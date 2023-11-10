@@ -7,7 +7,8 @@ use crate::{flex_statement::contract::Contract, utils::de::*};
 #[derive(Debug, Deserialize, Clone)]
 pub struct StmtFunds {
     #[serde(rename = "$value")]
-    #[serde(skip_serializing_if = "Vec::is_empty", default)]
+    // #[serde(rename = "StatementOfFundsLine", default)]
+    // #[serde(skip_serializing_if = "Vec::is_empty", default)]
     pub items: Vec<StatementOfFundsLine>,
 }
 
