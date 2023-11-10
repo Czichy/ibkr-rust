@@ -8,7 +8,7 @@ use crate::{flex_statement::contract::Contract, utils::de::*};
 pub struct StmtFunds {
     #[serde(rename = "$value")]
     // #[serde(rename = "StatementOfFundsLine", default)]
-    // #[serde(skip_serializing_if = "Vec::is_empty", default)]
+    #[serde(skip_serializing_if = "Vec::is_empty", default)]
     pub items: Vec<StatementOfFundsLine>,
 }
 
@@ -49,7 +49,7 @@ pub struct StatementOfFundsLine {
 
     #[serde(rename = "orderID")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
-    pub order_id: Option<i32>,
+    pub order_id: Option<u64>,
 
     #[serde(deserialize_with = "naive_date_from_str")]
     pub report_date: NaiveDate,
@@ -81,7 +81,7 @@ pub struct StatementOfFundsLine {
 
     #[serde(rename = "transactionID")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
-    pub transaction_id: Option<i32>,
+    pub transaction_id: Option<u64>,
 }
 
 #[cfg(test)]

@@ -1,7 +1,6 @@
 use std::{error, fmt, path::PathBuf};
 
 pub use flex_statement::*;
-use log::info;
 use quick_xml::de::from_str;
 use reqwest::header::USER_AGENT;
 use serde::de::DeserializeOwned;
@@ -106,6 +105,7 @@ impl FlexReader {
                 .await?;
             tracing::debug!("{:#?}", response);
             let bytes = response.text().await?;
+            let bytes = bytes.replace('&', "&amp;");
             tracing::error!(
                 "\n{} \n...\n {}",
                 &bytes[0..175],
