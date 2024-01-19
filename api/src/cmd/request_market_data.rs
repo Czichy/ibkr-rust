@@ -1,21 +1,18 @@
-use std::{
-    fmt::{Display, Formatter},
-    str::FromStr,
-};
+use std::{fmt::{Display, Formatter},
+          str::FromStr};
 
 use bytes::Bytes;
 use chrono::{DateTime, Local};
 
 use super::IntoIbkrFrame;
-use crate::{
-    contract::Contract,
-    enums::{MarketDataType, Outgoing},
-    frame::Frame,
-    prelude::{ib_message::Decodable, BarSize, Duration, ParseEnumError},
-    ticker::{GenericTickType, TickByTickType},
-    utils::ib_message::{Encodable, IBMessage},
-    RequestId, TimeStamp,
-};
+use crate::{contract::Contract,
+            enums::{MarketDataType, Outgoing},
+            frame::Frame,
+            prelude::{ib_message::Decodable, BarSize, Duration, ParseEnumError},
+            ticker::{GenericTickType, TickByTickType},
+            utils::ib_message::{Encodable, IBMessage},
+            RequestId,
+            TimeStamp};
 
 /// Call this function to request market data. The market data
 /// will be returned by the tick_price and tick_size wrapper events.
@@ -38,12 +35,12 @@ use crate::{
 /// * mkt_data_options - For internal use only. Use default value XYZ.
 #[derive(Debug)]
 pub struct MarketDataRequest {
-    pub req_id: RequestId,
-    pub contract: Contract,
+    pub req_id:            RequestId,
+    pub contract:          Contract,
     pub generic_tick_list: Vec<GenericTickType>,
-    pub snapshot: bool,
-    pub regulatory: bool,
-    pub additional_data: Vec<TagValue>,
+    pub snapshot:          bool,
+    pub regulatory:        bool,
+    pub additional_data:   Vec<TagValue>,
 }
 
 impl IntoIbkrFrame for MarketDataRequest {
@@ -114,7 +111,7 @@ impl IntoIbkrFrame for CancelHistoricalDataRequest {
 //  * is_smart_depth - specifies SMART depth request
 #[derive(Debug, Clone, Copy)]
 pub struct CancelMarketDepthRequest {
-    pub req_id: RequestId,
+    pub req_id:         RequestId,
     pub is_smart_depth: bool,
 }
 impl IntoIbkrFrame for CancelMarketDepthRequest {
@@ -171,11 +168,11 @@ impl IntoIbkrFrame for CancelTickByTickRequest {
 // /// 1-day bars always return with date in YYYYMMDD format
 #[derive(Debug)]
 pub struct HeadTimestampRequest {
-    pub req_id: RequestId,
-    pub contract: Contract,
+    pub req_id:       RequestId,
+    pub contract:     Contract,
     pub what_to_show: HistoricalDataType,
-    pub use_rth: UseRegularTradingHoursOnly,
-    pub format_date: IntradayBarDateFormat,
+    pub use_rth:      UseRegularTradingHoursOnly,
+    pub format_date:  IntradayBarDateFormat,
 }
 impl IntoIbkrFrame for HeadTimestampRequest {
     fn into_frame(&self) -> Frame {
@@ -255,16 +252,16 @@ impl IntoIbkrFrame for HeadTimestampRequest {
 /// *chart_options: - For internal use only. Use default value XYZ.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct HistoricalDataRequest {
-    pub req_id: RequestId,
-    pub contract: Contract,
-    pub end_date_time: TimeStamp,
-    pub duration: Duration,
+    pub req_id:           RequestId,
+    pub contract:         Contract,
+    pub end_date_time:    TimeStamp,
+    pub duration:         Duration,
     pub bar_size_setting: BarSize,
-    pub what_to_show: HistoricalDataType,
-    pub use_rth: UseRegularTradingHoursOnly,
-    pub format_date: IntradayBarDateFormat,
-    pub keep_up_to_date: bool,
-    pub chart_options: Vec<TagValue>,
+    pub what_to_show:     HistoricalDataType,
+    pub use_rth:          UseRegularTradingHoursOnly,
+    pub format_date:      IntradayBarDateFormat,
+    pub keep_up_to_date:  bool,
+    pub chart_options:    Vec<TagValue>,
 }
 impl IntoIbkrFrame for HistoricalDataRequest {
     fn into_frame(&self) -> Frame {
@@ -318,14 +315,14 @@ impl IntoIbkrFrame for HistoricalDataRequest {
 /// * misc_options - should be defined as null, reserved for internal use
 #[derive(Debug)]
 pub struct HistoricalTicksRequest {
-    pub req_id: RequestId,
-    pub contract: Contract,
-    pub date_time: HistoricalTickDateTime,
+    pub req_id:          RequestId,
+    pub contract:        Contract,
+    pub date_time:       HistoricalTickDateTime,
     pub number_of_ticks: i32,
-    pub what_to_show: HistoricalDataType,
-    pub use_rth: UseRegularTradingHoursOnly,
-    pub ignore_size: i32,
-    pub misc_options: Vec<TagValue>,
+    pub what_to_show:    HistoricalDataType,
+    pub use_rth:         UseRegularTradingHoursOnly,
+    pub ignore_size:     i32,
+    pub misc_options:    Vec<TagValue>,
 }
 impl IntoIbkrFrame for HistoricalTicksRequest {
     fn into_frame(&self) -> Frame {
@@ -419,10 +416,10 @@ impl IntoIbkrFrame for MarketDataTypeRequest {
 
 #[derive(Debug)]
 pub struct MarketDepthRequest {
-    pub req_id: RequestId,
-    pub contract: Contract,
-    pub num_rows: i32,
-    pub is_smart_depth: bool,
+    pub req_id:            RequestId,
+    pub contract:          Contract,
+    pub num_rows:          i32,
+    pub is_smart_depth:    bool,
     pub mkt_depth_options: Vec<TagValue>,
 }
 
@@ -464,11 +461,11 @@ impl IntoIbkrFrame for MarketDepthExchangesRequest {
 /// * ignore_size    - ignore size flag./
 #[derive(Debug)]
 pub struct TickByTickRequest {
-    pub req_id: RequestId,
-    pub contract: Contract,
-    pub tick_type: TickByTickType,
+    pub req_id:          RequestId,
+    pub contract:        Contract,
+    pub tick_type:       TickByTickType,
     pub number_of_ticks: i32,
-    pub ignore_size: bool,
+    pub ignore_size:     bool,
 }
 impl IntoIbkrFrame for TickByTickRequest {
     fn into_frame(&self) -> Frame {
@@ -539,15 +536,15 @@ pub enum HistoricalTickDateTime {
 ///                    falls partially or completely outside.
 /// * real_time_bars_options: - For internal use only. Use pub fnault value XYZ
 #[derive(Debug)]
-pub struct RealtimeBars {
-    pub req_id: RequestId,
-    pub contract: Contract,
-    pub bar_size: BarSize,
-    pub what_to_show: HistoricalDataType,
-    pub use_rth: UseRegularTradingHoursOnly,
+pub struct RealtimeBarRequest {
+    pub req_id:                 RequestId,
+    pub contract:               Contract,
+    pub bar_size:               BarSize,
+    pub what_to_show:           HistoricalDataType,
+    pub use_rth:                UseRegularTradingHoursOnly,
     pub real_time_bars_options: Vec<TagValue>,
 }
-impl IntoIbkrFrame for RealtimeBars {
+impl IntoIbkrFrame for RealtimeBarRequest {
     fn into_frame(&self) -> Frame {
         let version: i32 = 1;
 
@@ -688,14 +685,12 @@ impl FromStr for UsePriceMgmtAlgo {
 impl Decodable for UsePriceMgmtAlgo {}
 #[derive(Clone, Debug, Default, PartialEq, Eq, Hash)]
 pub struct TagValue {
-    pub tag: String,
+    pub tag:   String,
     pub value: String,
 }
 
 impl TagValue {
-    pub const fn new(tag: String, value: String) -> Self {
-        TagValue { tag, value }
-    }
+    pub const fn new(tag: String, value: String) -> Self { TagValue { tag, value } }
 }
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
 pub enum HistoricalDataType {
@@ -739,9 +734,7 @@ impl Encodable for HistoricalDataType {
     }
 }
 impl Default for HistoricalDataType {
-    fn default() -> Self {
-        Self::Trades
-    }
+    fn default() -> Self { Self::Trades }
 }
 
 impl FromStr for HistoricalDataType {
@@ -771,9 +764,7 @@ impl FromStr for HistoricalDataType {
 }
 
 impl Display for HistoricalDataType {
-    fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
-        write!(f, "{self:?}")
-    }
+    fn fmt(&self, f: &mut Formatter) -> std::fmt::Result { write!(f, "{self:?}") }
 }
 
 impl Decodable for HistoricalDataType {}

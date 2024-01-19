@@ -1,11 +1,9 @@
 use chrono::Utc;
 
-use crate::{
-    cmd::request_market_data::*,
-    prelude::{Client, IntoIbkrFrame},
-    ticker::MarketDataTracker,
-    Result,
-};
+use crate::{cmd::request_market_data::*,
+            prelude::{Client, IntoIbkrFrame},
+            ticker::MarketDataTracker,
+            Result};
 
 impl Client {
     pub fn subscribe_market_data_updates(&mut self) -> MarketDataTracker {
@@ -78,6 +76,41 @@ impl Client {
     /// * req_id - The ID that was specified in the call to req_mkt_data()
     #[tracing::instrument(skip(self))]
     pub async fn cancel_market_data(&mut self, request: &CancelMarketDataRequest) -> Result<()> {
+        // when unsubscribing symbols immediately after subscribing IB returns an error
+        // (Can't find EId with tickerId:nnn), so we track subscription times to
+        // ensure symbols are not unsubscribed before a minimum time span has elapsed
+        if let Some(subscription_time) = self.subscriptions_by_time.get(&request.req_id) {
+            let time_since_subscription = Utc::now() - *subscription_time;
+            if time_since_subscription < self.min_timespan_before_unsubscribe {
+                let delay = self.min_timespan_before_unsubscribe - time_since_subscription;
+                tokio::time::sleep(std::time::Duration::from_millis(
+                    delay.num_milliseconds() as u64
+                ))
+                .await;
+            }
+            // convert the command into a frame
+            // Write the frame to the socket
+            self.writer.write_frame(&request.into_frame()).await?;
+        }
+        Ok(())
+    }
+
+    #[tracing::instrument(skip(self))]
+    pub async fn request_realtime_bars(&mut self, request: &RealtimeBarRequest) -> Result<()> {
+        self.subscriptions_by_time
+            .insert(request.req_id, Utc::now());
+        // Write the frame to the socket
+        self.writer.write_frame(&request.into_frame()).await?;
+        Ok(())
+    }
+
+    /// After calling this function, market data for the specified id will stop
+    /// flowing.
+    ///
+    /// # Arguments
+    /// * req_id - The ID that was specified in the call to req_mkt_data()
+    #[tracing::instrument(skip(self))]
+    pub async fn cancel_realtime_bars(&mut self, request: &CancelRealtimeBars) -> Result<()> {
         // when unsubscribing symbols immediately after subscribing IB returns an error
         // (Can't find EId with tickerId:nnn), so we track subscription times to
         // ensure symbols are not unsubscribed before a minimum time span has elapsed
