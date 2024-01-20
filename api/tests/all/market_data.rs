@@ -292,6 +292,15 @@ async fn market_data_tick_by_tick() -> Result<()> {
         }
         assert!(count > 0);
     });
+    let receiver = client.market_data_tracker.historical_ticks.clone();
+    thread::spawn(move || {
+        let mut count: i32 = 0;
+        while let Ok(tick) = receiver.recv() {
+            count += 3;
+            tracing::error!("got tick: {:#?}", tick);
+        }
+        assert!(count > 0);
+    });
     let _ = client
         .request_tick_by_tick_data(&TickByTickRequest {
             req_id: 200,

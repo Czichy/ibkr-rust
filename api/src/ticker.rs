@@ -6,36 +6,37 @@ use derive_more::From;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
 
-use crate::{
-    bars::{HistoricalBars, HistoricalSchedule, RealtimeBar},
-    ib_frame::{ParseError, ParseIbkrFrame, ParseResult},
-    prelude::{
-        constants::UNSET_INTEGER,
-        ib_message::{decode, Decodable, Encodable},
-        DepthSide, Incoming, MarketDepthOperation, ParseEnumError,
-    },
-    MarketDataValueType, RequestId, TimeStamp,
-};
+use crate::{bars::{HistoricalBars, HistoricalSchedule, RealtimeBar},
+            ib_frame::{ParseError, ParseIbkrFrame, ParseResult},
+            prelude::{constants::UNSET_INTEGER,
+                      ib_message::{decode, Decodable, Encodable},
+                      DepthSide,
+                      Incoming,
+                      MarketDepthOperation,
+                      ParseEnumError},
+            MarketDataValueType,
+            RequestId,
+            TimeStamp};
 
 #[derive(Debug, Clone)]
 pub struct MarketDataTracker {
-    pub tick_by_tick: Receiver<Tick>,
-    pub bars: Receiver<RealtimeBar>,
-    pub market_depth: Receiver<MarketDepthUpdate>,
-    pub historical_ticks: Receiver<HistoricalTicks>,
-    pub historical_bars: Receiver<HistoricalBars>,
+    pub tick_by_tick:        Receiver<Tick>,
+    pub bars:                Receiver<RealtimeBar>,
+    pub market_depth:        Receiver<MarketDepthUpdate>,
+    pub historical_ticks:    Receiver<HistoricalTicks>,
+    pub historical_bars:     Receiver<HistoricalBars>,
     pub historical_schedule: Receiver<HistoricalSchedule>,
-    pub head_timestamp: Receiver<HeadTimestamp>,
+    pub head_timestamp:      Receiver<HeadTimestamp>,
 }
 #[allow(dead_code)]
 pub(crate) struct MarketDataTrackerSender {
-    pub tick_by_tick_tx: Sender<Tick>,
-    pub market_depth_tx: Sender<MarketDepthUpdate>,
-    pub bars_tx: Sender<RealtimeBar>,
-    pub historical_ticks_tx: Sender<HistoricalTicks>,
-    pub historical_bars_tx: Sender<HistoricalBars>,
+    pub tick_by_tick_tx:        Sender<Tick>,
+    pub market_depth_tx:        Sender<MarketDepthUpdate>,
+    pub bars_tx:                Sender<RealtimeBar>,
+    pub historical_ticks_tx:    Sender<HistoricalTicks>,
+    pub historical_bars_tx:     Sender<HistoricalBars>,
     pub historical_schedule_tx: Sender<HistoricalSchedule>,
-    pub head_timestamp_tx: Sender<HeadTimestamp>,
+    pub head_timestamp_tx:      Sender<HeadTimestamp>,
 }
 impl MarketDataTracker {
     pub(crate) fn new() -> (MarketDataTrackerSender, Self) {
@@ -93,6 +94,7 @@ impl ParseIbkrFrame for Tick {
         Self: Sized,
     {
         if !matches!(msg_id, Incoming::TickByTick) {
+            tracing::error!("Unexpected Message (TickByTick): {msg_id:?}");
             return Err(ParseError::UnexpectedMessage);
         }
         // it.next(); // skip version
@@ -141,7 +143,7 @@ impl ParseIbkrFrame for Tick {
                     tick_attrib_bid_ask: {
                         let mask: u32 = decode(it)?.unwrap();
                         TickAttribBidAsk {
-                            bid_past_low: mask & 1 != 0,
+                            bid_past_low:  mask & 1 != 0,
                             ask_past_high: mask & 2 != 0,
                         }
                     },
@@ -173,31 +175,31 @@ pub enum HistoricalTimeAndSales {
 
 #[derive(Clone, Debug)]
 pub struct TickByTickAllLast {
-    pub id: RequestId,
-    pub tick_type: TickByTickType,
-    pub time: TimeStamp,
-    pub price: MarketDataValueType,
-    pub size: MarketDataValueType,
-    pub tick_attrib_last: TickAttribLast,
-    pub exchange: String,
+    pub id:                 RequestId,
+    pub tick_type:          TickByTickType,
+    pub time:               TimeStamp,
+    pub price:              MarketDataValueType,
+    pub size:               MarketDataValueType,
+    pub tick_attrib_last:   TickAttribLast,
+    pub exchange:           String,
     pub special_conditions: String,
 }
 
 #[derive(Clone, Debug, Copy)]
 pub struct TickByTickBidAsk {
-    pub id: RequestId,
-    pub time: TimeStamp,
-    pub bid_price: MarketDataValueType,
-    pub ask_price: MarketDataValueType,
-    pub bid_size: MarketDataValueType,
-    pub ask_size: MarketDataValueType,
+    pub id:                  RequestId,
+    pub time:                TimeStamp,
+    pub bid_price:           MarketDataValueType,
+    pub ask_price:           MarketDataValueType,
+    pub bid_size:            MarketDataValueType,
+    pub ask_size:            MarketDataValueType,
     pub tick_attrib_bid_ask: TickAttribBidAsk,
 }
 
 #[derive(Clone, Debug, Copy)]
 pub struct TickByTickMidPoint {
-    pub id: RequestId,
-    pub time: TimeStamp,
+    pub id:        RequestId,
+    pub time:      TimeStamp,
     pub mid_point: MarketDataValueType,
 }
 
@@ -222,8 +224,8 @@ impl ShortAvailability {
 #[derive(Clone, Debug, Default, Copy)]
 pub struct TickAttribute {
     pub can_auto_execute: bool,
-    pub past_limit: bool,
-    pub pre_open: bool,
+    pub past_limit:       bool,
+    pub pre_open:         bool,
 }
 
 impl TickAttribute {
@@ -237,7 +239,7 @@ impl TickAttribute {
 }
 #[derive(Clone, Debug, Default, Copy)]
 pub struct TickAttribBidAsk {
-    pub bid_past_low: bool,
+    pub bid_past_low:  bool,
     pub ask_past_high: bool,
 }
 
@@ -266,10 +268,10 @@ impl TickAttribLast {
 
 #[derive(Clone, Debug, Copy)]
 pub struct TickPrice {
-    pub id: RequestId,
-    pub kind: TickType,
-    pub price: MarketDataValueType,
-    pub size: Option<MarketDataValueType>,
+    pub id:         RequestId,
+    pub kind:       TickType,
+    pub price:      MarketDataValueType,
+    pub size:       Option<MarketDataValueType>,
     pub attributes: TickAttribute,
 }
 impl ParseIbkrFrame for TickPrice {
@@ -278,6 +280,7 @@ impl ParseIbkrFrame for TickPrice {
         Self: Sized,
     {
         if !matches!(msg_id, Incoming::TickPrice) {
+            tracing::error!("Unexpected Message (TickType): {msg_id:?}");
             return Err(ParseError::UnexpectedMessage);
         }
         it.next(); // skip version
@@ -290,8 +293,8 @@ impl ParseIbkrFrame for TickPrice {
         let bits = mask.view_bits::<LocalBits>();
         let attributes = TickAttribute {
             can_auto_execute: bits[0],
-            past_limit: bits[1],
-            pre_open: bits[2],
+            past_limit:       bits[1],
+            pre_open:         bits[2],
         };
         Ok(Self {
             id,
@@ -305,7 +308,7 @@ impl ParseIbkrFrame for TickPrice {
 
 #[derive(Clone, Debug, Copy)]
 pub struct TickSize {
-    pub id: RequestId,
+    pub id:   RequestId,
     pub kind: TickType,
     pub size: MarketDataValueType,
 }
@@ -315,11 +318,12 @@ impl ParseIbkrFrame for TickSize {
         Self: Sized,
     {
         if !matches!(msg_id, Incoming::TickSize) {
+            tracing::error!("Unexpected Message (TickSize): {msg_id:?}");
             return Err(ParseError::UnexpectedMessage);
         }
         it.next(); // skip version
         Ok(Self {
-            id: decode(it)?.unwrap(),
+            id:   decode(it)?.unwrap(),
             kind: decode(it)?.unwrap(),
             size: decode(it)?.unwrap(),
         })
@@ -328,9 +332,9 @@ impl ParseIbkrFrame for TickSize {
 //
 #[derive(Clone, Debug)]
 pub struct TickString {
-    pub id: RequestId,
+    pub id:   RequestId,
     pub kind: TickType,
-    pub val: Option<String>,
+    pub val:  Option<String>,
 }
 impl ParseIbkrFrame for TickString {
     fn try_parse_frame(msg_id: Incoming, it: &mut Split<&str>) -> ParseResult<Self>
@@ -338,22 +342,23 @@ impl ParseIbkrFrame for TickString {
         Self: Sized,
     {
         if !matches!(msg_id, Incoming::TickString) {
+            tracing::error!("Unexpected Message (TickString): {msg_id:?}");
             return Err(ParseError::UnexpectedMessage);
         }
         it.next(); // skip version
         Ok(Self {
-            id: decode(it)?.unwrap(),
+            id:   decode(it)?.unwrap(),
             kind: decode(it)?.unwrap(),
-            val: decode(it)?,
+            val:  decode(it)?,
         })
     }
 }
 //
 #[derive(Clone, Debug, Copy)]
 pub struct TickGeneric {
-    pub id: RequestId,
+    pub id:   RequestId,
     pub kind: TickType,
-    pub val: MarketDataValueType,
+    pub val:  MarketDataValueType,
 }
 impl ParseIbkrFrame for TickGeneric {
     fn try_parse_frame(msg_id: Incoming, it: &mut Split<&str>) -> ParseResult<Self>
@@ -361,32 +366,34 @@ impl ParseIbkrFrame for TickGeneric {
         Self: Sized,
     {
         if !matches!(msg_id, Incoming::TickGeneric) {
+            tracing::error!("Unexpected Message (TickGeneric): {msg_id:?}");
             return Err(ParseError::UnexpectedMessage);
         }
         it.next(); // skip version
         Ok(Self {
-            id: decode(it)?.unwrap(),
+            id:   decode(it)?.unwrap(),
             kind: decode(it)?.unwrap(),
-            val: decode(it)?.unwrap(),
+            val:  decode(it)?.unwrap(),
         })
     }
 }
 
 #[derive(Clone, Debug, Copy)]
 pub struct HistoricalBidAsk {
-    pub time: TimeStamp,
+    pub time:       TimeStamp,
     pub attributes: TickAttribute,
-    pub price_bid: MarketDataValueType,
-    pub price_ask: MarketDataValueType,
-    pub size_bid: MarketDataValueType,
-    pub size_ask: MarketDataValueType,
+    pub price_bid:  MarketDataValueType,
+    pub price_ask:  MarketDataValueType,
+    pub size_bid:   MarketDataValueType,
+    pub size_ask:   MarketDataValueType,
 }
 impl ParseIbkrFrame for HistoricalBidAsk {
     fn try_parse_frame(msg_id: Incoming, it: &mut Split<&str>) -> ParseResult<Self>
     where
         Self: Sized,
     {
-        if !matches!(msg_id, Incoming::HistoricalTicksLast) {
+        if !matches!(msg_id, Incoming::HistoricalTicksBidAsk) {
+            tracing::error!("Unexpected Message (HistTickLast): {msg_id:?}");
             return Err(ParseError::UnexpectedMessage);
         }
         let time = decode(it)?.unwrap();
@@ -394,8 +401,8 @@ impl ParseIbkrFrame for HistoricalBidAsk {
         let bits = mask.view_bits::<LocalBits>();
         let attributes = TickAttribute {
             can_auto_execute: bits[0],
-            past_limit: bits[1],
-            pre_open: bits[2],
+            past_limit:       bits[1],
+            pre_open:         bits[2],
         };
         Ok(Self {
             time,
@@ -410,15 +417,16 @@ impl ParseIbkrFrame for HistoricalBidAsk {
 
 #[derive(Clone, Debug)]
 pub struct HistoricalTicks {
-    pub id: RequestId,
+    pub id:    RequestId,
     pub ticks: Vec<HistoricalTimeAndSales>,
-    pub done: bool,
+    pub done:  bool,
 }
 impl ParseIbkrFrame for HistoricalTicks {
     fn try_parse_frame(msg_id: Incoming, it: &mut Split<&str>) -> ParseResult<Self>
     where
         Self: Sized,
     {
+        tracing::error!("Msg Id Historical Ticks {:#?}", &msg_id);
         match msg_id {
             Incoming::HistoricalTicks => {
                 let id = decode(it)?.unwrap();
@@ -439,6 +447,7 @@ impl ParseIbkrFrame for HistoricalTicks {
                 })
             },
             Incoming::HistoricalTicksBidAsk => {
+                tracing::error!("Historical Ticks BidAsk {:#?}", &it);
                 let id = decode(it)?.unwrap();
                 let tick_count = decode(it)?.unwrap();
                 let ticks = {
@@ -484,9 +493,9 @@ impl ParseIbkrFrame for HistoricalTicks {
 
 #[derive(Clone, Debug, Copy)]
 pub struct HistoricalTick {
-    pub time: TimeStamp,
+    pub time:  TimeStamp,
     pub price: MarketDataValueType,
-    pub size: MarketDataValueType,
+    pub size:  MarketDataValueType,
 }
 impl ParseIbkrFrame for HistoricalTick {
     fn try_parse_frame(msg_id: Incoming, it: &mut Split<&str>) -> ParseResult<Self>
@@ -494,23 +503,24 @@ impl ParseIbkrFrame for HistoricalTick {
         Self: Sized,
     {
         if !matches!(msg_id, Incoming::HistoricalTicks) {
+            tracing::error!("Unexpected Message (HistTicks): {msg_id:?}");
             return Err(ParseError::UnexpectedMessage);
         }
         Ok(Self {
-            time: decode(it)?.unwrap(),
+            time:  decode(it)?.unwrap(),
             price: decode(it)?.unwrap(),
-            size: decode(it)?.unwrap(),
+            size:  decode(it)?.unwrap(),
         })
     }
 }
 
 #[derive(Clone, Debug)]
 pub struct HistoricalLast {
-    pub time: TimeStamp,
-    pub attributes: TickAttribute,
-    pub price: MarketDataValueType,
-    pub size: MarketDataValueType,
-    pub exchange: String,
+    pub time:               TimeStamp,
+    pub attributes:         TickAttribute,
+    pub price:              MarketDataValueType,
+    pub size:               MarketDataValueType,
+    pub exchange:           String,
     pub special_conditions: Option<String>,
 }
 impl ParseIbkrFrame for HistoricalLast {
@@ -519,6 +529,7 @@ impl ParseIbkrFrame for HistoricalLast {
         Self: Sized,
     {
         if !matches!(msg_id, Incoming::HistoricalTicksLast) {
+            tracing::error!("Unexpected Message (HistTickLast): {msg_id:?}");
             return Err(ParseError::UnexpectedMessage);
         }
         let time = decode(it)?.unwrap();
@@ -526,8 +537,8 @@ impl ParseIbkrFrame for HistoricalLast {
         let bits = mask.view_bits::<LocalBits>();
         let attributes = TickAttribute {
             can_auto_execute: bits[0],
-            past_limit: bits[1],
-            pre_open: bits[2],
+            past_limit:       bits[1],
+            pre_open:         bits[2],
         };
         Ok(Self {
             time, //: decode(it)?.unwrap(),
@@ -542,113 +553,113 @@ impl ParseIbkrFrame for HistoricalLast {
 
 #[derive(Clone, Debug, Copy)]
 pub struct HeadTimestamp {
-    pub id: RequestId,
+    pub id:        RequestId,
     pub timestamp: TimeStamp,
 }
 #[derive(Clone, Debug)]
 pub struct MarketDepthUpdate {
-    pub id: RequestId,
-    pub position: usize,
-    pub operation: MarketDepthOperation,
-    pub side: DepthSide,
-    pub price: MarketDataValueType,
-    pub size: MarketDataValueType,
+    pub id:             RequestId,
+    pub position:       usize,
+    pub operation:      MarketDepthOperation,
+    pub side:           DepthSide,
+    pub price:          MarketDataValueType,
+    pub size:           MarketDataValueType,
     pub is_smart_depth: String,
 }
 #[repr(i32)]
 #[derive(FromPrimitive, Debug, Clone, enum_ordinalize::Ordinalize, Copy)]
 pub enum TickType {
-    BidSize = 0,
-    Bid = 1,
-    Ask = 2,
-    AskSize = 3,
-    Last = 4,
-    LastSize = 5,
-    High = 6,
-    Low = 7,
-    Volume = 8,
-    Close = 9,
-    BidOptionComputation = 10,
-    AskOptionComputation = 11,
-    LastOptionComputation = 12,
-    ModelOption = 13,
-    Open = 14,
-    Low13Week = 15,
-    High13Week = 16,
-    Low26Week = 17,
-    High26Week = 18,
-    Low52Week = 19,
-    High52Week = 20,
-    AvgVolume = 21,
-    OpenInterest = 22,
-    OptionHistoricalVol = 23,
-    OptionImpliedVol = 24,
-    OptionBidExch = 25,
-    OptionAskExch = 26,
+    BidSize                = 0,
+    Bid                    = 1,
+    Ask                    = 2,
+    AskSize                = 3,
+    Last                   = 4,
+    LastSize               = 5,
+    High                   = 6,
+    Low                    = 7,
+    Volume                 = 8,
+    Close                  = 9,
+    BidOptionComputation   = 10,
+    AskOptionComputation   = 11,
+    LastOptionComputation  = 12,
+    ModelOption            = 13,
+    Open                   = 14,
+    Low13Week              = 15,
+    High13Week             = 16,
+    Low26Week              = 17,
+    High26Week             = 18,
+    Low52Week              = 19,
+    High52Week             = 20,
+    AvgVolume              = 21,
+    OpenInterest           = 22,
+    OptionHistoricalVol    = 23,
+    OptionImpliedVol       = 24,
+    OptionBidExch          = 25,
+    OptionAskExch          = 26,
     OptionCallOpenInterest = 27,
-    OptionPutOpenInterest = 28,
-    OptionCallVolume = 29,
-    OptionPutVolume = 30,
-    IndexFuturePremium = 31,
-    BidExch = 32,
-    AskExch = 33,
-    AuctionVolume = 34,
-    AuctionPrice = 35,
-    AuctionImbalance = 36,
-    MarkPrice = 37,
-    BidEfpComputation = 38,
-    AskEfpComputation = 39,
-    LastEfpComputation = 40,
-    OpenEfpComputation = 41,
-    HighEfpComputation = 42,
-    LowEfpComputation = 43,
-    CloseEfpComputation = 44,
-    LastTimestamp = 45,
-    Shortable = 46,
-    FundamentalRatios = 47,
-    RtVolume = 48,
-    Halted = 49,
-    BidYield = 50,
-    AskYield = 51,
-    LastYield = 52,
-    CustOptionComputation = 53,
-    TradeCount = 54,
-    TradeRate = 55,
-    VolumeRate = 56,
-    LastRthTrade = 57,
-    RtHistoricalVol = 58,
-    IbDividends = 59,
-    BondFactorMultiplier = 60,
-    RegulatoryImbalance = 61,
-    NewsTick = 62,
-    ShortTermVolume3Min = 63,
-    ShortTermVolume5Min = 64,
-    ShortTermVolume10Min = 65,
-    DelayedBid = 66,
-    DelayedAsk = 67,
-    DelayedLast = 68,
-    DelayedBidSize = 69,
-    DelayedAskSize = 70,
-    DelayedLastSize = 71,
-    DelayedHigh = 72,
-    DelayedLow = 73,
-    DelayedVolume = 74,
-    DelayedClose = 75,
-    DelayedOpen = 76,
-    RtTrdVolume = 77,
-    CreditmanMarkPrice = 78,
+    OptionPutOpenInterest  = 28,
+    OptionCallVolume       = 29,
+    OptionPutVolume        = 30,
+    IndexFuturePremium     = 31,
+    BidExch                = 32,
+    AskExch                = 33,
+    AuctionVolume          = 34,
+    AuctionPrice           = 35,
+    AuctionImbalance       = 36,
+    MarkPrice              = 37,
+    BidEfpComputation      = 38,
+    AskEfpComputation      = 39,
+    LastEfpComputation     = 40,
+    OpenEfpComputation     = 41,
+    HighEfpComputation     = 42,
+    LowEfpComputation      = 43,
+    CloseEfpComputation    = 44,
+    LastTimestamp          = 45,
+    Shortable              = 46,
+    FundamentalRatios      = 47,
+    RtVolume               = 48,
+    Halted                 = 49,
+    BidYield               = 50,
+    AskYield               = 51,
+    LastYield              = 52,
+    CustOptionComputation  = 53,
+    TradeCount             = 54,
+    TradeRate              = 55,
+    VolumeRate             = 56,
+    LastRthTrade           = 57,
+    RtHistoricalVol        = 58,
+    IbDividends            = 59,
+    BondFactorMultiplier   = 60,
+    RegulatoryImbalance    = 61,
+    NewsTick               = 62,
+    ShortTermVolume3Min    = 63,
+    ShortTermVolume5Min    = 64,
+    ShortTermVolume10Min   = 65,
+    DelayedBid             = 66,
+    DelayedAsk             = 67,
+    DelayedLast            = 68,
+    DelayedBidSize         = 69,
+    DelayedAskSize         = 70,
+    DelayedLastSize        = 71,
+    DelayedHigh            = 72,
+    DelayedLow             = 73,
+    DelayedVolume          = 74,
+    DelayedClose           = 75,
+    DelayedOpen            = 76,
+    RtTrdVolume            = 77,
+    CreditmanMarkPrice     = 78,
     CreditmanSlowMarkPrice = 79,
-    DelayedBidOption = 80,
-    DelayedAskOption = 81,
-    DelayedLastOption = 82,
-    DelayedModelOption = 83,
-    LastExch = 84,
-    LastRegTime = 85,
-    FuturesOpenInterest = 86,
-    AvgOptVolume = 87,
-    DelayedLastTimestamp = 88,
-    ShortableShares = 89,
-    NotSet = UNSET_INTEGER,
+    DelayedBidOption       = 80,
+    DelayedAskOption       = 81,
+    DelayedLastOption      = 82,
+    DelayedModelOption     = 83,
+    LastExch               = 84,
+    LastRegTime            = 85,
+    FuturesOpenInterest    = 86,
+    AvgOptVolume           = 87,
+    DelayedLastTimestamp   = 88,
+    ShortableShares        = 89,
+    NotSet                 = UNSET_INTEGER,
 }
 
 impl FromStr for TickType {
@@ -699,10 +710,10 @@ impl Encodable for GenericTickType {
 /// Tick by tick types
 #[derive(Clone, Debug, Copy)]
 pub enum TickByTickType {
-    NA = 0,
-    Last = 1,
-    AllLast = 2,
-    BidAsk = 3,
+    NA       = 0,
+    Last     = 1,
+    AllLast  = 2,
+    BidAsk   = 3,
     MidPoint = 4,
 }
 impl FromStr for TickByTickType {
