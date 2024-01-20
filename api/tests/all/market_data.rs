@@ -9,6 +9,44 @@ fn get_client_addr() -> SocketAddr {
     SocketAddr::new(IpAddr::V4(Ipv4Addr::new(192, 168, 1, 62)), 1111)
 }
 #[tokio::test]
+async fn market_data_realtime_bars() -> Result<()> {
+    let mut client = client::connect(get_client_addr(), 10).await?;
+    tokio::time::sleep(std::time::Duration::from_secs(3)).await;
+    let contract = Contract {
+        symbol: "EUR".to_string(),
+        exchange: Some("IDEALPRO".to_string()),
+        sec_type: SecType::Forex,
+        currency: "USD".to_string(),
+        ..Default::default()
+    };
+    let receiver = client.market_data_tracker.bars.clone();
+    thread::spawn(move || {
+        let mut count: i32 = 0;
+        while let Ok(tick) = receiver.recv() {
+            tracing::error!("received: {:?}", tick);
+            count += 1;
+            if count > 3 {}
+        }
+        assert!(count > 0);
+    });
+    let _orders = client
+        .request_realtime_bars(&RealtimeBarRequest {
+            req_id: 1000,
+            contract,
+            bar_size: BarSize::_1Min,
+            what_to_show: HistoricalDataType::BidAsk,
+            use_rth: UseRegularTradingHoursOnly::DontUse,
+            real_time_bars_options: vec![],
+        })
+        .await?;
+    tokio::time::sleep(std::time::Duration::from_secs(5)).await;
+    let _ = client
+        .cancel_realtime_bars(&CancelRealtimeBars { req_id: 1000 })
+        .await?;
+    Ok(())
+}
+
+#[tokio::test]
 async fn market_data_market_data() -> Result<()> {
     let mut client = client::connect(get_client_addr(), 10).await?;
     tokio::time::sleep(std::time::Duration::from_secs(3)).await;

@@ -535,6 +535,12 @@ pub enum HistoricalTickDateTime {
 ///                    product requested is returned, even if the time time span
 ///                    falls partially or completely outside.
 /// * real_time_bars_options: - For internal use only. Use pub fnault value XYZ
+
+// Requests real time bars
+// Currently, only 5 seconds bars are provided. This request is subject to the same pacing as any
+// historical data request: no more than 60 API queries in more than 600 seconds. Real time bars
+// subscriptions are also included in the calculation of the number of Level 1 market data
+// subscriptions allowed in an account.
 #[derive(Debug)]
 pub struct RealtimeBarRequest {
     pub req_id:                 RequestId,
@@ -553,7 +559,10 @@ impl IntoIbkrFrame for RealtimeBarRequest {
         msg.push_str(&self.req_id.encode());
         msg.push_str(&self.contract.encode_for_ticker());
 
-        msg.push_str(&self.bar_size.encode());
+        // * bar_size - Currently only 5 second bars are supported, if any other value
+        //   is used, an exception will be thrown.
+        // msg.push_str(&self.bar_size.encode());
+        msg.push_str("5\0");
         msg.push_str(&self.what_to_show.encode());
         msg.push_str(&self.use_rth.encode());
 
