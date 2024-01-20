@@ -306,7 +306,7 @@ async fn market_data_tick_by_tick() -> Result<()> {
             req_id: 200,
             contract,
             tick_type: TickByTickType::BidAsk,
-            number_of_ticks: 100,
+            number_of_ticks: 0,
             ignore_size: false,
         })
         .await?;
