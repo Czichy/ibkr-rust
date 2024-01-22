@@ -552,7 +552,7 @@ pub struct RealtimeBarRequest {
 }
 impl IntoIbkrFrame for RealtimeBarRequest {
     fn into_frame(&self) -> Frame {
-        let version: i32 = 1;
+        let version: i32 = 3;
 
         let mut msg = Outgoing::ReqRealTimeBars.encode();
         msg.push_str(&version.encode());

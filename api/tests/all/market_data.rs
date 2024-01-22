@@ -13,9 +13,9 @@ async fn market_data_realtime_bars() -> Result<()> {
     let mut client = client::connect(get_client_addr(), 10).await?;
     tokio::time::sleep(std::time::Duration::from_secs(3)).await;
     let contract = Contract {
-        symbol: "EUR".to_string(),
-        exchange: Some("IDEALPRO".to_string()),
-        sec_type: SecType::Forex,
+        symbol: "AAPL".to_string(),
+        exchange: Some("SMART".to_string()),
+        sec_type: SecType::Stock,
         currency: "USD".to_string(),
         ..Default::default()
     };
@@ -34,7 +34,7 @@ async fn market_data_realtime_bars() -> Result<()> {
             req_id: 1000,
             contract,
             bar_size: BarSize::_1Min,
-            what_to_show: HistoricalDataType::BidAsk,
+            what_to_show: HistoricalDataType::Trades,
             use_rth: UseRegularTradingHoursOnly::DontUse,
             real_time_bars_options: vec![],
         })
@@ -306,7 +306,7 @@ async fn market_data_tick_by_tick() -> Result<()> {
             req_id: 200,
             contract,
             tick_type: TickByTickType::BidAsk,
-            number_of_ticks: 0,
+            number_of_ticks: 200,
             ignore_size: false,
         })
         .await?;
