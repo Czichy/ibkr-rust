@@ -385,7 +385,7 @@ impl Client {
 
     //----------------------------------------------------------------------------------------------
     /// Disconnect from TWS
-    pub fn disconnect(&mut self) -> Result<()> {
+    pub fn disconnect(&self) -> Result<()> {
         if !self.is_connected() {
             info!("Already disconnected...");
             return Ok(());
