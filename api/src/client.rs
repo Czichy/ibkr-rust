@@ -390,10 +390,8 @@ impl Client {
             info!("Already disconnected...");
             return Ok(());
         }
-        info!("Disconnect requested.  Shutting down stream...");
-        // self.disconnect_requested.store(true, Ordering::Release);
-        // self.stream.as_mut().unwrap().shutdown(Shutdown::Both)?;
-        //*self.conn_state.lock().expect(POISONED_MUTEX) = ConnStatus::DISCONNECTED;
+        error!("Disconnect requested.  Shutting down stream...");
+        let _ = self.notify_shutdown.send(())?;
         Ok(())
     }
 
