@@ -1,0 +1,47 @@
+[package]
+name = "ibkr-rust-api"
+version = "0.1.0"
+authors = ["cczichy <christian@czichy.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1.0.40"
+bitvec = "1.0.1"
+bytes = "1.1.0"
+chrono = { version = "0.4", features = [ "serde" ] }
+chrono-tz = "0.6.3"
+crossbeam  = "0.8.1"
+derive_more = "0.99"
+enum-ordinalize = "3.1.11"
+lazy_static = "1.4.0"
+num-derive = "0.3.3"
+num-traits = "0.2.14"
+regex = "1.6.0"
+rust_decimal = { version = "1", features = [ "serde-str" ] }
+rust_decimal_macros = "1"
+serde = { version = "1.0", features = [ "derive" ], optional = true }
+strum = "0.24.0"
+strum_macros = "0.24.0"
+thiserror = "1.0.30"
+tokio = { version = "1.5.0", features = ["full"] }
+tracing = "0.1.25"
+tracing-bunyan-formatter = "0.3.1"
+tracing-log = { version = "0.1" }
+tracing-subscriber = { version = "0.3.3", default-features = false, features = ["registry","fmt","env-filter"] }
+
+[dev-dependencies]
+ctor = "0.1.22"
+# Enable test-utilities in dev mode only. This is mostly for tests.
+tokio = { version = "1.5.0", features = ["test-util"] }
+#tracing-test = "0.2.1"
+pretty_assertions = "1.2.1"
+
+[features]
+default = []
+period_type_u16 = []
+period_type_u32 = []
+period_type_u64 = []
+unsafe_performance = []
+market_data_value_type_f32 = []
