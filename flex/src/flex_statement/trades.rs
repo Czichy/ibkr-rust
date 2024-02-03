@@ -42,6 +42,7 @@ impl TradeElements {
 #[derive(Debug, Deserialize, Clone, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct Trade {
+    #[serde(rename = "accountId")]
     pub account_id: String,
 
     #[serde(deserialize_with = "deserialize_option_from_str")]
@@ -63,7 +64,7 @@ pub struct Trade {
 
     #[serde(rename = "ibOrderID")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
-    pub ib_order_id: Option<i32>,
+    pub ib_order_id: Option<u32>,
 
     #[serde(rename = "ibExecID")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
@@ -89,8 +90,8 @@ pub struct Trade {
     #[serde(deserialize_with = "deserialize_option_from_str")]
     pub orig_trade_id: Option<i32>,
 
-    #[serde(deserialize_with = "naive_date_time_from_str")]
-    pub order_time: NaiveDateTime,
+    #[serde(deserialize_with = "some_naive_date_time_from_str")]
+    pub order_time: Option<NaiveDateTime>,
 
     #[serde(deserialize_with = "some_naive_date_time_from_str")]
     pub open_date_time: Option<NaiveDateTime>,
@@ -252,7 +253,7 @@ mod tests {
                 clearing_firm_id:         None,
                 orig_trade_price:         Some(dec!(0)),
                 orig_trade_id:            None,
-                order_time:               NaiveDateTime::from_str("2021-02-26T09:22:05").unwrap(),
+                order_time:               NaiveDateTime::from_str("2021-02-26T09:22:05").ok(),
                 open_date_time:           None,
                 trade_date_time:          NaiveDateTime::from_str("2021-02-26T10:01:35").unwrap(),
                 report_date:              "2021-02-26".to_string(),

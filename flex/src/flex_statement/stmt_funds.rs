@@ -16,6 +16,7 @@ pub struct StmtFunds {
 #[serde(rename_all = "camelCase")]
 // TODO: Create Enume for different lines e.g. Activity = Starting Balance
 pub struct StatementOfFundsLine {
+    #[serde(rename = "accountId")]
     pub account_id: String,
 
     #[serde(deserialize_with = "deserialize_option_from_str")]

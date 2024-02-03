@@ -3,13 +3,16 @@ use iso_currency::Currency;
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
+use self::open_position::OpenPositions;
 use crate::{contract::Contract,
             flex_statement::{account_information::AccountInformation, trades::Trades},
             stmt_funds::StmtFunds,
             unbundled_commission_details::UnbundledCommissionDetails,
             utils::de::{naive_date_from_str, naive_date_time_from_str}};
+
 pub mod account_information;
 pub mod contract;
+pub mod open_position;
 pub mod stmt_funds;
 pub mod trades;
 pub mod unbundled_commission_details;
@@ -146,12 +149,6 @@ pub struct CashTransactions {
 }
 
 #[derive(Debug, Deserialize, Clone)]
-pub struct OpenPositions {
-    #[serde(rename = "OpenPosition", default)]
-    pub positions: Vec<OpenPosition>,
-}
-
-#[derive(Debug, Deserialize, Clone)]
 pub struct FxPositions {
     #[serde(rename = "FxPosition", default)]
     pub positions: Vec<FxPosition>,
@@ -166,17 +163,6 @@ pub struct CashTransaction {
     pub transaction_id: String,
     pub date_time:      String,
     pub amount:         Decimal,
-}
-
-#[derive(Debug, Deserialize, Clone)]
-#[serde(rename_all = "camelCase")]
-pub struct OpenPosition {
-    pub currency:       String,
-    pub symbol:         String,
-    pub description:    String,
-    pub position:       Decimal,
-    pub mark_price:     Decimal,
-    pub position_value: Decimal,
 }
 
 #[derive(Debug, Deserialize, Clone)]
@@ -244,6 +230,7 @@ mod tests {
     use quick_xml::de::from_str;
 
     use super::*;
+    use crate::flex_statement_from_file;
 
     #[test]
     fn deserialize_date_time() {
@@ -358,6 +345,7 @@ mod tests {
 <TransactionTaxes>
 </TransactionTaxes>
         <OpenPositions>
+<OpenPosition accountId="U11213636" acctAlias="" model="" currency="USD" fxRateToBase="0.90606" assetCategory="BOND" symbol="T 2 1/4 03/31/24" description="T 2 1/4 03/31/24" conid="553749289" securityID="US91282CEG24" securityIDType="ISIN" cusip="91282CEG2" isin="US91282CEG24" listingExchange="" underlyingConid="" underlyingSymbol="" underlyingSecurityID="" underlyingListingExchange="" issuer="" multiplier="1" strike="" expiry="" putCall="" principalAdjustFactor="1" reportDate="2023-12-29" position="10000" markPrice="99.3125" positionValue="9931.25" openPrice="97.0427" costBasisPrice="97.0427" costBasisMoney="9704.27" percentOfNAV="34.69" fifoPnlUnrealized="226.98" side="Long" levelOfDetail="SUMMARY" openDateTime="" holdingPeriodDateTime="" vestingDate="" code="" originatingOrderID="" originatingTransactionID="" accruedInt="57.79" serialNumber="" deliveryType="" commodityType="" fineness="0.0" weight="0.0"/>
 <OpenPosition accountId="U11213636" acctAlias="" model="" currency="EUR" fxRateToBase="1" assetCategory="OPT" symbol="P ODXS 20231215 14800 M" description="DAX 15DEC23 14800 P" conid="611912519" securityID="" securityIDType="" cusip="" isin="" listingExchange="EUREX" underlyingConid="825711" underlyingSymbol="DAX" underlyingSecurityID="" underlyingListingExchange="" issuer="" multiplier="1" strike="14800" expiry="2023-12-15" putCall="P" principalAdjustFactor="" reportDate="2023-11-09" position="4" markPrice="82.7" positionValue="330.8" openPrice="104.2" costBasisPrice="104.2" costBasisMoney="416.8" percentOfNAV="100.00" fifoPnlUnrealized="-86" side="Long" levelOfDetail="SUMMARY" openDateTime="" holdingPeriodDateTime="" vestingDate="" code="" originatingOrderID="" originatingTransactionID="" accruedInt="" serialNumber="" deliveryType="" commodityType="" fineness="0.0" weight="0.0 ()"/>
 <OpenPosition accountId="U11213636" acctAlias="" model="" currency="EUR" fxRateToBase="1" assetCategory="BOND" symbol="DBR 1 08/15/24" description="DBR 1 08/15/24" conid="165809631" securityID="DE0001102366" securityIDType="ISIN" cusip="" isin="DE0001102366" listingExchange="" underlyingConid="" underlyingSymbol="" underlyingSecurityID="" underlyingListingExchange="" issuer="" multiplier="1" strike="" expiry="" putCall="" principalAdjustFactor="1" reportDate="2023-11-09" position="5000" markPrice="98.113" positionValue="4905.65" openPrice="97.75" costBasisPrice="97.75" costBasisMoney="4887.5" percentOfNAV="20.05" fifoPnlUnrealized="18.15" side="Long" levelOfDetail="SUMMARY" openDateTime="" holdingPeriodDateTime="" vestingDate="" code="" originatingOrderID="" originatingTransactionID="" accruedInt="12.3" serialNumber="" deliveryType="" commodityType="" fineness="0.0" weight="0.0 ()"/>
 <OpenPosition accountId="U11213636" acctAlias="" model="" currency="EUR" fxRateToBase="1" assetCategory="BOND" symbol="DBR 1 3/4 02/15/24" description="DBR 1 3/4 02/15/24" conid="142870711" securityID="DE0001102333" securityIDType="ISIN" cusip="" isin="DE0001102333" listingExchange="" underlyingConid="" underlyingSymbol="" underlyingSecurityID="" underlyingListingExchange="" issuer="" multiplier="1" strike="" expiry="" putCall="" principalAdjustFactor="1" reportDate="2023-11-09" position="15000" markPrice="99.502" positionValue="14925.3" openPrice="99.133333333" costBasisPrice="99.133333333" costBasisMoney="14870" percentOfNAV="61.01" fifoPnlUnrealized="55.3" side="Long" levelOfDetail="SUMMARY" openDateTime="" holdingPeriodDateTime="" vestingDate="" code="" originatingOrderID="" originatingTransactionID="" accruedInt="194.9" serialNumber="" deliveryType="" commodityType="" fineness="0.0" weight="0.0 ()"/>
@@ -367,6 +355,23 @@ mod tests {
 "#;
         let xml = xml.replace('&', "&amp;");
         let response: FlexStatement = from_str(&xml).unwrap();
+        tracing::error!("Response - {response:#?}");
+        if let super::trades::TradeElements::Trade(trade) =
+            &response.trades.as_ref().unwrap().items[1]
+        {
+            assert_eq!(trade.contract.symbol, "VWRL");
+        } else {
+            panic!("");
+        }
+    }
+
+    #[tokio::test]
+    async fn flex_deserialize_statement_full() {
+        let response: FlexStatement = flex_statement_from_file(std::path::PathBuf::from(
+            r"/home/czichy/Dokumente/finanzen/ledger/import/ib/U11213636/1-in/2023/U11213636_2023.xml",
+        ))
+        .await
+        .unwrap();
         tracing::error!("Response - {response:#?}");
         if let super::trades::TradeElements::Trade(trade) =
             &response.trades.as_ref().unwrap().items[1]

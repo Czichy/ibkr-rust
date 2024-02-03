@@ -272,7 +272,6 @@ mod tests {
     //};
     use pretty_assertions::assert_eq;
     use quick_xml::de::from_str;
-    use reqwest::header::USER_AGENT;
     use rust_decimal::Decimal;
     use rust_decimal_macros::dec;
     use tracing_bunyan_formatter::{BunyanFormattingLayer, JsonStorageLayer};
@@ -393,8 +392,9 @@ mod tests {
                     clearing_firm_id:         None,
                     orig_trade_price:         Some(dec!(0)),
                     orig_trade_id:            None,
-                    order_time:               NaiveDateTime::from_str("2022-02-15T10:20:24")
-                        .unwrap(),
+                    order_time:               Some(
+                        NaiveDateTime::from_str("2022-02-15T10:20:24").unwrap()
+                    ),
                     open_date_time:           None,
                     trade_date_time:          NaiveDateTime::from_str("2022-02-15T10:20:26")
                         .unwrap(),

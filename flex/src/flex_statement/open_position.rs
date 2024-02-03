@@ -1,88 +1,72 @@
-﻿    pub struct OpenPosition
-    {
-        pub AccountId:string,
+﻿use iso_currency::Currency;
+use rust_decimal::Decimal;
+use serde::{Deserialize, Serialize};
 
-        pub AcctAlias:string,
+use crate::{flex_statement::contract::Contract, utils::de::*};
 
-        pub Model:string,
+#[derive(Debug, Deserialize, Clone)]
+pub struct OpenPositions {
+    #[serde(rename = "OpenPosition", default)]
+    pub positions: Vec<OpenPosition>,
+}
 
-        pub Currency:Option<Currency>,
+#[derive(Debug, Deserialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct OpenPosition {
+    #[serde(rename = "accountId")]
+    pub account_id: String,
 
-        pub FxRateToBase:Option<Decimal>,
+    #[serde(deserialize_with = "deserialize_option_from_str")]
+    pub acct_alias: Option<String>,
 
-        pub AssetCategory:Option<AssetCategory>,
+    #[serde(deserialize_with = "deserialize_option_from_str")]
+    pub model: Option<String>,
 
-        pub Symbol:string,
+    pub fx_rate_to_base: Option<Decimal>,
 
-        pub Description:string,
+    #[serde(flatten)]
+    pub contract: Option<Contract>,
+    //     [Format(Constants.DateFormat)]
+    //     pub Expiry:Option<NaiveDateTime>,
 
-        pub Conid:Option<i64>,
+    //     pub PutCall:Option<PutCall>,
 
-        pub SecurityID:string,
+    //     pub PrincipalAdjustFactor:string,
 
-        pub SecurityIDType:string,
+    //     //Note: The reportDate XML attribute may contain either a date or aString, i.e.
+    // reportDate="MULTI"     pub ReportDate:string,
 
-        pub Cusip:string,
+    //     pub Position:Option<i32>,
 
-        pub Isin:string,
+    //     pub MarkPrice:Option<Decimal>,
 
-        pub ListingExchange:string,
+    //     pub PositionValue:Option<Decimal>,
 
-        pub UnderlyingConid:Option<i32>,
+    //     pub OpenPrice:Option<Decimal>,
 
-        pub UnderlyingSymbol:string,
+    //     pub CostBasisPrice:Option<Decimal>,
 
-        pub UnderlyingSecurityID:string,
+    //     pub CostBasisMoney:Option<Decimal>,
 
-        pub UnderlyingListingExchange:string,
+    //     pub PercentOfNAV:Option<Decimal>,
 
-        pub Issuer:string,
+    //     pub FifoPnlUnrealized:Option<Decimal>,
 
-        pub Multiplier:Option<i32>,
+    //     pub Side:Option<LongShort>,
 
-        pub Strike:Option<Decimal>,
+    //     pub LevelOfDetail:string,
 
-        [Format(Constants.DateFormat)]
-        pub Expiry:Option<NaiveDateTime>,
+    //     [Format(Constants.DateTimeFormat)]
+    //     pub OpenDateTime:Option<NaiveDateTime>,
 
-        pub PutCall:Option<PutCall>,
+    //     [Format(Constants.DateTimeFormat)]
+    //     pub HoldingPeriodDateTime:Option<NaiveDateTime>,
 
-        pub PrincipalAdjustFactor:string,
+    //     pub Code:string,
 
-        //Note: The reportDate XML attribute may contain either a date or aString, i.e. reportDate="MULTI"
-        pub ReportDate:string,
+    //     pub OriginatingOrderID:Option<i64>,
 
-        pub Position:Option<i32>,
+    //     pub OriginatingTransactionID:Option<i64>,
 
-        pub MarkPrice:Option<Decimal>,
-
-        pub PositionValue:Option<Decimal>,
-
-        pub OpenPrice:Option<Decimal>,
-
-        pub CostBasisPrice:Option<Decimal>,
-
-        pub CostBasisMoney:Option<Decimal>,
-
-        pub PercentOfNAV:Option<Decimal>,
-
-        pub FifoPnlUnrealized:Option<Decimal>,
-
-        pub Side:Option<LongShort>,
-
-        pub LevelOfDetail:string,
-
-        [Format(Constants.DateTimeFormat)]
-        pub OpenDateTime:Option<NaiveDateTime>,
-
-        [Format(Constants.DateTimeFormat)]
-        pub HoldingPeriodDateTime:Option<NaiveDateTime>,
-
-        pub Code:string,
-
-        pub OriginatingOrderID:Option<i64>,
-
-        pub OriginatingTransactionID:Option<i64>,
-
-        pub AccruedInt:Option<Decimal>,
-    }
+    //     pub AccruedInt:Option<Decimal>,
+}

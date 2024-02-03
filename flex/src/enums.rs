@@ -263,6 +263,7 @@ impl FromStr for OrderType {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
+            "" => Ok(OrderType::NoOrderType),
             "None" => Ok(OrderType::NoOrderType),
             "LMT" => Ok(OrderType::Limit),
             "MKT" => Ok(OrderType::Market),

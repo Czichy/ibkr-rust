@@ -77,7 +77,7 @@ async fn market_data_market_data() -> Result<()> {
             additional_data: vec![],
         }) //           1000, contract, false, false, vec![])
         .await?;
-    tokio::time::sleep(std::time::Duration::from_secs(5)).await;
+    tokio::time::sleep(std::time::Duration::from_secs(50)).await;
     let _ = client
         .cancel_market_data(&CancelMarketDataRequest { req_id: 1000 })
         .await?;
