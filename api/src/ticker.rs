@@ -670,7 +670,7 @@ impl FromStr for TickType {
             Ok(n) => n,
             Err(_) => return Err(ParseEnumError),
         };
-        FromPrimitive::from_i32(ord).map_or(Err(ParseEnumError), Ok)
+        FromPrimitive::from_i32(ord).ok_or(ParseEnumError)
     }
 }
 impl Encodable for TickType {

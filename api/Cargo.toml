@@ -7,29 +7,29 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow = "1.0.40"
-bitvec = "1.0.1"
-bytes = "1.1.0"
-chrono = { version = "0.4", features = [ "serde" ] }
-chrono-tz = "0.6.3"
-crossbeam  = "0.8.1"
-derive_more = "0.99"
-enum-ordinalize = "3.1.11"
-lazy_static = "1.4.0"
-num-derive = "0.3.3"
-num-traits = "0.2.14"
-regex = "1.6.0"
-rust_decimal = { version = "1", features = [ "serde-str" ] }
-rust_decimal_macros = "1"
-serde = { version = "1.0", features = [ "derive" ], optional = true }
-strum = "0.24.0"
-strum_macros = "0.24.0"
-thiserror = "1.0.30"
-tokio = { version = "1.5.0", features = ["full"] }
-tracing = "0.1.25"
-tracing-bunyan-formatter = "0.3.1"
-tracing-log = { version = "0.1" }
-tracing-subscriber = { version = "0.3.3", default-features = false, features = ["registry","fmt","env-filter"] }
+anyhow.workspace = true
+bitvec.workspace = true
+bytes.workspace = true
+chrono.workspace = true
+chrono-tz.workspace = true
+crossbeam .workspace = true
+derive_more.workspace = true
+enum-ordinalize.workspace = true
+lazy_static.workspace = true
+num-derive.workspace = true
+num-traits.workspace = true
+regex.workspace = true
+rust_decimal.workspace = true
+rust_decimal_macros.workspace = true
+serde.workspace = true
+strum.workspace = true
+strum_macros.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+tracing-bunyan-formatter.workspace = true
+tracing-log.workspace = true
+tracing-subscriber.workspace = true
 
 [dev-dependencies]
 ctor = "0.1.22"

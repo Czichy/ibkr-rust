@@ -63,7 +63,7 @@ pub enum ConnectionStatus {
     REDIRECT,
 }
 #[derive(Debug)]
-pub(self) enum Request {
+pub enum Request {
     OrderId {
         sender: mpsc::Sender<Option<OrderId>>,
     },
@@ -74,7 +74,7 @@ pub(self) enum Request {
 }
 
 #[derive(Debug)]
-pub(self) enum Response {
+pub enum Response {
     ContractDetails {
         #[allow(dead_code)]
         req_id:  RequestId,

@@ -1,10 +1,53 @@
+[workspace.package]
+authors = ["Czichy <christian@czichy.com>"]
+# name = "seeking-edge"
+version = "0.1.0"
+edition = "2021"
+include = ["../../LICENSE-APACHE", "../../LICENSE-MIT", "**/*.rs", "Cargo.toml"]
+homepage = "https://czichy.com"
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+repository = ""
+rust-version = "1.77"
+ 
 [workspace]
-nested = { optional = true }
 members = [
     "api",
     "flex",
     #"common",
     ]
+
+[workspace.dependencies]
+ahash = "0.8.2"
+anyhow = "1.0.40"
+bitvec = "1.0.1"
+bytes = "1.1.0"
+chrono = { version = "0.4", features = [ "serde" ] }
+chrono-tz = "0.6.3"
+crossbeam  = "0.8.1"
+derive_more = "0.99"
+enum-ordinalize = "3.1.11"
+iso_currency = { version = "0.4.0", features = ["with-serde"] }
+lazy_static = "1.4.0"
+log = "0.4.14"
+num-derive = "0.3.3"
+num-traits = "0.2.14"
+quick-xml = { version = "0.25", features = [ "serialize" ] }
+regex = "1.6.0"
+reqwest = { version = "0.11", features = ["stream"] }
+rust_decimal = { version = "1", features = [ "serde-str" ] }
+rust_decimal_macros = "1"
+serde = { version = "1.0", features = [ "derive" ] }
+structopt="0.3"
+strum = "0.24.0"
+strum_macros = "0.24.0"
+thiserror = "1.0.30"
+tokio = { version = "1", features = ["full"] }
+tracing = { version = "0.1", default-features = false, features = ["log", "std","attributes"] }
+tracing-bunyan-formatter = "0.3.9"
+tracing-log = { version = "0.1" }
+tracing-subscriber = { version = "0.3.16", default-features = false, features = ["registry","fmt","env-filter"] }
+    
 [profile.dev]
 opt-level = 0
 debug = true

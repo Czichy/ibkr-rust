@@ -1088,7 +1088,7 @@ mod tests {
     #[test]
     #[allow(deprecated)]
     fn parse() {
-        let test_cases = vec![
+        let test_cases = [
             ("-0800", FixedOffset::west(8 * 3600)),
             ("+10:00", FixedOffset::east(10 * 3600)),
             ("PST", FixedOffset::west(8 * 3600)),
@@ -1107,7 +1107,7 @@ mod tests {
     fn unix_timestamp() {
         let parse = Parse::new(&Utc, Utc::now().time());
 
-        let test_cases = vec![
+        let test_cases = [
             (
                 "0000000000",
                 Utc.with_ymd_and_hms(1970, 1, 1, 0, 0, 0).unwrap(),
@@ -1153,7 +1153,7 @@ mod tests {
     fn rfc3339() {
         let parse = Parse::new(&Utc, Utc::now().time());
 
-        let test_cases = vec![
+        let test_cases = [
             (
                 "2021-05-01T01:17:02.604456Z",
                 Utc.ymd(2021, 5, 1).and_hms_nano(1, 17, 2, 604456000),
@@ -1180,7 +1180,7 @@ mod tests {
     fn rfc2822() {
         let parse = Parse::new(&Utc, Utc::now().time());
 
-        let test_cases = vec![
+        let test_cases = [
             (
                 "Wed, 02 Jun 2021 06:31:39 GMT",
                 Utc.with_ymd_and_hms(2021, 6, 2, 6, 31, 39).unwrap(),
@@ -1207,7 +1207,7 @@ mod tests {
     fn postgres_timestamp() {
         let parse = Parse::new(&Utc, Utc::now().time());
 
-        let test_cases = vec![
+        let test_cases = [
             (
                 "2019-11-29 08:08-08",
                 Utc.with_ymd_and_hms(2019, 11, 29, 16, 8, 0).unwrap(),
@@ -1249,7 +1249,7 @@ mod tests {
     fn ymd_hms() {
         let parse = Parse::new(&Utc, Utc::now().time());
 
-        let test_cases = vec![
+        let test_cases = [
             (
                 "2021-04-30 21:14",
                 Utc.with_ymd_and_hms(2021, 4, 30, 21, 14, 0).unwrap(),
@@ -1295,7 +1295,7 @@ mod tests {
     fn ymd_hms_z() {
         let parse = Parse::new(&Utc, Utc::now().time());
 
-        let test_cases = vec![
+        let test_cases = [
             (
                 "2017-11-25 13:31:15 PST",
                 Utc.with_ymd_and_hms(2017, 11, 25, 21, 31, 15).unwrap(),
@@ -1345,7 +1345,7 @@ mod tests {
     fn ymd() {
         let parse = Parse::new(&Utc, Utc::now().time());
 
-        let test_cases = vec![(
+        let test_cases = [(
             "2021-02-21",
             Utc.ymd(2021, 2, 21).and_time(Utc::now().time()),
         )];
@@ -1373,7 +1373,7 @@ mod tests {
         let now_at_pst = Utc::now().with_timezone(&FixedOffset::west(8 * 3600));
         let now_at_cst = Utc::now().with_timezone(&FixedOffset::east(8 * 3600));
 
-        let test_cases = vec![
+        let test_cases = [
             (
                 "2021-02-21 PST",
                 FixedOffset::west(8 * 3600)
@@ -1418,7 +1418,7 @@ mod tests {
     fn hms() {
         let parse = Parse::new(&Utc, Utc::now().time());
 
-        let test_cases = vec![
+        let test_cases = [
             (
                 "01:06:06",
                 Utc::now().date().and_time(NaiveTime::from_hms(1, 6, 6)),
@@ -1449,7 +1449,7 @@ mod tests {
         let parse = Parse::new(&Utc, Utc::now().time());
         let now_at_pst = Utc::now().with_timezone(&FixedOffset::west(8 * 3600));
 
-        let test_cases = vec![
+        let test_cases = [
             (
                 "01:06:06 PST",
                 FixedOffset::west(8 * 3600)
@@ -1495,7 +1495,7 @@ mod tests {
     fn month_ymd() {
         let parse = Parse::new(&Utc, Utc::now().time());
 
-        let test_cases = vec![(
+        let test_cases = [(
             "2021-Feb-21",
             Utc.ymd(2021, 2, 21).and_time(Utc::now().time()),
         )];
@@ -1521,7 +1521,7 @@ mod tests {
     fn month_md_hms() {
         let parse = Parse::new(&Utc, Utc::now().time());
 
-        let test_cases = vec![
+        let test_cases = [
             (
                 "May 6 at 9:24 PM",
                 Utc.with_ymd_and_hms(Utc::now().year(), 5, 6, 21, 24, 0)
@@ -1549,7 +1549,7 @@ mod tests {
     fn month_mdy_hms() {
         let parse = Parse::new(&Utc, Utc::now().time());
 
-        let test_cases = vec![
+        let test_cases = [
             (
                 "May 8, 2009 5:57:51 PM",
                 Utc.with_ymd_and_hms(2009, 5, 8, 17, 57, 51).unwrap(),
@@ -1579,7 +1579,7 @@ mod tests {
     fn month_mdy_hms_z() {
         let parse = Parse::new(&Utc, Utc::now().time());
 
-        let test_cases = vec![
+        let test_cases = [
             (
                 "May 02, 2021 15:51:31 UTC",
                 Utc.with_ymd_and_hms(2021, 5, 2, 15, 51, 31).unwrap(),
@@ -1613,7 +1613,7 @@ mod tests {
     fn month_mdy() {
         let parse = Parse::new(&Utc, Utc::now().time());
 
-        let test_cases = vec![
+        let test_cases = [
             (
                 "May 25, 2021",
                 Utc.ymd(2021, 5, 25).and_time(Utc::now().time()),
@@ -1661,7 +1661,7 @@ mod tests {
     fn month_dmy_hms() {
         let parse = Parse::new(&Utc, Utc::now().time());
 
-        let test_cases = vec![
+        let test_cases = [
             (
                 "12 Feb 2006, 19:17",
                 Utc.with_ymd_and_hms(2006, 2, 12, 19, 17, 0).unwrap(),
@@ -1691,7 +1691,7 @@ mod tests {
     fn month_dmy() {
         let parse = Parse::new(&Utc, Utc::now().time());
 
-        let test_cases = vec![
+        let test_cases = [
             ("7 oct 70", Utc.ymd(1970, 10, 7).and_time(Utc::now().time())),
             (
                 "7 oct 1970",
@@ -1728,7 +1728,7 @@ mod tests {
     fn slash_mdy_hms() {
         let parse = Parse::new(&Utc, Utc::now().time());
 
-        let test_cases = vec![
+        let test_cases = [
             (
                 "4/8/2014 22:05",
                 Utc.with_ymd_and_hms(2014, 4, 8, 22, 5, 0).unwrap(),
@@ -1794,7 +1794,7 @@ mod tests {
     fn slash_mdy() {
         let parse = Parse::new(&Utc, Utc::now().time());
 
-        let test_cases = vec![
+        let test_cases = [
             (
                 "3/31/2014",
                 Utc.ymd(2014, 3, 31).and_time(Utc::now().time()),
@@ -1828,7 +1828,7 @@ mod tests {
     fn slash_ymd_hms() {
         let parse = Parse::new(&Utc, Utc::now().time());
 
-        let test_cases = vec![
+        let test_cases = [
             (
                 "2014/4/8 22:05",
                 Utc.with_ymd_and_hms(2014, 4, 8, 22, 5, 0).unwrap(),
@@ -1870,7 +1870,7 @@ mod tests {
     fn slash_ymd() {
         let parse = Parse::new(&Utc, Utc::now().time());
 
-        let test_cases = vec![
+        let test_cases = [
             (
                 "2014/3/31",
                 Utc.ymd(2014, 3, 31).and_time(Utc::now().time()),
@@ -1902,7 +1902,7 @@ mod tests {
     fn dot_mdy_or_ymd() {
         let parse = Parse::new(&Utc, Utc::now().time());
 
-        let test_cases = vec![
+        let test_cases = [
             // mm.dd.yyyy
             (
                 "3.31.2014",
@@ -1946,7 +1946,7 @@ mod tests {
     fn mysql_log_timestamp() {
         let parse = Parse::new(&Utc, Utc::now().time());
 
-        let test_cases = vec![
+        let test_cases = [
             // yymmdd hh:mm:ss mysql log
             (
                 "171113 14:14:20",
@@ -1969,7 +1969,7 @@ mod tests {
     fn chinese_ymd_hms() {
         let parse = Parse::new(&Utc, Utc::now().time());
 
-        let test_cases = vec![(
+        let test_cases = [(
             "2014年04月08日11时25分18秒",
             Utc.with_ymd_and_hms(2014, 4, 8, 11, 25, 18).unwrap(),
         )];
@@ -1989,7 +1989,7 @@ mod tests {
     fn chinese_ymd() {
         let parse = Parse::new(&Utc, Utc::now().time());
 
-        let test_cases = vec![(
+        let test_cases = [(
             "2014年04月08日",
             Utc.ymd(2014, 4, 8).and_time(Utc::now().time()),
         )];
@@ -2014,7 +2014,7 @@ mod tests {
     fn ib_hms_z() {
         let parse = Parse::new(&Utc, Utc::now().time());
 
-        let test_cases = vec![
+        let test_cases = [
             (
                 "20171125 13:31:15 PST",
                 Utc.with_ymd_and_hms(2017, 11, 25, 21, 31, 15).unwrap(),
@@ -2071,7 +2071,7 @@ mod tests {
     fn ymd_hms_timezone_ib() {
         let parse = Parse::new(&Utc, Utc::now().time());
 
-        let test_cases = vec![
+        let test_cases = [
             (
                 "20220902 16:31:15 Europe/Berlin",
                 Utc.with_ymd_and_hms(2022, 9, 2, 14, 31, 15).unwrap(),
@@ -2104,7 +2104,7 @@ mod tests {
     fn hms_timezone_ib() {
         let parse = Parse::new(&Utc, Utc::now().time());
 
-        let test_cases = vec![
+        let test_cases = [
             (
                 "15:17:45 Europe/Berlin",
                 Utc::now()
@@ -2131,7 +2131,7 @@ mod tests {
     #[test]
     #[allow(deprecated)]
     fn timezone() {
-        let test_cases = vec![
+        let test_cases = [
             ("Europe/Berlin", chrono_tz::Europe::Berlin),
             ("US/Eastern", chrono_tz::US::Eastern),
         ];
