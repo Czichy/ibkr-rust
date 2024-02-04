@@ -7,19 +7,14 @@ use ibkr_rust_flex::FlexReader;
 pub async fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
     let opt = Opt::parse();
     // Initialize logger
-    if !opt.quiet {
-        tracing_subscriber::fmt()
-            .with_max_level(match opt.verbose {
-                0 => tracing::Level::WARN,
-                1 => tracing::Level::INFO,
-                2 => tracing::Level::DEBUG,
-                _ => tracing::Level::TRACE,
-            })
-            .init();
-    }
-
-    // let token = match Command::new("sh").arg("-c").arg(&opt.token).output().await
-    // {
+    tracing_subscriber::fmt()
+        .with_max_level(match opt.verbose {
+            Some(0) => tracing::Level::WARN,
+            Some(1) => tracing::Level::INFO,
+            Some(2) => tracing::Level::DEBUG,
+            _ => tracing::Level::ERROR,
+        })
+        .init();
 
     let token = match Command::new("sh").arg("-c").arg(&opt.token).output() {
         Ok(output) => String::from_utf8_lossy(&output.stdout).into_owned(),
@@ -79,14 +74,10 @@ struct Opt {
     #[arg(short, long)]
     override_file_name: Option<String>,
 
-    /// Silence all log output
-    #[arg(short, long)]
-    quiet: bool,
-
     /// Verbose logging mode (-v, -vv, -vvv)
     // #[structopt(short = "v", long = "verbose", parse(from_occurrences))]
     #[arg(short, long)]
-    verbose: usize,
+    verbose: Option<usize>,
 }
 
 #[cfg(test)]
