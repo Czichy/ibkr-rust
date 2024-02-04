@@ -1,11 +1,11 @@
 use std::{path::PathBuf, process::Command};
 
+use clap::Parser;
 use ibkr_rust_flex::FlexReader;
-use structopt::StructOpt;
 
 #[tokio::main]
 pub async fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
-    let opt = Opt::from_args();
+    let opt = Opt::parse();
     // Initialize logger
     if !opt.quiet {
         tracing_subscriber::fmt()
@@ -59,36 +59,33 @@ pub async fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
     //}
 }
 
-#[derive(Debug, StructOpt)]
-//#[structopt(
-//    raw(name = "crate_name!()"),
-//    raw(version = "crate_version!()"),
-//    raw(author = "crate_authors!()"),
-//    raw(about = "crate_description!()")
-//)]
+#[derive(Debug, Parser)]
+#[command(author, version, about, long_about = None)]
 struct Opt {
     /// Config file
-    #[structopt(short = "f", long = "flex_query")]
+    #[arg(short, long)]
     query: String,
 
     /// token file
-    #[structopt(short = "t", long = "token")]
+    #[arg(short, long)]
     token: String,
 
     /// download files into destination folder
-    #[structopt(short = "d", long = "dump_to_folder", parse(from_os_str))]
+    #[arg(short, long)]
+    // #[structopt(short = "d", long = "dump_to_folder", parse(from_os_str))]
     dump_path: Option<PathBuf>,
 
     /// download files into destination folder
-    #[structopt(short = "n", long = "override_file_name")]
+    #[arg(short, long)]
     override_file_name: Option<String>,
 
     /// Silence all log output
-    #[structopt(short = "q", long = "quiet")]
+    #[arg(short, long)]
     quiet: bool,
 
     /// Verbose logging mode (-v, -vv, -vvv)
-    #[structopt(short = "v", long = "verbose", parse(from_occurrences))]
+    // #[structopt(short = "v", long = "verbose", parse(from_occurrences))]
+    #[arg(short, long)]
     verbose: usize,
 }
 
