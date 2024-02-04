@@ -1,77 +1,88 @@
-use chrono::NaiveDateTime;
 use chrono::NaiveDate;
 use iso_currency::Currency;
 use rust_decimal::Decimal;
 use serde::Deserialize;
 
-use crate::{
-    enums::{AssetCategory, SecIdType},
-    utils::de::*,
-};
+use crate::{enums::{AssetCategory, SecIdType},
+            utils::de::*};
 
 #[derive(Debug, Deserialize, Clone, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct Contract {
-    #[serde(rename = "assetCategory")]
+    #[serde(rename = "@assetCategory")]
     pub asset_category: AssetCategory,
 
+    #[serde(rename = "@symbol")]
     pub symbol: String,
 
     #[serde(deserialize_with = "deserialize_from_str")]
+    #[serde(rename = "@currency")]
     pub currency: Currency,
 
+    #[serde(rename = "@description")]
     pub description: String,
 
-    #[serde(rename = "conid")]
+    #[serde(rename = "@conid")]
     #[serde(deserialize_with = "deserialize_from_str")]
     pub con_id: i32,
 
-    #[serde(rename = "securityID")]
+    #[serde(rename = "@securityID")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
     pub security_id: Option<String>,
 
-    #[serde(rename = "securityIDType")]
+    #[serde(rename = "@securityIDType")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
     pub security_id_type: Option<SecIdType>,
 
     #[serde(deserialize_with = "deserialize_empty_string_is_none")]
+    #[serde(rename = "@cusip")]
     pub cusip: Option<String>,
 
     #[serde(deserialize_with = "deserialize_empty_string_is_none")]
+    #[serde(rename = "@isin")]
     pub isin: Option<String>,
 
+    #[serde(rename = "@listingExchange")]
     pub listing_exchange: String,
 
-    #[serde(rename = "underlyingConid", default)]
+    #[serde(rename = "@underlyingConid", default)]
     #[serde(deserialize_with = "deserialize_option")]
     pub underlying_con_id: Option<i32>,
 
     #[serde(deserialize_with = "deserialize_empty_string_is_none")]
+    #[serde(rename = "@underlyingSymbol")]
     pub underlying_symbol: Option<String>,
 
-    #[serde(rename = "underlyingSecurityID")]
+    #[serde(rename = "@underlyingSecurityID")]
     #[serde(deserialize_with = "deserialize_empty_string_is_none")]
     pub underlying_security_id: Option<String>,
 
     #[serde(deserialize_with = "deserialize_empty_string_is_none")]
+    #[serde(rename = "@underlyingListingExchange")]
     pub underlying_listing_exchange: Option<String>,
 
     #[serde(deserialize_with = "deserialize_empty_string_is_none")]
+    #[serde(rename = "@issuer")]
     pub issuer: Option<String>,
 
     #[serde(deserialize_with = "deserialize_option")]
+    #[serde(rename = "@multiplier")]
     pub multiplier: Option<Decimal>,
 
     #[serde(deserialize_with = "deserialize_option")]
+    #[serde(rename = "@strike")]
     pub strike: Option<Decimal>,
 
     #[serde(deserialize_with = "some_naive_date_from_str")]
+    #[serde(rename = "@expiry")]
     pub expiry: Option<NaiveDate>,
 
     #[serde(deserialize_with = "deserialize_empty_string_is_none")]
+    #[serde(rename = "@putCall")]
     pub put_call: Option<String>,
 
     #[serde(deserialize_with = "deserialize_empty_string_is_none")]
+    #[serde(rename = "@principalAdjustFactor")]
     pub principal_adjust_factor: Option<String>,
 }
 
@@ -81,10 +92,8 @@ mod tests {
     use quick_xml::de::from_str;
 
     use super::*;
-    use crate::{
-        enums::{AssetCategory, SecIdType},
-        flex_statement::contract::Contract,
-    };
+    use crate::{enums::{AssetCategory, SecIdType},
+                flex_statement::contract::Contract};
 
     #[test]
     fn flex_deserialize_contract() {

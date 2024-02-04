@@ -42,149 +42,189 @@ impl TradeElements {
 #[derive(Debug, Deserialize, Clone, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct Trade {
-    #[serde(rename = "accountId")]
+    #[serde(rename = "@accountId")]
     pub account_id: String,
 
     #[serde(deserialize_with = "deserialize_option_from_str")]
+    #[serde(rename = "@acctAlias")]
     pub acct_alias: Option<String>,
 
     #[serde(deserialize_with = "deserialize_option_from_str")]
+    #[serde(rename = "@model")]
     pub model: Option<String>,
 
     #[serde(flatten)]
     pub contract: Contract,
 
+    #[serde(rename = "@fxRateToBase")]
     pub fx_rate_to_base: Option<Decimal>,
 
+    #[serde(rename = "@transactionType")]
     pub transaction_type: String,
 
-    #[serde(rename = "tradeID")]
+    #[serde(rename = "@tradeID")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
     pub trade_id: Option<i32>,
 
-    #[serde(rename = "ibOrderID")]
+    #[serde(rename = "@ibOrderID")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
     pub ib_order_id: Option<u32>,
 
-    #[serde(rename = "ibExecID")]
+    #[serde(rename = "@ibExecID")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
     pub ib_exec_id: Option<String>,
 
-    #[serde(rename = "brokerageOrderID")]
+    #[serde(rename = "@brokerageOrderID")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
     pub brokerage_order_id: Option<String>,
 
     #[serde(deserialize_with = "deserialize_option_from_str")]
+    #[serde(rename = "@orderReference")]
     pub order_reference: Option<String>,
 
+    #[serde(rename = "@volatilityOrderLink")]
+    #[serde(deserialize_with = "deserialize_option_from_str")]
     pub volatility_order_link: Option<String>,
 
-    #[serde(rename = "clearingFirmID")]
+    #[serde(rename = "@clearingFirmID")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
     pub clearing_firm_id: Option<String>,
 
+    #[serde(rename = "@origTradePrice")]
     pub orig_trade_price: Option<Decimal>,
 
     // pub orig_trade_date: Option<NaiveDateTime>,
-    #[serde(rename = "origTradeID")]
+    #[serde(rename = "@origTradeID")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
     pub orig_trade_id: Option<i32>,
 
     #[serde(deserialize_with = "some_naive_date_time_from_str")]
+    #[serde(rename = "@orderTime")]
     pub order_time: Option<NaiveDateTime>,
 
     #[serde(deserialize_with = "some_naive_date_time_from_str")]
+    #[serde(rename = "@openDateTime")]
     pub open_date_time: Option<NaiveDateTime>,
 
-    #[serde(rename = "dateTime")]
+    #[serde(rename = "@dateTime")]
     #[serde(deserialize_with = "naive_date_time_from_str")]
     pub trade_date_time: NaiveDateTime,
 
     // Note: The reportDate XML attribute may contain either a date or aString, i.e.
     // reportDate="MULTI"
+    #[serde(rename = "@reportDate")]
     pub report_date:        String,
     // Note: The settleDateTarget XML attribute may contain either a date or aString, i.e.
     // settleDateTarget="MULTI"
+    #[serde(rename = "@settleDateTarget")]
     pub settle_date_target: String,
     // Note: The tradeDate XML attribute may contain either a date or aString, i.e.
     // tradeDate="MULTI"
     #[serde(deserialize_with = "naive_date_from_str")]
+    #[serde(rename = "@tradeDate")]
     pub trade_date:         NaiveDate,
 
-    pub exchange:       String,
-    #[serde(rename = "transactionID")]
+    #[serde(rename = "@exchange")]
+    pub exchange: String,
+
+    #[serde(rename = "@transactionID")]
     pub transaction_id: String,
 
+    #[serde(rename = "@buySell")]
     pub buy_sell: BuySell,
 
     // alternative format
+    #[serde(rename = "@quantity")]
     pub quantity: Decimal,
 
+    #[serde(rename = "@tradePrice")]
     pub trade_price: Decimal,
 
+    #[serde(rename = "@tradeMoney")]
     pub trade_money: Decimal,
 
+    #[serde(rename = "@proceeds")]
     pub proceeds: Decimal,
 
+    #[serde(rename = "@ibCommission")]
     pub ib_commission: Decimal,
 
     #[serde(deserialize_with = "deserialize_option_from_str")]
+    #[serde(rename = "@exchOrderId")]
     pub exch_order_id: Option<String>,
 
-    #[serde(rename = "extExecID")]
+    #[serde(rename = "@extExecID")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
     pub ext_exec_id: Option<String>,
 
     #[serde(default)]
     #[serde(deserialize_with = "some_naive_date_time_from_str")]
+    #[serde(rename = "@holdingPeriodDateTime")]
     pub holding_period_date_time: Option<NaiveDateTime>,
 
     #[serde(deserialize_with = "deserialize_option_from_str")]
+    #[serde(rename = "@whenRealized")]
     pub when_realized: Option<String>,
 
     #[serde(deserialize_with = "deserialize_option_from_str")]
+    #[serde(rename = "@whenReopened")]
     pub when_reopened: Option<String>,
 
+    #[serde(rename = "@levelOfDetail")]
     pub level_of_detail: String,
 
+    #[serde(rename = "@changeInPrice")]
     pub change_in_price: Option<Decimal>,
 
+    #[serde(rename = "@changeInQuantity")]
     pub change_in_quantity: Option<Decimal>,
 
     #[serde(deserialize_with = "deserialize_from_str")]
+    #[serde(rename = "@orderType")]
     pub order_type: OrderType,
 
-    #[serde(rename = "isAPIOrder")]
+    #[serde(rename = "@isAPIOrder")]
     pub is_api_order: String,
 
+    #[serde(rename = "@accruedInterest")]
     pub accrued_interest: Option<Decimal>,
 
-    #[serde(rename = "traderID")]
+    #[serde(rename = "@traderID")]
     pub trader_id: String,
 
+    #[serde(rename = "@taxes")]
     pub taxes: Decimal,
 
+    #[serde(rename = "@ibCommissionCurrency")]
     pub ib_commission_currency: Option<Currency>,
 
+    #[serde(rename = "@netCash")]
     pub net_cash: Decimal,
 
+    #[serde(rename = "@closePrice")]
     pub close_price: Decimal,
 
     #[serde(deserialize_with = "open_close_deserialize")]
+    #[serde(rename = "@openCloseIndicator")]
     pub open_close_indicator: Vec<OpenClose>,
 
     #[serde(deserialize_with = "notes_deserialize")]
+    #[serde(rename = "@notes")]
     pub notes: Vec<Notes>,
 
+    #[serde(rename = "@cost")]
     pub cost: Decimal,
 
+    #[serde(rename = "@fifoPnlRealized")]
     pub fifo_pnl_realized: Decimal,
 
+    #[serde(rename = "@fxPnl")]
     pub fx_pnl: Option<Decimal>,
 
+    #[serde(rename = "@mtmPnl")]
     pub mtm_pnl: Option<Decimal>,
 
-    #[serde(rename = "origOrderID")]
+    #[serde(rename = "@origOrderID")]
     pub orig_order_id: Option<i64>,
 }
 
@@ -261,7 +301,7 @@ mod tests {
                 trade_date:               NaiveDate::from_str("2021-02-26").unwrap(),
                 exchange:                 "AEB".to_string(),
                 transaction_id:           "85594826".to_string(),
-                buy_sell:                 crate::enums::BuySell::BUY,
+                buy_sell:                 crate::enums::BuySell::Buy,
                 quantity:                 dec!(10),
                 trade_price:              dec!(89.5),
                 trade_money:              dec!(895),

@@ -14,12 +14,21 @@ impl Display for ParseEnumError {
 #[derive(Debug, Deserialize, Clone, PartialEq, Eq)]
 pub enum BuySell {
     #[serde(rename = "BUY")]
-    BUY,
+    Buy,
     #[serde(rename = "SELL")]
-    SELL,
+    Sell,
     #[serde(rename = "SELL (Ca.)")]
-    SELLCa,
+    SellCa,
 }
+
+#[derive(Debug, Deserialize, Clone, PartialEq, Eq)]
+pub enum LongShort {
+    #[serde(rename = "Long")]
+    Long,
+    #[serde(rename = "Short")]
+    Short,
+}
+
 #[derive(Debug, Deserialize, Clone, Eq, PartialEq)]
 pub enum PutCall {
     P,

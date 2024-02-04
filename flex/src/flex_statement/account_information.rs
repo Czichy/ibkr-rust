@@ -7,6 +7,7 @@ use crate::utils::de::some_naive_date_time_from_str;
 #[derive(Debug, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct AccountInformation {
+    #[serde(rename = "@accountId")]
     pub account_id: String,
 
     pub acct_alias: String,

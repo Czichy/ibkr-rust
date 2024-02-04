@@ -51,11 +51,11 @@ pub(crate) struct FlexQueryResponse {
 
     pub flex_statements: FlexStatements,
 
-    #[serde(rename = "queryName")]
+    #[serde(rename = "@queryName")]
     pub query_name: String,
 
     #[allow(dead_code)]
-    #[serde(rename = "type", default)]
+    #[serde(rename = "@type", default)]
     pub query_type: String,
 }
 
@@ -123,21 +123,21 @@ pub struct FlexStatement {
     // * *
     pub unbundled_commission_details: Option<UnbundledCommissionDetails>,
 
-    #[serde(rename = "accountId")]
+    #[serde(rename = "@accountId")]
     pub account_id: String,
 
-    #[serde(rename = "fromDate")]
+    #[serde(rename = "@fromDate")]
     #[serde(deserialize_with = "naive_date_from_str")]
     pub from_date: NaiveDate,
 
-    #[serde(rename = "toDate")]
+    #[serde(rename = "@toDate")]
     #[serde(deserialize_with = "naive_date_from_str")]
     pub to_date: NaiveDate,
 
-    #[serde(rename = "period")]
+    #[serde(rename = "@period")]
     pub period: String,
 
-    #[serde(rename = "whenGenerated")]
+    #[serde(rename = "@whenGenerated")]
     #[serde(deserialize_with = "naive_date_time_from_str")]
     pub when_generated: NaiveDateTime,
 }
@@ -187,39 +187,56 @@ pub struct TransactionTaxes {
 #[serde(rename_all = "camelCase")]
 pub struct TransactionTax {
     #[serde(flatten)]
-    pub contract:   Contract,
+    pub contract: Contract,
+
+    #[serde(rename = "@accountId")]
     pub account_id: String,
 
+    #[serde(rename = "@acctAlias")]
     pub acct_alias: String,
 
+    #[serde(rename = "@model")]
     pub model: String,
 
+    #[serde(rename = "@currency")]
     pub currency: Option<Currency>,
 
+    #[serde(rename = "@fxRateToBase")]
     pub fx_rate_to_base: Option<Decimal>,
 
+    #[serde(rename = "@principalAdjustFactor")]
     pub principal_adjust_factor: String,
 
+    #[serde(rename = "@date")]
     pub date: Option<NaiveDateTime>,
 
+    #[serde(rename = "@taxDescription")]
     pub tax_description: String,
 
+    #[serde(rename = "@quantity")]
     pub quantity: Option<Decimal>,
 
     // Note: The reportDate XML attribute may contain either a date or aString, i.e.
     // reportDate="MULTI"
+    #[serde(rename = "@reportDate")]
     pub report_date: String,
 
+    #[serde(rename = "@taxAmount")]
     pub tax_amount: Option<Decimal>,
 
+    #[serde(rename = "@tradeId")]
     pub trade_id: Option<i64>,
 
+    #[serde(rename = "@tradePrice")]
     pub trade_price: Option<Decimal>,
 
+    #[serde(rename = "@source")]
     pub source: String,
 
+    #[serde(rename = "@code")]
     pub code: String,
 
+    #[serde(rename = "@levelOfDetail")]
     pub level_of_detail: String,
 }
 
@@ -247,7 +264,7 @@ mod tests {
                     .flat_map(move |&b| time_fmt.iter().map(move |&c| format!("{}{}{}", a, b, c)))
             })
             .collect::<Vec<_>>();
-        let date_str = vec![
+        let date_str = [
             "2021-08-03;11:53:15".to_string(),
             "20210803115315".to_string(),
         ];

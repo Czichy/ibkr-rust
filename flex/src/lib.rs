@@ -119,7 +119,7 @@ impl FlexReader {
                     if let Ok(response) = from_str::<FlexQueryResponse>(&bytes) {
                         let mut file_name: PathBuf = PathBuf::from(&path);
                         if let Some(file_name_override) = self.override_file_name.clone() {
-                            file_name.push(format!("{}", file_name_override));
+                            file_name.push(&file_name_override);
                         } else {
                             file_name.push(format!(
                                 "{}_{}_{}",
@@ -149,7 +149,7 @@ impl FlexReader {
                     if let Ok(response) = from_str::<FlexQueryResponse>(&bytes) {
                         let mut file_name: PathBuf = PathBuf::from(&path);
                         if let Some(file_name_override) = self.override_file_name.clone() {
-                            file_name.push(format!("{}", file_name_override));
+                            file_name.push(&file_name_override);
                         } else {
                             file_name.push(format!(
                                 "{}_{}_{}",
@@ -403,7 +403,7 @@ mod tests {
                     trade_date:               NaiveDate::from_str("2022-02-15").unwrap(),
                     exchange:                 "ISLAND".to_string(),
                     transaction_id:           "932769321".to_string(),
-                    buy_sell:                 crate::enums::BuySell::SELL,
+                    buy_sell:                 crate::enums::BuySell::Sell,
                     quantity:                 dec!(-1),
                     trade_price:              dec!(115.73),
                     trade_money:              dec!(-115.73),

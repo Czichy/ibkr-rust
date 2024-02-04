@@ -16,71 +16,95 @@ pub struct StmtFunds {
 #[serde(rename_all = "camelCase")]
 // TODO: Create Enume for different lines e.g. Activity = Starting Balance
 pub struct StatementOfFundsLine {
-    #[serde(rename = "accountId")]
+    #[serde(rename = "@accountId")]
     pub account_id: String,
 
     #[serde(deserialize_with = "deserialize_option_from_str")]
+    #[serde(rename = "@acctAlias")]
     pub acct_alias: Option<String>,
 
     #[serde(deserialize_with = "deserialize_option_from_str")]
+    #[serde(rename = "@activityCode")]
     pub activity_code: Option<String>,
 
     #[serde(flatten)]
     pub contract: Option<Contract>,
 
+    #[serde(rename = "@activityDescription")]
     pub activity_description: String,
 
+    #[serde(rename = "@amount")]
+    #[serde(deserialize_with = "deserialize_option_from_str")]
     pub amount: Option<Decimal>,
 
+    #[serde(rename = "@balance")]
+    #[serde(deserialize_with = "deserialize_option_from_str")]
     pub balance: Option<Decimal>,
 
+    #[serde(rename = "@credit")]
+    #[serde(deserialize_with = "deserialize_option_from_str")]
     pub credit: Option<Decimal>,
 
+    #[serde(rename = "@date")]
     #[serde(deserialize_with = "naive_date_from_str")]
     pub date: NaiveDate,
 
+    #[serde(rename = "@debit")]
+    #[serde(deserialize_with = "deserialize_option_from_str")]
     pub debit: Option<Decimal>,
 
+    #[serde(rename = "@fxRateToBase")]
+    #[serde(deserialize_with = "deserialize_option_from_str")]
     pub fx_rate_to_base: Option<Decimal>,
 
+    #[serde(rename = "@levelOfDetail")]
     pub level_of_detail: String,
 
+    #[serde(rename = "@model")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
     pub model: Option<String>,
 
-    #[serde(rename = "orderID")]
+    #[serde(rename = "@orderID")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
     pub order_id: Option<u64>,
 
+    #[serde(rename = "@reportDate")]
     #[serde(deserialize_with = "naive_date_from_str")]
     pub report_date: NaiveDate,
 
+    #[serde(rename = "@settleDate")]
     #[serde(deserialize_with = "some_naive_date_from_str")]
     pub settle_date: Option<NaiveDate>,
 
+    #[serde(rename = "@tradeCode")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
     pub trade_code: Option<String>,
 
+    #[serde(rename = "@tradeCommission")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
     pub trade_commission: Option<Decimal>,
 
+    #[serde(rename = "@tradeGross")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
     pub trade_gross: Option<Decimal>,
 
-    #[serde(rename = "tradeID")]
+    #[serde(rename = "@tradeID")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
     pub trade_id: Option<String>,
 
+    #[serde(rename = "@tradePrice")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
     pub trade_price: Option<Decimal>,
 
+    #[serde(rename = "@tradeQuantity")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
     pub trade_quantity: Option<Decimal>,
 
+    #[serde(rename = "@tradeTax")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
     pub trade_tax: Option<Decimal>,
 
-    #[serde(rename = "transactionID")]
+    #[serde(rename = "@transactionID")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
     pub transaction_id: Option<u64>,
 }
@@ -102,7 +126,7 @@ mod tests {
         let xml = r#"
 <StmtFunds>
 <StatementOfFundsLine accountId="U7502027" acctAlias="" model="" currency="EUR" fxRateToBase="1" assetCategory="" symbol="" description="" conid="" securityID="" securityIDType="" cusip="" isin="" listingExchange="" underlyingConid="" underlyingSymbol="" underlyingSecurityID="" underlyingListingExchange="" issuer="" multiplier="" strike="" expiry="" putCall="" principalAdjustFactor="" reportDate="2022-02-15" date="2022-02-15" settleDate="" activityCode="" activityDescription="Starting Balance" tradeID="" orderID="" buySell="" tradeQuantity="0" tradePrice="0" tradeGross="0" tradeCommission="0" tradeTax="0" debit="" credit="" amount="0" tradeCode="" balance="6655.368396105" levelOfDetail="BaseCurrency" transactionID="" serialNumber="" deliveryType="" commodityType="" fineness="" weight="" />
-        <StatementOfFundsLine accountId="U11213636" acctAlias="" model="" currency="EUR" fxRateToBase="1" assetCategory="CASH" symbol="" description="" conid="" securityID="" securityIDType="" cusip="" isin="" listingExchange="" underlyingConid="" underlyingSymbol="" underlyingSecurityID="" underlyingListingExchange="" issuer="" multiplier="0" strike="" expiry="" putCall="" principalAdjustFactor="" reportDate="2023-01-30" date="2023-01-30" settleDate="2023-01-31" activityCode="DEP" activityDescription="Cash Transfer" tradeID="" orderID="" buySell="" tradeQuantity="0" tradePrice="0" tradeGross="0" tradeCommission="0" tradeTax="0" debit="" credit="15724.15" amount="15724.15" tradeCode="" balance="15724.15" levelOfDetail="Currency" transactionID="1635131224"/>
+<StatementOfFundsLine accountId="U11213636" acctAlias="" model="" currency="EUR" fxRateToBase="1" assetCategory="CASH" symbol="" description="" conid="" securityID="" securityIDType="" cusip="" isin="" listingExchange="" underlyingConid="" underlyingSymbol="" underlyingSecurityID="" underlyingListingExchange="" issuer="" multiplier="0" strike="" expiry="" putCall="" principalAdjustFactor="" reportDate="2023-01-30" date="2023-01-30" settleDate="2023-01-31" activityCode="DEP" activityDescription="Cash Transfer" tradeID="" orderID="" buySell="" tradeQuantity="0" tradePrice="0" tradeGross="0" tradeCommission="0" tradeTax="0" debit="" credit="15724.15" amount="15724.15" tradeCode="" balance="15724.15" levelOfDetail="Currency" transactionID="1635131224"/>
 <StatementOfFundsLine accountId="U7502027" acctAlias="" model="" currency="EUR" fxRateToBase="1" assetCategory="STK" symbol="F" description="FORD MOTOR CO" conid="9599491" securityID="US3453708600" securityIDType="ISIN" cusip="345370860" isin="US3453708600" listingExchange="NYSE" underlyingConid="" underlyingSymbol="" underlyingSecurityID="" underlyingListingExchange="" issuer="" multiplier="1" strike="" expiry="" putCall="" principalAdjustFactor="" reportDate="2022-02-14" date="2022-02-14" settleDate="2022-02-16" activityCode="BUY" activityDescription="Buy 100 FORD MOTOR CO " tradeID="336654462" orderID="299500993" buySell="BUY" tradeQuantity="100" tradePrice="17.61" tradeGross="-1557.49884" tradeCommission="-0.88444" tradeTax="0" debit="-1558.38328" credit="" amount="-1558.38328" tradeCode="P" balance="5103.133989064" levelOfDetail="BaseCurrency" transactionID="929316089" serialNumber="" deliveryType="" commodityType="" fineness="0.0" weight="0.0 ()"/>
 </StmtFunds>
 
