@@ -41,21 +41,16 @@ pub enum OpenClose {
 }
 pub(crate) fn open_close_deserialize<'de, D>(
     deserializer: D,
-) -> core::result::Result<Vec<OpenClose>, D::Error>
+) -> core::result::Result<Option<OpenClose>, D::Error>
 where
     D: Deserializer<'de>,
 {
     let str_sequence = String::deserialize(deserializer)?;
-    Ok(str_sequence
-        .split(';')
-        .filter_map(|item| {
-            match item {
-                "O" => Some(OpenClose::O),
-                "C" => Some(OpenClose::C),
-                _ => None,
-            }
-        })
-        .collect())
+    Ok(match str_sequence.as_ref() {
+        "O" => Some(OpenClose::O),
+        "C" => Some(OpenClose::C),
+        _ => None,
+    })
 }
 
 #[derive(Debug, Deserialize, Clone, Eq, PartialEq)]

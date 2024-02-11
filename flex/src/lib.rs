@@ -425,7 +425,7 @@ mod tests {
                     ib_commission_currency:   Some(Currency::USD),
                     net_cash:                 dec!(114.729279777),
                     close_price:              dec!(121.47),
-                    open_close_indicator:     vec![OpenClose::O],
+                    open_close_indicator:     Some(OpenClose::O),
                     notes:                    vec![Notes::PartialExecution],
                     cost:                     dec!(-114.729279777),
                     fifo_pnl_realized:        dec!(0),

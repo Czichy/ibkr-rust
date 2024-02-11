@@ -208,8 +208,9 @@ pub struct Trade {
     pub close_price: Decimal,
 
     #[serde(deserialize_with = "open_close_deserialize")]
+    // #[serde(deserialize_with = "deserialize_option_from_str")]
     #[serde(rename = "@openCloseIndicator")]
-    pub open_close_indicator: Vec<OpenClose>,
+    pub open_close_indicator: Option<OpenClose>,
 
     #[serde(deserialize_with = "notes_deserialize")]
     #[serde(rename = "@notes")]
@@ -326,7 +327,7 @@ mod tests {
                 ib_commission_currency:   Some(Currency::EUR),
                 net_cash:                 dec!(-899),
                 close_price:              dec!(89.9),
-                open_close_indicator:     vec![OpenClose::O],
+                open_close_indicator:     Some(OpenClose::O),
                 notes:                    vec![],
                 cost:                     dec!(899),
                 fifo_pnl_realized:        dec!(0),
