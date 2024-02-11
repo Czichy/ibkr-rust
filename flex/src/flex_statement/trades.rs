@@ -10,6 +10,7 @@ use crate::{enums::{notes_deserialize, open_close_deserialize, OrderType, *},
                         deserialize_option_from_str,
                         naive_date_from_str,
                         naive_date_time_from_str,
+                        some_naive_date_from_str,
                         some_naive_date_time_from_str}};
 
 #[derive(Debug, Deserialize, Clone)]
@@ -113,11 +114,13 @@ pub struct Trade {
     // Note: The reportDate XML attribute may contain either a date or aString, i.e.
     // reportDate="MULTI"
     #[serde(rename = "@reportDate")]
-    pub report_date:        String,
+    #[serde(deserialize_with = "some_naive_date_from_str")]
+    pub report_date:        Option<NaiveDate>,
     // Note: The settleDateTarget XML attribute may contain either a date or aString, i.e.
     // settleDateTarget="MULTI"
     #[serde(rename = "@settleDateTarget")]
-    pub settle_date_target: String,
+    #[serde(deserialize_with = "some_naive_date_from_str")]
+    pub settle_date_target: Option<NaiveDate>,
     // Note: The tradeDate XML attribute may contain either a date or aString, i.e.
     // tradeDate="MULTI"
     #[serde(deserialize_with = "naive_date_from_str")]
@@ -296,8 +299,8 @@ mod tests {
                 order_time:               NaiveDateTime::from_str("2021-02-26T09:22:05").ok(),
                 open_date_time:           None,
                 trade_date_time:          NaiveDateTime::from_str("2021-02-26T10:01:35").unwrap(),
-                report_date:              "2021-02-26".to_string(),
-                settle_date_target:       "2021-03-02".to_string(),
+                report_date:              NaiveDate::from_str("2021-02-26").ok(),
+                settle_date_target:       NaiveDate::from_str("2021-03-02").ok(),
                 trade_date:               NaiveDate::from_str("2021-02-26").unwrap(),
                 exchange:                 "AEB".to_string(),
                 transaction_id:           "85594826".to_string(),

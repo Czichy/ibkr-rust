@@ -398,8 +398,8 @@ mod tests {
                     open_date_time:           None,
                     trade_date_time:          NaiveDateTime::from_str("2022-02-15T10:20:26")
                         .unwrap(),
-                    report_date:              "2022-02-15".to_string(),
-                    settle_date_target:       "2022-02-17".to_string(),
+                    report_date:              NaiveDate::from_str("2022-02-15").ok(),
+                    settle_date_target:       NaiveDate::from_str("2022-02-17").ok(),
                     trade_date:               NaiveDate::from_str("2022-02-15").unwrap(),
                     exchange:                 "ISLAND".to_string(),
                     transaction_id:           "932769321".to_string(),
