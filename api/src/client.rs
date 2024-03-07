@@ -18,34 +18,11 @@ use crate::{cmd::*,
             shutdown::Shutdown,
             writer::Writer,
             ServerVersion};
-//{
-//    account::AccountData,
-//    contract::{Contract, ContractDetails},
-//    enums::*,
-//    order::ExecutionFilter,
-//    prelude::{AccountValue, AccountValueKey},
-//    ticker::Tick,
-//    AccountCode, ClientId, OrderId, RequestId, Result, ServerVersion,
-//};
 mod account;
 mod contract_details;
 mod executions;
 mod market_data;
 mod orders;
-
-// #[derive(Debug)]
-// pub struct SyncChannel<T> {
-//     pub(crate) sender:   Sender<T>,
-//     pub(crate) receiver: Receiver<T>,
-// }
-
-// impl<T> SyncChannel<T> {
-//     fn new() -> Self {
-//         let (sender, receiver) = unbounded();
-
-//         SyncChannel { sender, receiver }
-//     }
-// }
 
 #[derive(Debug)]
 pub struct ResponseWithId<T> {
@@ -69,21 +46,15 @@ pub enum Request {
     },
     RequestWithId {
         req_id: RequestId,
-        sender: mpsc::Sender<Response>,
+        sender: mpsc::Sender<ContractDetailsResponse>,
     },
 }
 
-#[derive(Debug)]
-pub enum Response {
-    ContractDetails {
-        #[allow(dead_code)]
-        req_id:  RequestId,
-        details: Option<ContractDetails>,
-    },
-    // Order(OrderTracker),
-    // Ticker(ticker::Ticker),
-    // Bars(bars::BarSeries),
-    // Empty,
+#[derive(Debug, Clone)]
+pub struct ContractDetailsResponse {
+    #[allow(dead_code)]
+    req_id:  RequestId,
+    details: Option<ContractDetails>,
 }
 
 /// Established connection with a Redis server.
@@ -143,7 +114,7 @@ pub struct Client {
     pub order_tracker:          OrderTracker,
     pub account_tracker:        Receiver<AccountData>,
     pub market_data_tracker:    MarketDataTracker,
-    pub contract_events:        Receiver<ContractDetails>,
+    pub contract_events:        Receiver<ContractDetailsResponse>,
     pub account_update_tracker: Receiver<DateTime<Utc>>,
     pub message_tracker:        Receiver<TwsApiMessage>,
 }
@@ -285,7 +256,7 @@ async fn run(
     account_tracker_tx: Sender<AccountData>,
     account_update_tracker_tx: Sender<AccountLastUpdate>,
     market_data_tracker_tx: MarketDataTrackerSender,
-    contract_details_events_tx: Sender<ContractDetails>,
+    contract_details_events_tx: Sender<ContractDetailsResponse>,
     message_events_tx: Sender<TwsApiMessage>,
 ) -> Result<()> {
     // When the provided `shutdown` future completes, we must send a shutdown
@@ -447,7 +418,7 @@ struct Handler {
     subscribe_handler_rx: mpsc::Receiver<Request>,
     /// track order details request and send the result to the corresponsing
     /// receivers
-    requests:             HashMap<usize, mpsc::Sender<Response>>,
+    requests:             HashMap<usize, mpsc::Sender<ContractDetailsResponse>>,
 
     // track market data request, send the incomming frames to the corresponding receivers
     // ticker_reqs: HashMap<usize, mpsc::Sender<Option<contract::ContractDetails>>>,
@@ -463,7 +434,7 @@ struct Handler {
     /// receivers
     order_tracker_tx: OrderTrackerSender,
 
-    contract_details_events_tx: Sender<ContractDetails>,
+    contract_details_events_tx: Sender<ContractDetailsResponse>,
 
     message_events_tx: Sender<TwsApiMessage>,
 }
@@ -553,20 +524,24 @@ impl Handler {
                         if let Some(sender) = self.requests.get(&id) {
                             debug!("got sender for req_id:\t{}", id);
                             sender
-                                .send(Response::ContractDetails {
+                                .send(ContractDetailsResponse {
                                     req_id:  id,
                                     details: Some(details.clone()),
                                 })
                                 .await?;
                         }
-                        self.contract_details_events_tx.send(details)?;
+                        self.contract_details_events_tx
+                            .send(ContractDetailsResponse {
+                                req_id:  id,
+                                details: Some(details.clone()),
+                            })?;
                     },
 
                     IBFrame::ContractDetailsEnd(req_id) => {
                         match self.requests.remove_entry(&req_id) {
                             Some((_, sender)) => {
                                 sender
-                                    .send(Response::ContractDetails {
+                                    .send(ContractDetailsResponse {
                                         req_id,
                                         details: None,
                                     })

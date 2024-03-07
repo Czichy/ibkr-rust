@@ -2,12 +2,11 @@ use crossbeam::channel::Receiver;
 use tokio::sync::mpsc;
 use tracing::{debug, instrument};
 
-use super::{Client, Request, Response};
-use crate::{
-    cmd::RequestContractDetails,
-    contract::{Contract, ContractDetails},
-    RequestId, Result,
-};
+use super::{Client, ContractDetailsResponse, Request};
+use crate::{cmd::RequestContractDetails,
+            contract::{Contract, ContractDetails},
+            RequestId,
+            Result};
 impl Client {
     #[instrument(skip(self))]
     pub async fn request_contract_details(
@@ -24,7 +23,7 @@ impl Client {
         Ok(())
     }
 
-    pub fn subscribe_contract_details(&mut self) -> Receiver<ContractDetails> {
+    pub fn subscribe_contract_details(&mut self) -> Receiver<ContractDetailsResponse> {
         self.contract_events.clone()
     }
 
@@ -50,14 +49,11 @@ impl Client {
         self.writer.write_frame(&frame.into_frame()).await?;
         let mut results = Vec::new();
         while let Some(result) = rep_rx.recv().await {
-            match result {
-                Response::ContractDetails { req_id: _, details } => {
-                    tracing::trace!("Received contract details: {:?}", details);
-                    match details {
-                        Some(details) => results.push(details),
-                        None => break,
-                    }
-                },
+            let ContractDetailsResponse { req_id: _, details } = result;
+            tracing::trace!("Received contract details: {:?}", details);
+            match details {
+                Some(details) => results.push(details),
+                None => break,
             }
         }
         Ok(results)

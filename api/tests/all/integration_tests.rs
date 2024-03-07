@@ -67,6 +67,36 @@ async fn request_contract_details() -> Result<()> {
 }
 
 #[tokio::test]
+async fn request_contract_details_stream() -> Result<()> {
+    // Open a connection to the mini-redis address.
+    let mut client = client::connect(get_client_addr(), 1).await?;
+    let contracts = client.subscribe_contract_details().clone();
+    tokio::time::sleep(std::time::Duration::from_secs(1)).await;
+    thread::spawn(move || {
+        while let Ok(contract) = contracts.recv() {
+            tracing::error!("got contracts:  {:#?}", contract);
+        }
+    });
+    let _contract2 = Contract {
+        symbol: "AMD".to_string(),
+        exchange: Some("SMART".to_string()),
+        sec_type: SecType::Stock,
+        currency: "USD".to_string(),
+        ..Default::default()
+    };
+
+    let _ = &client.request_contract_details(1, _contract2).await?;
+    tokio::time::sleep(std::time::Duration::from_secs(10)).await;
+    Ok(())
+}
+
+async fn contract_details_async(mut client: Client, contract: Contract) -> ContractDetails {
+    let contracts = client.subscribe_contract_details().clone();
+    let _ = &client.request_contract_details(1, _contract2).await?;
+    contracts.try_iter().filter(|c| c.callable)
+}
+
+#[tokio::test]
 async fn orders_auto_open() -> Result<()> {
     let mut client = client::connect(get_client_addr(), 0).await?;
     let orders = client.order_tracker.order.clone();
