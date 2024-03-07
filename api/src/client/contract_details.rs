@@ -1,8 +1,9 @@
 use crossbeam::channel::Receiver;
+use futures::{Stream, StreamExt};
 use tokio::sync::mpsc;
 use tracing::{debug, instrument};
 
-use super::{Client, ContractDetailsResponse, Request};
+use super::{Client, Request, ResponseWithId};
 use crate::{cmd::RequestContractDetails,
             contract::{Contract, ContractDetails},
             RequestId,
@@ -23,16 +24,16 @@ impl Client {
         Ok(())
     }
 
-    pub fn subscribe_contract_details(&mut self) -> Receiver<ContractDetailsResponse> {
+    pub fn subscribe_contract_details(&mut self) -> Receiver<ResponseWithId<ContractDetails>> {
         self.contract_events.clone()
     }
 
-    #[instrument(skip(self))]
     pub async fn get_contract_details(
         &mut self,
         req_id: RequestId,
         contract: Contract,
-    ) -> Result<Vec<ContractDetails>> {
+    ) -> impl Stream<Item = Result<ContractDetails>> + '_ {
+        async_stream::try_stream! {
         // Convert the command into a frame
         let frame = RequestContractDetails::new(req_id, contract);
         debug!("request id:\t{}", req_id);
@@ -47,15 +48,14 @@ impl Client {
             .await?;
         // Write the frame to the socket
         self.writer.write_frame(&frame.into_frame()).await?;
-        let mut results = Vec::new();
-        while let Some(result) = rep_rx.recv().await {
-            let ContractDetailsResponse { req_id: _, details } = result;
-            tracing::trace!("Received contract details: {:?}", details);
-            match details {
-                Some(details) => results.push(details),
-                None => break,
+        while let Some(response) = rep_rx.recv().await {
+            if let Some(response) = response.response {
+                tracing::trace!("Received contract details: {:?}", response);
+                yield (response);
+            } else {
+                return;
             }
         }
-        Ok(results)
+        }
     }
 }

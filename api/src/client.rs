@@ -27,7 +27,7 @@ mod orders;
 #[derive(Debug)]
 pub struct ResponseWithId<T> {
     pub req_id:   RequestId,
-    pub response: T,
+    pub response: Option<T>,
 }
 /// Connection status
 #[repr(i32)]
@@ -46,16 +46,16 @@ pub enum Request {
     },
     RequestWithId {
         req_id: RequestId,
-        sender: mpsc::Sender<ContractDetailsResponse>,
+        sender: mpsc::Sender<ResponseWithId<ContractDetails>>,
     },
 }
 
-#[derive(Debug, Clone)]
-pub struct ContractDetailsResponse {
-    #[allow(dead_code)]
-    req_id:  RequestId,
-    details: Option<ContractDetails>,
-}
+// #[derive(Debug, Clone)]
+// pub struct ContractDetailsResponse {
+//     #[allow(dead_code)]
+//     req_id:  RequestId,
+//     details: Option<ContractDetails>,
+// }
 
 /// Established connection with a Redis server.
 ///
@@ -114,7 +114,7 @@ pub struct Client {
     pub order_tracker:          OrderTracker,
     pub account_tracker:        Receiver<AccountData>,
     pub market_data_tracker:    MarketDataTracker,
-    pub contract_events:        Receiver<ContractDetailsResponse>,
+    pub contract_events:        Receiver<ResponseWithId<ContractDetails>>,
     pub account_update_tracker: Receiver<DateTime<Utc>>,
     pub message_tracker:        Receiver<TwsApiMessage>,
 }
@@ -256,7 +256,7 @@ async fn run(
     account_tracker_tx: Sender<AccountData>,
     account_update_tracker_tx: Sender<AccountLastUpdate>,
     market_data_tracker_tx: MarketDataTrackerSender,
-    contract_details_events_tx: Sender<ContractDetailsResponse>,
+    contract_details_events_tx: Sender<ResponseWithId<ContractDetails>>,
     message_events_tx: Sender<TwsApiMessage>,
 ) -> Result<()> {
     // When the provided `shutdown` future completes, we must send a shutdown
@@ -418,7 +418,7 @@ struct Handler {
     subscribe_handler_rx: mpsc::Receiver<Request>,
     /// track order details request and send the result to the corresponsing
     /// receivers
-    requests:             HashMap<usize, mpsc::Sender<ContractDetailsResponse>>,
+    requests:             HashMap<usize, mpsc::Sender<ResponseWithId<ContractDetails>>>,
 
     // track market data request, send the incomming frames to the corresponding receivers
     // ticker_reqs: HashMap<usize, mpsc::Sender<Option<contract::ContractDetails>>>,
@@ -434,7 +434,7 @@ struct Handler {
     /// receivers
     order_tracker_tx: OrderTrackerSender,
 
-    contract_details_events_tx: Sender<ContractDetailsResponse>,
+    contract_details_events_tx: Sender<ResponseWithId<ContractDetails>>,
 
     message_events_tx: Sender<TwsApiMessage>,
 }
@@ -524,26 +524,25 @@ impl Handler {
                         if let Some(sender) = self.requests.get(&id) {
                             debug!("got sender for req_id:\t{}", id);
                             sender
-                                .send(ContractDetailsResponse {
-                                    req_id:  id,
-                                    details: Some(details.clone()),
+                                .send(ResponseWithId {
+                                    req_id:   id,
+                                    response: Some(details.clone()),
                                 })
                                 .await?;
                         }
-                        self.contract_details_events_tx
-                            .send(ContractDetailsResponse {
-                                req_id:  id,
-                                details: Some(details.clone()),
-                            })?;
+                        self.contract_details_events_tx.send(ResponseWithId {
+                            req_id:   id,
+                            response: Some(details.clone()),
+                        })?;
                     },
 
                     IBFrame::ContractDetailsEnd(req_id) => {
                         match self.requests.remove_entry(&req_id) {
                             Some((_, sender)) => {
                                 sender
-                                    .send(ContractDetailsResponse {
+                                    .send(ResponseWithId {
                                         req_id,
-                                        details: None,
+                                        response: None,
                                     })
                                     .await?;
                             },
