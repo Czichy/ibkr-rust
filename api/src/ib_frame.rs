@@ -265,9 +265,10 @@ impl IBFrame {
                     ..Default::default()
                 };
                 contract.trading_class = decode(&mut it)?;
+                // new field???
+                let _: Option<String> = decode(&mut it)?;
                 contract.con_id = decode(&mut it)?;
                 details.min_tick = decode(&mut it)?;
-                // details.md_size_multiplier = decode(&mut it)?;
                 contract.multiplier = decode(&mut it)?;
                 details.order_types = decode(&mut it)?;
                 details.valid_exchanges = decode(&mut it)?;

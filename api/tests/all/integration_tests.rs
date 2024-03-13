@@ -90,11 +90,11 @@ async fn request_contract_details_stream() -> Result<()> {
     Ok(())
 }
 
-async fn contract_details_async(mut client: Client, contract: Contract) -> ContractDetails {
-    let contracts = client.subscribe_contract_details().clone();
-    let _ = &client.request_contract_details(1, _contract2).await?;
-    contracts.try_iter().filter(|c| c.callable)
-}
+// async fn contract_details_async(mut client: Client, contract: Contract) ->
+// ContractDetails {     let contracts =
+// client.subscribe_contract_details().clone();     let _ =
+// &client.request_contract_details(1, _contract2).await?;     contracts.
+// try_iter().filter(|c| c.callable) }
 
 #[tokio::test]
 async fn orders_auto_open() -> Result<()> {
