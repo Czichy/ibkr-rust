@@ -599,7 +599,8 @@ impl ParseIbkrFrame for OrderInformation {
             fa_profile: decode(it)?,
             model_code: decode(it)?,
             good_till_date: decode(it)?,
-            // rule_80_a: decode(it)?,
+            // TODO: latest Version 183 comment out
+            rule_80_a: decode(it)?,
             percent_offset: decode(it)?,
             settling_firm: { decode(it)? },
 
