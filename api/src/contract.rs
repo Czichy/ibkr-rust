@@ -266,6 +266,66 @@ pub struct ContractDetails {
     pub notes:                Option<String>,
 }
 
+impl ParseIbkrFrame for ContractDetails {
+    fn try_parse_frame(msg_id: Incoming, it: &mut Split<&str>) -> ParseResult<Self>
+    where
+        Self: Sized,
+    {
+        match msg_id {
+            Incoming::ContractData => {
+                tracing::debug!("decode ContractData");
+                let mut contract = Contract::try_parse_frame(msg_id, it)?;
+                tracing::debug!("decoded contract: {:#?}", contract);
+                let mut details = ContractDetails {
+                    market_name: decode(it)?,
+                    ..Default::default()
+                };
+                contract.trading_class = decode(it)?;
+                // new field???
+                // TODO: ab Version 183
+                // let _: Option<String> = decode(it)?;
+                contract.con_id = decode(it)?;
+                details.min_tick = decode(it)?;
+                contract.multiplier = decode(it)?;
+                details.order_types = decode(it)?;
+                details.valid_exchanges = decode(it)?;
+                details.price_magnifier = decode(it)?;
+                details.under_con_id = decode(it)?;
+                details.long_name = decode(it)?;
+                contract.primary_exchange = decode(it)?;
+                details.contract_month = decode(it)?;
+                details.industry = decode(it)?;
+                details.category = decode(it)?;
+                details.subcategory = decode(it)?;
+                details.timezone_id = decode(it)?;
+                details.trading_hours = decode(it)?;
+                details.liquid_hours = decode(it)?;
+                details.ev_rule = decode(it)?;
+                details.ev_multiplier = decode(it)?;
+                let sec_id_list_count: Option<usize> = decode(it)?;
+                details.sec_id_list = match sec_id_list_count {
+                    Some(count) => {
+                        let mut sec_ids: Vec<(String, String)> = Vec::with_capacity(count);
+                        for _i in 0..count {
+                            sec_ids.push((decode(it)?.unwrap(), decode(it)?.unwrap()));
+                        }
+                        Some(sec_ids)
+                    },
+                    None => None,
+                };
+                details.agg_group = decode(it)?;
+                details.under_symbol = decode(it)?;
+                details.under_sec_type = decode(it)?;
+                details.market_rule_ids = decode(it)?;
+                details.real_expiration_date = decode(it)?;
+                details.contract = contract;
+                details.stock_type = decode(it)?;
+                Ok(details)
+            },
+            _ => Err(ParseError::Incomplete),
+        }
+    }
+}
 impl ContractDetails {
     pub fn liquid_hours(&self) -> Option<Vec<(DateTime<Tz>, DateTime<Tz>)>> {
         let liq_hours_it = self.liquid_hours.as_ref()?.split(';');

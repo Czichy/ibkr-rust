@@ -251,59 +251,8 @@ impl IBFrame {
             },
             Incoming::ContractData => {
                 tracing::debug!("decode ContractData");
-                // let msg_version: usize = decode(&mut it)?.unwrap();
-                // tracing::error!("message version: {}", msg_version);
-                let req_id: usize = //if msg_version >= 3 {
-                    decode(&mut it)?.unwrap();
-                // } else {
-                //     0
-                // };
-                let mut contract = contract::Contract::try_parse_frame(msg_id, &mut it)?;
-                tracing::debug!("decoded contract: {:#?}", contract);
-                let mut details = contract::ContractDetails {
-                    market_name: decode(&mut it)?,
-                    ..Default::default()
-                };
-                contract.trading_class = decode(&mut it)?;
-                // new field???
-                // TODO: ab Version 183
-                // let _: Option<String> = decode(&mut it)?;
-                contract.con_id = decode(&mut it)?;
-                details.min_tick = decode(&mut it)?;
-                contract.multiplier = decode(&mut it)?;
-                details.order_types = decode(&mut it)?;
-                details.valid_exchanges = decode(&mut it)?;
-                details.price_magnifier = decode(&mut it)?;
-                details.under_con_id = decode(&mut it)?;
-                details.long_name = decode(&mut it)?;
-                contract.primary_exchange = decode(&mut it)?;
-                details.contract_month = decode(&mut it)?;
-                details.industry = decode(&mut it)?;
-                details.category = decode(&mut it)?;
-                details.subcategory = decode(&mut it)?;
-                details.timezone_id = decode(&mut it)?;
-                details.trading_hours = decode(&mut it)?;
-                details.liquid_hours = decode(&mut it)?;
-                details.ev_rule = decode(&mut it)?;
-                details.ev_multiplier = decode(&mut it)?;
-                let sec_id_list_count: Option<usize> = decode(&mut it)?;
-                details.sec_id_list = match sec_id_list_count {
-                    Some(count) => {
-                        let mut sec_ids: Vec<(String, String)> = Vec::with_capacity(count);
-                        for _i in 0..count {
-                            sec_ids.push((decode(&mut it)?.unwrap(), decode(&mut it)?.unwrap()));
-                        }
-                        Some(sec_ids)
-                    },
-                    None => None,
-                };
-                details.agg_group = decode(&mut it)?;
-                details.under_symbol = decode(&mut it)?;
-                details.under_sec_type = decode(&mut it)?;
-                details.market_rule_ids = decode(&mut it)?;
-                details.real_expiration_date = decode(&mut it)?;
-                details.contract = contract;
-                details.stock_type = decode(&mut it)?;
+                let req_id: usize = decode(&mut it)?.unwrap();
+                let details = contract::ContractDetails::try_parse_frame(msg_id, &mut it)?;
                 Ok(IBFrame::ContractDetails {
                     req_id,
                     contract_details: details,
