@@ -125,7 +125,7 @@ pub struct Order {
     pub origin:              Option<Origin>,
     pub short_sale_slot:     Option<ShortSaleSlot>,
     pub designated_location: Option<String>,
-    pub exempt_code:         i32,
+    pub exempt_code:         Option<i32>,
 
     // SMART routing fields
     pub discretionary_amt:     Decimal,
@@ -261,7 +261,7 @@ impl Order {
             transmit: true,
             open_close: Some(OrderOpenClose::Open),
             origin: Some(Origin::Customer),
-            exempt_code: -1,
+            exempt_code: Some(-1),
             auction_strategy: Some(AuctionStrategy::NoAuctionStrategy),
             ..Default::default()
         }
@@ -605,7 +605,7 @@ impl ParseIbkrFrame for OrderInformation {
 
             short_sale_slot: decode(it)?,
             designated_location: decode(it)?,
-            exempt_code: decode(it)?.unwrap(),
+            exempt_code: decode(it)?,
 
             auction_strategy: if !completed { decode(it)? } else { None },
             starting_price: decode(it)?,

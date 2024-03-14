@@ -170,6 +170,7 @@ pub async fn connect<T: ToSocketAddrs + Send>(addr: T, client_id: ClientId) -> R
         _ => return Err("could not get server version".into()),
     };
 
+    tracing::error!("Server Version: {}", &server_version);
     // start API
     let frame = Api::Start {
         client_id,
