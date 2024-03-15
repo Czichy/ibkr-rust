@@ -160,7 +160,7 @@ pub async fn connect<T: ToSocketAddrs + Send>(addr: T, client_id: ClientId) -> R
     writer.write_frame(&frame.into_frame()).await?;
 
     // Read the response
-    let response = reader.read_frame().await?;
+    let response = reader.read_frame(None).await?;
     debug!("{:?}", response);
     let (server_version, _connection_time) = match response {
         Some(IBFrame::ServerVersion {
@@ -220,6 +220,7 @@ pub async fn connect<T: ToSocketAddrs + Send>(addr: T, client_id: ClientId) -> R
         // Process the connection. If an error is encountered, log it.
         if let Err(err) = run(
             reader,
+            server_version,
             subscribe_handler_rx,
             test,
             order_tracker_tx,
@@ -250,6 +251,7 @@ pub async fn connect<T: ToSocketAddrs + Send>(addr: T, client_id: ClientId) -> R
 async fn run(
     //&mut self,
     reader: Reader,
+    server_version: ServerVersion,
     // socket: tokio::net::tcp::OwnedReadHalf,
     subscribe_handler_rx: mpsc::Receiver<Request>,
     notify_shutdown: broadcast::Receiver<()>,
@@ -281,6 +283,7 @@ async fn run(
         // Receive shutdown notifications.
         shutdown: Shutdown::new(notify_shutdown),
 
+        server_version,
         // Notifies the receiver half once all clones are
         // dropped.
         //_shutdown_complete: shutdown_complete_tx.clone(),
@@ -384,7 +387,7 @@ struct Handler {
     /// The implementation of the command is in the `cmd` module. Each command
     /// will need to interact with `db` in order to complete the work.
     // db: Db,
-
+    server_version: ServerVersion,
     /// The TCP connection decorated with the redis protocol encoder / decoder
     /// implemented using a buffered `TcpStream`.
     ///
@@ -392,7 +395,7 @@ struct Handler {
     /// passed to `Connection::new`, which initializes the associated buffers.
     /// `Connection` allows the handler to operate at the "frame" level and keep
     /// the byte level protocol parsing details encapsulated in `Connection`.
-    reader: Reader,
+    reader:         Reader,
 
     /// Max connection semaphore.
     ///
@@ -461,7 +464,7 @@ impl Handler {
             // While reading a request frame, also listen for the shutdown
             // signal.
             let maybe_frame = tokio::select! {
-                res = self.reader.read_frame() => res?,
+                res = self.reader.read_frame(Some(self.server_version)) => res?,
                 Some(request) = self.subscribe_handler_rx.recv() => {
                 match request {
                     Request::OrderId {sender } => {

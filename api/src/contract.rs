@@ -11,7 +11,8 @@ use crate::{enums::*,
             ib_frame::{ParseError, ParseIbkrFrame, ParseResult},
             order::{ComboAction, OptionOpenClose, ShortSaleSlot},
             prelude::ib_message::{decode, Decodable},
-            utils::ib_message::Encodable};
+            utils::ib_message::Encodable,
+            ServerVersion};
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ComboLeg {
     pub con_id:              i32,
@@ -92,7 +93,11 @@ impl Encodable for Contract {
 }
 
 impl ParseIbkrFrame for Contract {
-    fn try_parse_frame(msg_id: Incoming, it: &mut Split<&str>) -> ParseResult<Self>
+    fn try_parse_frame(
+        msg_id: Incoming,
+        server_version: Option<ServerVersion>,
+        it: &mut Split<&str>,
+    ) -> ParseResult<Self>
     where
         Self: Sized,
     {
@@ -267,14 +272,19 @@ pub struct ContractDetails {
 }
 
 impl ParseIbkrFrame for ContractDetails {
-    fn try_parse_frame(msg_id: Incoming, it: &mut Split<&str>) -> ParseResult<Self>
+    fn try_parse_frame(
+        msg_id: Incoming,
+        server_version: Option<ServerVersion>,
+        it: &mut Split<&str>,
+    ) -> ParseResult<Self>
     where
         Self: Sized,
     {
+        let server_version = server_version.ok_or(ParseError::MissingServerVersion)?;
         match msg_id {
             Incoming::ContractData => {
                 tracing::debug!("decode ContractData");
-                let mut contract = Contract::try_parse_frame(msg_id, it)?;
+                let mut contract = Contract::try_parse_frame(msg_id, Some(server_version), it)?;
                 tracing::debug!("decoded contract: {:#?}", contract);
                 let mut details = ContractDetails {
                     market_name: decode(it)?,
@@ -282,8 +292,10 @@ impl ParseIbkrFrame for ContractDetails {
                 };
                 contract.trading_class = decode(it)?;
                 // new field???
-                // TODO: ab Version 183
-                // let _: Option<String> = decode(it)?;
+                if server_version >= 183 {
+                    // TODO: ab Version 183
+                    let _: Option<String> = decode(it)?;
+                }
                 contract.con_id = decode(it)?;
                 details.min_tick = decode(it)?;
                 contract.multiplier = decode(it)?;

@@ -15,6 +15,7 @@ use crate::{contract::{ComboLeg, Contract, DeltaNeutralContract, SecType},
             AccountCode,
             ClientId,
             OrderId,
+            ServerVersion,
             TimeStamp};
 
 #[derive(Debug, Clone)]
@@ -553,19 +554,24 @@ pub struct OrderInformation {
 }
 impl ParseIbkrFrame for OrderInformation {
     #[allow(clippy::cognitive_complexity)]
-    fn try_parse_frame(msg_id: Incoming, it: &mut Split<&str>) -> ParseResult<Self>
+    fn try_parse_frame(
+        msg_id: Incoming,
+        server_version: Option<ServerVersion>,
+        it: &mut Split<&str>,
+    ) -> ParseResult<Self>
     where
         Self: Sized,
     {
         if !matches!(msg_id, Incoming::OpenOrder | Incoming::CompletedOrder) {
             return Err(ParseError::UnexpectedMessage);
         }
+        let server_version = server_version.ok_or(ParseError::MissingServerVersion)?;
         let completed = matches!(msg_id, Incoming::CompletedOrder);
         tracing::debug!("decode Orders: {:#?}", msg_id);
         let order_id = if !completed { decode(it)? } else { None };
         tracing::debug!("orderid: {:#?}", order_id);
         // decode contract
-        let contract = Contract::try_parse_frame(msg_id, it)?;
+        let contract = Contract::try_parse_frame(msg_id, Some(server_version), it)?;
         tracing::debug!("contract: {:#?}", &contract);
         let mut order = Order {
             contract,
@@ -600,7 +606,11 @@ impl ParseIbkrFrame for OrderInformation {
             model_code: decode(it)?,
             good_till_date: decode(it)?,
             // TODO: latest Version 183 comment out
-            rule_80_a: decode(it)?,
+            rule_80_a: if server_version < 183 {
+                decode(it)?
+            } else {
+                Default::default()
+            },
             percent_offset: decode(it)?,
             settling_firm: { decode(it)? },
 
@@ -829,7 +839,11 @@ pub struct OrderStatusUpdate {
     pub why_held:        Option<String>,
 }
 impl ParseIbkrFrame for OrderStatusUpdate {
-    fn try_parse_frame(msg_id: Incoming, it: &mut Split<&str>) -> ParseResult<Self>
+    fn try_parse_frame(
+        msg_id: Incoming,
+        server_version: Option<ServerVersion>,
+        it: &mut Split<&str>,
+    ) -> ParseResult<Self>
     where
         Self: Sized,
     {
@@ -876,7 +890,11 @@ pub struct Execution {
 }
 
 impl ParseIbkrFrame for Execution {
-    fn try_parse_frame(msg_id: Incoming, it: &mut Split<&str>) -> ParseResult<Self>
+    fn try_parse_frame(
+        msg_id: Incoming,
+        server_version: Option<ServerVersion>,
+        it: &mut Split<&str>,
+    ) -> ParseResult<Self>
     where
         Self: Sized,
     {
@@ -885,7 +903,7 @@ impl ParseIbkrFrame for Execution {
         }
         it.next(); // skip version
         let order_id: i32 = decode(it)?.unwrap();
-        let contract = Contract::try_parse_frame(msg_id, it)?;
+        let contract = Contract::try_parse_frame(msg_id, server_version, it)?;
 
         Ok(Self {
             order_id,
@@ -921,7 +939,11 @@ pub struct CommissionReport {
     pub yield_redemption_date: Option<i32>,
 }
 impl ParseIbkrFrame for CommissionReport {
-    fn try_parse_frame(msg_id: Incoming, it: &mut Split<&str>) -> ParseResult<Self>
+    fn try_parse_frame(
+        msg_id: Incoming,
+        server_version: Option<ServerVersion>,
+        it: &mut Split<&str>,
+    ) -> ParseResult<Self>
     where
         Self: Sized,
     {

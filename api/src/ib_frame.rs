@@ -22,8 +22,33 @@ use crate::{account::{AccountData, AccountLastUpdate, Position},
             AccountCode,
             OrderId,
             RequestId,
+            ServerVersion,
             TimeStamp};
 
+#[derive(Debug, thiserror::Error)]
+#[allow(dead_code)]
+pub enum ParseError {
+    #[error("decode error: {}", _0)]
+    Decoding(#[from] IbDecodeError),
+
+    #[error("Not enough data is available to parse a message")]
+    Incomplete,
+
+    #[error("Invalid message encoding")]
+    Other(crate::prelude::Error),
+
+    #[error("Unexpected variant: {}", _0)]
+    UnexpectedVariant(String),
+
+    #[error("Unexpected message type")]
+    UnexpectedMessage,
+
+    #[error("Missing Server Version")]
+    MissingServerVersion,
+
+    #[error("protocol error; invalid frame format.")]
+    Protocol(#[from] FromUtf8Error),
+}
 pub type ParseResult<T, E = ParseError> = Result<T, E>;
 
 pub trait FromIbkrFrame {
@@ -45,31 +70,13 @@ pub trait ParseIbkrFrame {
     /// to send to the server.
 
     #[allow(clippy::wrong_self_convention)]
-    fn try_parse_frame(msg_id: Incoming, it: &mut Split<&str>) -> ParseResult<Self>
+    fn try_parse_frame(
+        msg_id: Incoming,
+        server_version: Option<ServerVersion>,
+        it: &mut Split<&str>,
+    ) -> ParseResult<Self>
     where
         Self: Sized;
-}
-
-#[derive(Debug, thiserror::Error)]
-#[allow(dead_code)]
-pub enum ParseError {
-    #[error("decode error: {}", _0)]
-    Decoding(#[from] IbDecodeError),
-
-    #[error("Not enough data is available to parse a message")]
-    Incomplete,
-
-    #[error("Invalid message encoding")]
-    Other(crate::prelude::Error),
-
-    #[error("Unexpected variant: {}", _0)]
-    UnexpectedVariant(String),
-
-    #[error("Unexpected message type")]
-    UnexpectedMessage,
-
-    #[error("protocol error; invalid frame format.")]
-    Protocol(#[from] FromUtf8Error),
 }
 
 // TODO: split into separate structs to implement parse
@@ -170,8 +177,10 @@ impl IBFrame {
     }
 
     #[allow(clippy::cognitive_complexity)]
-    // TODO: Simplify
-    pub fn parse(src: &mut Cursor<&[u8]>) -> ParseResult<IBFrame> {
+    pub fn parse(
+        src: &mut Cursor<&[u8]>,
+        server_version: Option<ServerVersion>,
+    ) -> ParseResult<IBFrame> {
         let msg = read(src)?;
         let utf8msg = String::from_utf8_lossy(msg);
         tracing::debug!("trying to parse message: {:?}", utf8msg);
@@ -192,13 +201,17 @@ impl IBFrame {
             },
             Incoming::AccountSummary => {
                 Ok(IBFrame::AccountSummary(AccountData::try_parse_frame(
-                    msg_id, &mut it,
+                    msg_id,
+                    server_version,
+                    &mut it,
                 )?))
             },
 
             Incoming::AcctValue => {
                 Ok(IBFrame::AccountValue(AccountData::try_parse_frame(
-                    msg_id, &mut it,
+                    msg_id,
+                    server_version,
+                    &mut it,
                 )?))
             },
 
@@ -233,7 +246,7 @@ impl IBFrame {
             Incoming::PortfolioValue => {
                 let _version: i32 = decode(&mut it)?.unwrap();
                 Ok(IBFrame::PortfolioValue(Position {
-                    contract:       Contract::try_parse_frame(msg_id, &mut it)?,
+                    contract:       Contract::try_parse_frame(msg_id, server_version, &mut it)?,
                     position:       decode(&mut it)?,
                     market_price:   decode(&mut it)?,
                     market_value:   decode(&mut it)?,
@@ -252,7 +265,8 @@ impl IBFrame {
             Incoming::ContractData => {
                 tracing::debug!("decode ContractData");
                 let req_id: usize = decode(&mut it)?.unwrap();
-                let details = contract::ContractDetails::try_parse_frame(msg_id, &mut it)?;
+                let details =
+                    contract::ContractDetails::try_parse_frame(msg_id, server_version, &mut it)?;
                 Ok(IBFrame::ContractDetails {
                     req_id,
                     contract_details: details,
@@ -272,7 +286,8 @@ impl IBFrame {
                 Ok(IBFrame::OpenOrderEnd)
             },
             Incoming::OpenOrder | Incoming::CompletedOrder => {
-                let order_information = OrderInformation::try_parse_frame(msg_id, &mut it)?;
+                let order_information =
+                    OrderInformation::try_parse_frame(msg_id, server_version, &mut it)?;
                 match msg_id {
                     Incoming::OpenOrder => Ok(IBFrame::OpenOrder(order_information)),
                     Incoming::CompletedOrder => Ok(IBFrame::CompletedOrder(order_information)),
@@ -282,68 +297,84 @@ impl IBFrame {
 
             Incoming::CommissionReport => {
                 Ok(IBFrame::CommissionReport(
-                    CommissionReport::try_parse_frame(msg_id, &mut it)?,
+                    CommissionReport::try_parse_frame(msg_id, server_version, &mut it)?,
                 ))
             },
 
             Incoming::ExecutionData => {
                 Ok(IBFrame::Execution(Execution::try_parse_frame(
-                    msg_id, &mut it,
+                    msg_id,
+                    server_version,
+                    &mut it,
                 )?))
             },
 
             Incoming::OrderStatus => {
                 Ok(IBFrame::OrderStatus(OrderStatusUpdate::try_parse_frame(
-                    msg_id, &mut it,
+                    msg_id,
+                    server_version,
+                    &mut it,
                 )?))
             },
 
             Incoming::RealTimeBars => {
                 Ok(IBFrame::RealtimeBar(RealtimeBar::try_parse_frame(
-                    msg_id, &mut it,
+                    msg_id,
+                    server_version,
+                    &mut it,
                 )?))
             },
 
             Incoming::TickPrice => {
                 Ok(IBFrame::Tick(
-                    TickPrice::try_parse_frame(msg_id, &mut it)?.into(),
+                    TickPrice::try_parse_frame(msg_id, server_version, &mut it)?.into(),
                 ))
             },
 
             Incoming::TickSize => {
                 Ok(IBFrame::Tick(
-                    TickSize::try_parse_frame(msg_id, &mut it)?.into(),
+                    TickSize::try_parse_frame(msg_id, server_version, &mut it)?.into(),
                 ))
             },
 
             Incoming::TickString => {
                 Ok(IBFrame::Tick(
-                    TickString::try_parse_frame(msg_id, &mut it)?.into(),
+                    TickString::try_parse_frame(msg_id, server_version, &mut it)?.into(),
                 ))
             },
 
             Incoming::TickGeneric => {
                 Ok(IBFrame::Tick(
-                    TickGeneric::try_parse_frame(msg_id, &mut it)?.into(),
+                    TickGeneric::try_parse_frame(msg_id, server_version, &mut it)?.into(),
                 ))
             },
 
-            Incoming::TickByTick => Ok(IBFrame::Tick(Tick::try_parse_frame(msg_id, &mut it)?)),
+            Incoming::TickByTick => {
+                Ok(IBFrame::Tick(Tick::try_parse_frame(
+                    msg_id,
+                    server_version,
+                    &mut it,
+                )?))
+            },
 
             Incoming::HistoricalData => {
                 Ok(IBFrame::HistoricalBars(HistoricalBars::try_parse_frame(
-                    msg_id, &mut it,
+                    msg_id,
+                    server_version,
+                    &mut it,
                 )?))
             },
 
             Incoming::HistoricalDataUpdate => {
                 Ok(IBFrame::HistoricalBars(HistoricalBars::try_parse_frame(
-                    msg_id, &mut it,
+                    msg_id,
+                    server_version,
+                    &mut it,
                 )?))
             },
 
             Incoming::HistoricalSchedule => {
-                Ok(HistoricalSchedule::try_parse_frame(msg_id, &mut it)?.into())
+                Ok(HistoricalSchedule::try_parse_frame(msg_id, server_version, &mut it)?.into())
             },
 
             Incoming::HeadTimestamp => {
@@ -357,7 +388,9 @@ impl IBFrame {
             | Incoming::HistoricalTicksBidAsk
             | Incoming::HistoricalTicksLast => {
                 Ok(IBFrame::HistoricalTicks(HistoricalTicks::try_parse_frame(
-                    msg_id, &mut it,
+                    msg_id,
+                    server_version,
+                    &mut it,
                 )?))
             },
 
@@ -435,7 +468,7 @@ mod tests {
                 .as_bytes();
         tracing::warn!("{:?}", String::from_utf8_lossy(&[0, 0, 2, 120]));
         let mut buff = Cursor::new(string_to_parse);
-        let open_position = IBFrame::parse(&mut buff);
+        let open_position = IBFrame::parse(&mut buff, Some(176));
         tracing::warn!("parse open position: {:#?}", open_position);
     }
     #[test]
@@ -462,7 +495,7 @@ mod tests {
                 .as_bytes();
         tracing::warn!("{:?}", String::from_utf8_lossy(&[0, 0, 2, 127]));
         let mut buff = Cursor::new(string_to_parse);
-        let open_position = IBFrame::parse(&mut buff);
+        let open_position = IBFrame::parse(&mut buff, Some(183));
         tracing::warn!("parse open position: {:#?}", open_position);
     }
 }

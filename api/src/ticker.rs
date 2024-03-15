@@ -16,6 +16,7 @@ use crate::{bars::{HistoricalBars, HistoricalSchedule, RealtimeBar},
                       ParseEnumError},
             MarketDataValueType,
             RequestId,
+            ServerVersion,
             TimeStamp};
 
 #[derive(Debug, Clone)]
@@ -89,7 +90,11 @@ pub enum Tick {
 }
 
 impl ParseIbkrFrame for Tick {
-    fn try_parse_frame(msg_id: Incoming, it: &mut Split<&str>) -> ParseResult<Self>
+    fn try_parse_frame(
+        msg_id: Incoming,
+        server_version: Option<ServerVersion>,
+        it: &mut Split<&str>,
+    ) -> ParseResult<Self>
     where
         Self: Sized,
     {
@@ -275,7 +280,11 @@ pub struct TickPrice {
     pub attributes: TickAttribute,
 }
 impl ParseIbkrFrame for TickPrice {
-    fn try_parse_frame(msg_id: Incoming, it: &mut Split<&str>) -> ParseResult<Self>
+    fn try_parse_frame(
+        msg_id: Incoming,
+        server_version: Option<ServerVersion>,
+        it: &mut Split<&str>,
+    ) -> ParseResult<Self>
     where
         Self: Sized,
     {
@@ -313,7 +322,11 @@ pub struct TickSize {
     pub size: MarketDataValueType,
 }
 impl ParseIbkrFrame for TickSize {
-    fn try_parse_frame(msg_id: Incoming, it: &mut Split<&str>) -> ParseResult<Self>
+    fn try_parse_frame(
+        msg_id: Incoming,
+        server_version: Option<ServerVersion>,
+        it: &mut Split<&str>,
+    ) -> ParseResult<Self>
     where
         Self: Sized,
     {
@@ -337,7 +350,11 @@ pub struct TickString {
     pub val:  Option<String>,
 }
 impl ParseIbkrFrame for TickString {
-    fn try_parse_frame(msg_id: Incoming, it: &mut Split<&str>) -> ParseResult<Self>
+    fn try_parse_frame(
+        msg_id: Incoming,
+        server_version: Option<ServerVersion>,
+        it: &mut Split<&str>,
+    ) -> ParseResult<Self>
     where
         Self: Sized,
     {
@@ -361,7 +378,11 @@ pub struct TickGeneric {
     pub val:  MarketDataValueType,
 }
 impl ParseIbkrFrame for TickGeneric {
-    fn try_parse_frame(msg_id: Incoming, it: &mut Split<&str>) -> ParseResult<Self>
+    fn try_parse_frame(
+        msg_id: Incoming,
+        server_version: Option<ServerVersion>,
+        it: &mut Split<&str>,
+    ) -> ParseResult<Self>
     where
         Self: Sized,
     {
@@ -388,7 +409,11 @@ pub struct HistoricalBidAsk {
     pub size_ask:   MarketDataValueType,
 }
 impl ParseIbkrFrame for HistoricalBidAsk {
-    fn try_parse_frame(msg_id: Incoming, it: &mut Split<&str>) -> ParseResult<Self>
+    fn try_parse_frame(
+        msg_id: Incoming,
+        server_version: Option<ServerVersion>,
+        it: &mut Split<&str>,
+    ) -> ParseResult<Self>
     where
         Self: Sized,
     {
@@ -422,7 +447,11 @@ pub struct HistoricalTicks {
     pub done:  bool,
 }
 impl ParseIbkrFrame for HistoricalTicks {
-    fn try_parse_frame(msg_id: Incoming, it: &mut Split<&str>) -> ParseResult<Self>
+    fn try_parse_frame(
+        msg_id: Incoming,
+        server_version: Option<ServerVersion>,
+        it: &mut Split<&str>,
+    ) -> ParseResult<Self>
     where
         Self: Sized,
     {
@@ -435,7 +464,7 @@ impl ParseIbkrFrame for HistoricalTicks {
                     let mut ticks = Vec::with_capacity(tick_count);
                     for _i in 0..tick_count {
                         ticks.push(HistoricalTimeAndSales::Tick(
-                            HistoricalTick::try_parse_frame(msg_id, it)?,
+                            HistoricalTick::try_parse_frame(msg_id, server_version, it)?,
                         ));
                     }
                     ticks
@@ -454,7 +483,7 @@ impl ParseIbkrFrame for HistoricalTicks {
                     let mut ticks = Vec::with_capacity(tick_count);
                     for _i in 0..tick_count {
                         ticks.push(HistoricalTimeAndSales::BidAsk(
-                            HistoricalBidAsk::try_parse_frame(msg_id, it)?,
+                            HistoricalBidAsk::try_parse_frame(msg_id, server_version, it)?,
                         ));
                     }
                     ticks
@@ -469,16 +498,17 @@ impl ParseIbkrFrame for HistoricalTicks {
             Incoming::HistoricalTicksLast => {
                 let id = decode(it)?.unwrap();
                 let tick_count = decode(it)?.unwrap();
-                let ticks = {
-                    let mut ticks = Vec::with_capacity(tick_count);
-                    for _i in 0..tick_count {
-                        let tick = HistoricalTimeAndSales::Last(HistoricalLast::try_parse_frame(
-                            msg_id, it,
-                        )?);
-                        ticks.push(tick);
-                    }
-                    ticks
-                };
+                let ticks =
+                    {
+                        let mut ticks = Vec::with_capacity(tick_count);
+                        for _i in 0..tick_count {
+                            let tick = HistoricalTimeAndSales::Last(
+                                HistoricalLast::try_parse_frame(msg_id, server_version, it)?,
+                            );
+                            ticks.push(tick);
+                        }
+                        ticks
+                    };
                 Ok(Self {
                     id,
                     ticks,
@@ -498,7 +528,11 @@ pub struct HistoricalTick {
     pub size:  MarketDataValueType,
 }
 impl ParseIbkrFrame for HistoricalTick {
-    fn try_parse_frame(msg_id: Incoming, it: &mut Split<&str>) -> ParseResult<Self>
+    fn try_parse_frame(
+        msg_id: Incoming,
+        server_version: Option<ServerVersion>,
+        it: &mut Split<&str>,
+    ) -> ParseResult<Self>
     where
         Self: Sized,
     {
@@ -524,7 +558,11 @@ pub struct HistoricalLast {
     pub special_conditions: Option<String>,
 }
 impl ParseIbkrFrame for HistoricalLast {
-    fn try_parse_frame(msg_id: Incoming, it: &mut Split<&str>) -> ParseResult<Self>
+    fn try_parse_frame(
+        msg_id: Incoming,
+        server_version: Option<ServerVersion>,
+        it: &mut Split<&str>,
+    ) -> ParseResult<Self>
     where
         Self: Sized,
     {

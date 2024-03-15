@@ -1,52 +1,54 @@
-use std::{
-    convert::TryFrom,
-    fmt::{Display, Formatter},
-    str::{FromStr, Split},
-};
+use std::{convert::TryFrom,
+          fmt::{Display, Formatter},
+          str::{FromStr, Split}};
 
 use chrono::{NaiveDate, Utc};
 use chrono_tz::Tz;
 
-use crate::{
-    ib_frame::{ParseError, ParseIbkrFrame, ParseResult},
-    prelude::{
-        dateparser::Parse,
-        ib_message::{decode, Decodable, Encodable},
-        Incoming, ParseEnumError,
-    },
-    MarketDataValueType, RequestId, TimeStamp,
-};
+use crate::{ib_frame::{ParseError, ParseIbkrFrame, ParseResult},
+            prelude::{dateparser::Parse,
+                      ib_message::{decode, Decodable, Encodable},
+                      Incoming,
+                      ParseEnumError},
+            MarketDataValueType,
+            RequestId,
+            ServerVersion,
+            TimeStamp};
 
 #[derive(Debug, Clone, Copy)]
 pub struct Bar {
     pub t_stamp: TimeStamp,
-    pub open: MarketDataValueType,
-    pub high: MarketDataValueType,
-    pub low: MarketDataValueType,
-    pub close: MarketDataValueType,
-    pub wap: MarketDataValueType,
-    pub volume: MarketDataValueType,
-    pub count: isize,
+    pub open:    MarketDataValueType,
+    pub high:    MarketDataValueType,
+    pub low:     MarketDataValueType,
+    pub close:   MarketDataValueType,
+    pub wap:     MarketDataValueType,
+    pub volume:  MarketDataValueType,
+    pub count:   isize,
 }
 
 #[derive(Debug, Clone)]
 pub struct BarSeries {
     pub start_dt: TimeStamp,
-    pub end_dt: TimeStamp,
-    pub n_bars: usize,
-    pub bars: Vec<Bar>,
+    pub end_dt:   TimeStamp,
+    pub n_bars:   usize,
+    pub bars:     Vec<Bar>,
 }
 
 #[derive(Debug, Clone)]
 pub struct HistoricalSchedule {
-    pub id: RequestId,
+    pub id:              RequestId,
     pub start_date_time: TimeStamp,
-    pub end_date_time: TimeStamp,
-    pub time_zone: Tz,
-    pub sessions: Vec<HistoricalSession>,
+    pub end_date_time:   TimeStamp,
+    pub time_zone:       Tz,
+    pub sessions:        Vec<HistoricalSession>,
 }
 impl ParseIbkrFrame for HistoricalSchedule {
-    fn try_parse_frame(msg_id: Incoming, it: &mut Split<&str>) -> ParseResult<Self>
+    fn try_parse_frame(
+        msg_id: Incoming,
+        server_version: Option<ServerVersion>,
+        it: &mut Split<&str>,
+    ) -> ParseResult<Self>
     where
         Self: Sized,
     {
@@ -82,8 +84,8 @@ impl ParseIbkrFrame for HistoricalSchedule {
                 .map_err(|_| ParseError::UnexpectedVariant(tz.clone()))?;
             let session = HistoricalSession {
                 start_date_time: start_date_time_session,
-                end_date_time: end_date_time_session,
-                ref_date: decode(it)?.unwrap(),
+                end_date_time:   end_date_time_session,
+                ref_date:        decode(it)?.unwrap(),
             };
             sessions.push(session);
         }
@@ -100,11 +102,15 @@ impl ParseIbkrFrame for HistoricalSchedule {
 #[derive(Debug, Clone, Copy)]
 pub struct HistoricalSession {
     pub start_date_time: TimeStamp,
-    pub end_date_time: TimeStamp,
-    pub ref_date: NaiveDate,
+    pub end_date_time:   TimeStamp,
+    pub ref_date:        NaiveDate,
 }
 impl ParseIbkrFrame for HistoricalSession {
-    fn try_parse_frame(msg_id: Incoming, it: &mut Split<&str>) -> ParseResult<Self>
+    fn try_parse_frame(
+        msg_id: Incoming,
+        server_version: Option<ServerVersion>,
+        it: &mut Split<&str>,
+    ) -> ParseResult<Self>
     where
         Self: Sized,
     {
@@ -113,18 +119,22 @@ impl ParseIbkrFrame for HistoricalSession {
         }
         Ok(Self {
             start_date_time: decode(it)?.unwrap(),
-            end_date_time: decode(it)?.unwrap(),
-            ref_date: decode(it)?.unwrap(),
+            end_date_time:   decode(it)?.unwrap(),
+            ref_date:        decode(it)?.unwrap(),
         })
     }
 }
 #[derive(Debug, Clone, Copy)]
 pub struct RealtimeBar {
-    pub id: RequestId,
+    pub id:   RequestId,
     pub data: Bar,
 }
 impl ParseIbkrFrame for RealtimeBar {
-    fn try_parse_frame(msg_id: Incoming, it: &mut Split<&str>) -> ParseResult<Self>
+    fn try_parse_frame(
+        msg_id: Incoming,
+        server_version: Option<ServerVersion>,
+        it: &mut Split<&str>,
+    ) -> ParseResult<Self>
     where
         Self: Sized,
     {
@@ -137,13 +147,13 @@ impl ParseIbkrFrame for RealtimeBar {
             id,
             data: Bar {
                 t_stamp: decode(it)?.unwrap(),
-                open: decode(it)?.unwrap(),
-                high: decode(it)?.unwrap(),
-                low: decode(it)?.unwrap(),
-                close: decode(it)?.unwrap(),
-                volume: decode(it)?.unwrap(),
-                wap: decode(it)?.unwrap(),
-                count: decode(it)?.unwrap(),
+                open:    decode(it)?.unwrap(),
+                high:    decode(it)?.unwrap(),
+                low:     decode(it)?.unwrap(),
+                close:   decode(it)?.unwrap(),
+                volume:  decode(it)?.unwrap(),
+                wap:     decode(it)?.unwrap(),
+                count:   decode(it)?.unwrap(),
             },
         })
     }
@@ -151,11 +161,15 @@ impl ParseIbkrFrame for RealtimeBar {
 
 #[derive(Debug, Clone)]
 pub struct HistoricalBars {
-    pub id: RequestId,
+    pub id:   RequestId,
     pub data: BarSeries,
 }
 impl ParseIbkrFrame for HistoricalBars {
-    fn try_parse_frame(msg_id: Incoming, it: &mut Split<&str>) -> ParseResult<Self>
+    fn try_parse_frame(
+        msg_id: Incoming,
+        server_version: Option<ServerVersion>,
+        it: &mut Split<&str>,
+    ) -> ParseResult<Self>
     where
         Self: Sized,
     {
@@ -170,13 +184,13 @@ impl ParseIbkrFrame for HistoricalBars {
                     for _i in 0..n_bars {
                         bar_data.push(Bar {
                             t_stamp: decode(it)?.unwrap(),
-                            open: decode(it)?.unwrap(),
-                            high: decode(it)?.unwrap(),
-                            low: decode(it)?.unwrap(),
-                            close: decode(it)?.unwrap(),
-                            volume: decode(it)?.unwrap(),
-                            wap: decode(it)?.unwrap(),
-                            count: decode(it)?.unwrap(),
+                            open:    decode(it)?.unwrap(),
+                            high:    decode(it)?.unwrap(),
+                            low:     decode(it)?.unwrap(),
+                            close:   decode(it)?.unwrap(),
+                            volume:  decode(it)?.unwrap(),
+                            wap:     decode(it)?.unwrap(),
+                            count:   decode(it)?.unwrap(),
                         });
                     }
                     bar_data
@@ -243,9 +257,7 @@ impl Encodable for BarSize {
     }
 }
 impl Default for BarSize {
-    fn default() -> Self {
-        Self::_1Min
-    }
+    fn default() -> Self { Self::_1Min }
 }
 
 impl FromStr for BarSize {
@@ -278,9 +290,7 @@ impl FromStr for BarSize {
 }
 
 impl Display for BarSize {
-    fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
-        write!(f, "{self:?}")
-    }
+    fn fmt(&self, f: &mut Formatter) -> std::fmt::Result { write!(f, "{self:?}") }
 }
 impl Decodable for BarSize {}
 
@@ -305,9 +315,7 @@ impl Encodable for Duration {
     }
 }
 impl Default for Duration {
-    fn default() -> Self {
-        Self::Day(1)
-    }
+    fn default() -> Self { Self::Day(1) }
 }
 
 impl TryFrom<std::time::Duration> for Duration {
@@ -315,19 +323,24 @@ impl TryFrom<std::time::Duration> for Duration {
 
     fn try_from(value: std::time::Duration) -> Result<Self, Self::Error> {
         match value.as_secs() {
-            d if d > 365 * 24 * 60 * 60 => u32::try_from(d / (365 * 24 * 60 * 60))
-                .map_or(Err(ParseEnumError), |years| Ok(Duration::Year(years))),
-            d if d > 24 * 60 * 60 && d <= 365 * 24 * 60 * 60 => u32::try_from(d)
-                .map_or(Err(ParseEnumError), |days| {
+            d if d > 365 * 24 * 60 * 60 => {
+                u32::try_from(d / (365 * 24 * 60 * 60))
+                    .map_or(Err(ParseEnumError), |years| Ok(Duration::Year(years)))
+            },
+            d if d > 24 * 60 * 60 && d <= 365 * 24 * 60 * 60 => {
+                u32::try_from(d).map_or(Err(ParseEnumError), |days| {
                     Ok(Duration::Day(days / (24 * 60 * 60)))
-                }),
-            d => u32::try_from(d).map_or(Err(ParseEnumError), |seconds| {
-                if seconds > 0 {
-                    Ok(Duration::Seconds(seconds))
-                } else {
-                    Err(ParseEnumError)
-                }
-            }),
+                })
+            },
+            d => {
+                u32::try_from(d).map_or(Err(ParseEnumError), |seconds| {
+                    if seconds > 0 {
+                        Ok(Duration::Seconds(seconds))
+                    } else {
+                        Err(ParseEnumError)
+                    }
+                })
+            },
         }
     }
 }
@@ -344,13 +357,15 @@ impl FromStr for Duration {
         s.next()
             .and_then(|v| v.parse::<u32>().ok())
             .and_then(|value| {
-                s.next().and_then(|d| d.chars().next()).map(|d| match d {
-                    'S' => Ok(Duration::Seconds(value)),
-                    'D' => Ok(Duration::Day(value)),
-                    'W' => Ok(Duration::Week(value)),
-                    'M' => Ok(Duration::Month(value)),
-                    'Y' => Ok(Duration::Year(value)),
-                    _ => Err(ParseEnumError),
+                s.next().and_then(|d| d.chars().next()).map(|d| {
+                    match d {
+                        'S' => Ok(Duration::Seconds(value)),
+                        'D' => Ok(Duration::Day(value)),
+                        'W' => Ok(Duration::Week(value)),
+                        'M' => Ok(Duration::Month(value)),
+                        'Y' => Ok(Duration::Year(value)),
+                        _ => Err(ParseEnumError),
+                    }
                 })
             })
             .unwrap_or(Err(ParseEnumError))
@@ -358,8 +373,6 @@ impl FromStr for Duration {
 }
 
 impl Display for Duration {
-    fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
-        write!(f, "{self:?}")
-    }
+    fn fmt(&self, f: &mut Formatter) -> std::fmt::Result { write!(f, "{self:?}") }
 }
 impl Decodable for Duration {}

@@ -1,12 +1,11 @@
 use std::io::Cursor;
 
 use bytes::{Buf, BytesMut};
-use tokio::{
-    io::{AsyncReadExt, BufReader},
-    net::tcp::OwnedReadHalf,
-};
+use tokio::{io::{AsyncReadExt, BufReader},
+            net::tcp::OwnedReadHalf};
 
-use crate::ib_frame::{self, IBFrame};
+use crate::{ib_frame::{self, IBFrame},
+            ServerVersion};
 /// Send and receive `IBFrame` values from a remote peer.
 ///
 /// When implementing networking protocols, a message on that protocol is
@@ -41,12 +40,12 @@ impl Reader {
     /// are initialized.
     pub fn new(socket: OwnedReadHalf) -> Reader {
         Reader {
-            stream: BufReader::new(socket),
+            stream:         BufReader::new(socket),
             // Default to a 4KB read buffer. For the use case of mini redis,
             // this is fine. However, real applications will want to tune this
             // value to their specific use case. There is a high likelihood that
             // a larger read buffer will work better.
-            buffer: BytesMut::with_capacity(32 * 1024),
+            buffer:         BytesMut::with_capacity(32 * 1024),
             never_received: true,
         }
     }
@@ -62,12 +61,15 @@ impl Reader {
     /// On success, the received frame is returned. If the `TcpStream`
     /// is closed in a way that doesn't break a frame in half, it returns
     /// `None`. Otherwise, an error is returned.
-    pub async fn read_frame(&mut self) -> crate::prelude::Result<Option<IBFrame>> {
+    pub async fn read_frame(
+        &mut self,
+        server_version: Option<ServerVersion>,
+    ) -> crate::prelude::Result<Option<IBFrame>> {
         loop {
             tracing::trace!("read frame ...");
             // Attempt to parse a frame from the buffered data. If enough data
             // has been buffered, the frame is returned.
-            if let Some(frame) = self.parse_frame()? {
+            if let Some(frame) = self.parse_frame(server_version)? {
                 return Ok(Some(frame));
             }
 
@@ -94,7 +96,10 @@ impl Reader {
     /// data, the frame is returned and the data removed from the buffer. If not
     /// enough data has been buffered yet, `Ok(None)` is returned. If the
     /// buffered data does not represent a valid frame, `Err` is returned.
-    fn parse_frame(&mut self) -> crate::prelude::Result<Option<IBFrame>> {
+    fn parse_frame(
+        &mut self,
+        server_version: Option<ServerVersion>,
+    ) -> crate::prelude::Result<Option<IBFrame>> {
         use ib_frame::ParseError::Incomplete;
 
         // Cursor is used to track the "current" location in the
@@ -132,7 +137,7 @@ impl Reader {
                     self.never_received = false;
                     IBFrame::parse_server_version(&mut buf)?
                 } else {
-                    match IBFrame::parse(&mut buf) {
+                    match IBFrame::parse(&mut buf, server_version) {
                         Ok(frame) => frame,
                         Err(e) => {
                             tracing::warn!("{}", e.to_string());
