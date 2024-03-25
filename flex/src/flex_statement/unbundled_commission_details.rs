@@ -1,10 +1,13 @@
 use chrono::NaiveDateTime;
+use iso_currency::Currency;
 use rust_decimal::Decimal;
 use serde::Deserialize;
 
 use crate::{enums::*,
             flex_statement::contract::Contract,
-            utils::de::{deserialize_empty_string_is_none, naive_date_time_from_str}};
+            utils::de::{deserialize_empty_string_is_none,
+                        deserialize_from_str,
+                        naive_date_time_from_str}};
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct UnbundledCommissionDetails {
@@ -28,6 +31,10 @@ pub struct UnbundledCommissionDetail {
 
     #[serde(flatten)]
     pub contract: Contract,
+
+    #[serde(deserialize_with = "deserialize_from_str")]
+    #[serde(rename = "@currency")]
+    pub currency: Currency,
 
     #[serde(rename = "@buySell")]
     pub buy_sell: BuySell,
@@ -110,7 +117,6 @@ mod tests {
                 contract:                      Contract {
                     asset_category:              AssetCategory::STK,
                     symbol:                      "F".to_string(),
-                    currency:                    Currency::USD,
                     description:                 "FORD MOTOR CO".to_string(),
                     con_id:                      9599491,
                     security_id:                 Some("US3453708600".to_string()),
@@ -129,6 +135,7 @@ mod tests {
                     put_call:                    None,
                     principal_adjust_factor:     None,
                 },
+                currency:                      Currency::USD,
                 buy_sell:                      BuySell::Buy,
                 exchange:                      "IEX".to_string(),
                 date_time:                     NaiveDateTime::from_str("2022-02-14T09:36:30")

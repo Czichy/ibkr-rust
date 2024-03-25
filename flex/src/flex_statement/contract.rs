@@ -15,10 +15,9 @@ pub struct Contract {
     #[serde(rename = "@symbol")]
     pub symbol: String,
 
-    #[serde(deserialize_with = "deserialize_from_str")]
-    #[serde(rename = "@currency")]
-    pub currency: Currency,
-
+    // #[serde(deserialize_with = "deserialize_from_str")]
+    // #[serde(rename = "@currency")]
+    // pub currency: Currency,
     #[serde(rename = "@description")]
     pub description: String,
 
@@ -114,7 +113,7 @@ mod tests {
         assert_eq!(response.strike, None);
         assert_eq!(response.security_id_type, Some(SecIdType::Isin));
         assert_eq!(response.listing_exchange, "AEB");
-        assert_eq!(response.currency, Currency::EUR);
+        // assert_eq!(response.currency, Currency::EUR);
         assert_eq!(response.security_id, Some("IE00B3RBWM25".into()));
         assert_eq!(response.principal_adjust_factor, None);
     }

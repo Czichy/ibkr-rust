@@ -57,6 +57,10 @@ pub struct Trade {
     #[serde(flatten)]
     pub contract: Contract,
 
+    #[serde(deserialize_with = "deserialize_from_str")]
+    #[serde(rename = "@currency")]
+    pub currency: Currency,
+
     #[serde(rename = "@fxRateToBase")]
     pub fx_rate_to_base: Option<Decimal>,
 
@@ -267,7 +271,6 @@ mod tests {
                 contract:                 Contract {
                     asset_category:              AssetCategory::STK,
                     symbol:                      "VWRL".to_string(),
-                    currency:                    Currency::EUR,
                     description:                 "VANG FTSE AW USDD".to_string(),
                     con_id:                      128831206,
                     security_id:                 Some("IE00B3RBWM25".to_string()),
@@ -286,6 +289,7 @@ mod tests {
                     put_call:                    None,
                     principal_adjust_factor:     None,
                 },
+                currency:                 Currency::EUR,
                 fx_rate_to_base:          Some(dec!(1)),
                 transaction_type:         "ExchTrade".to_string(),
                 trade_id:                 Some(29464420),

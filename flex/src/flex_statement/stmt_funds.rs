@@ -1,4 +1,5 @@
 use chrono::NaiveDate;
+use iso_currency::Currency;
 use rust_decimal::Decimal;
 use serde::Deserialize;
 
@@ -29,6 +30,10 @@ pub struct StatementOfFundsLine {
 
     #[serde(flatten)]
     pub contract: Option<Contract>,
+
+    #[serde(deserialize_with = "deserialize_from_str")]
+    #[serde(rename = "@currency")]
+    pub currency: Currency,
 
     #[serde(rename = "@activityDescription")]
     pub activity_description: String,
@@ -141,6 +146,7 @@ mod tests {
                     acct_alias:           None,
                     activity_code:        None,
                     contract:             None,
+                    currency:             Currency::EUR,
                     activity_description: "Starting Balance".to_string(),
                     amount:               Some(dec!(0),),
                     balance:              Some(dec!(6655.368396105),),
@@ -167,6 +173,7 @@ mod tests {
                     acct_alias:           None,
                     activity_code:        Some("DEP".to_string()),
                     contract:             None,
+                    currency:             Currency::EUR,
                     activity_description: "Cash Transfer".to_string(),
                     amount:               Some(dec!(15724.15)),
                     balance:              Some(dec!(15724.15)),
@@ -195,7 +202,7 @@ mod tests {
                     contract:             Some(Contract {
                         asset_category:              crate::enums::AssetCategory::STK,
                         symbol:                      "F".to_string(),
-                        currency:                    Currency::EUR,
+                        // currency:                    Currency::EUR,
                         description:                 "FORD MOTOR CO".to_string(),
                         con_id:                      9599491,
                         security_id:                 Some("US3453708600".to_string()),
@@ -214,6 +221,7 @@ mod tests {
                         put_call:                    None,
                         principal_adjust_factor:     None,
                     },),
+                    currency:             Currency::EUR,
                     activity_description: "Buy 100 FORD MOTOR CO ".to_string(),
                     amount:               Some(dec!(-1558.38328),),
                     balance:              Some(dec!(5103.133989064),),

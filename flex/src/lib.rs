@@ -362,7 +362,6 @@ mod tests {
                     contract:                 Contract {
                         asset_category:              AssetCategory::STK,
                         symbol:                      "AMD".to_string(),
-                        currency:                    Currency::USD,
                         description:                 "ADVANCED MICRO DEVICES".to_string(),
                         con_id:                      4391,
                         security_id:                 Some("US0079031078".to_string()),
@@ -381,6 +380,7 @@ mod tests {
                         put_call:                    None,
                         principal_adjust_factor:     None,
                     },
+                    currency:                 Currency::USD,
                     fx_rate_to_base:          Some(dec!(0.88043)),
                     transaction_type:         "ExchTrade".to_string(),
                     trade_id:                 Some(337365179),
