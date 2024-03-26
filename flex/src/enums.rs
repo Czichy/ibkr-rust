@@ -299,3 +299,81 @@ impl FromStr for OrderType {
         }
     }
 }
+
+#[derive(Debug, PartialEq, Eq, Clone, Deserialize)]
+pub enum ActionType {
+    AssetPurchase,
+    BondConversion,
+    BondMaturity,
+    CashDividend,
+    ChoiceDividendDelivery,
+    ChoiceDividendIssue,
+    ContactConsolidation,
+    ContractSoulte,
+    ContractSpinOff,
+    ContractSplit,
+    ConvertibleIssue,
+    CouponPayment,
+    DelistWorthless,
+    DividendRightsIssue,
+    ExpireDividendRight,
+    FeeAllocation,
+    ForwardSplit,
+    GenericVoluntary,
+    IssueChange,
+    IssueForwardSplit,
+    Merger,
+    PartialCallIssue,
+    ReverseSplit,
+    SharePurchaseIssue,
+    SpinOff,
+    StockDividend,
+    SubscribableRightsIssue,
+    SubscribeRights,
+    TbillMaturity,
+    TenderIssue,
+    UnknownEvent,
+    VoluntaryConversion,
+}
+
+impl FromStr for ActionType {
+    type Err = ParseEnumError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "OR" => Ok(ActionType::AssetPurchase),
+            "BC" => Ok(ActionType::BondConversion),
+            "BM" => Ok(ActionType::BondMaturity),
+            "CD" => Ok(ActionType::CashDividend),
+            "HD" => Ok(ActionType::ChoiceDividendDelivery),
+            "HI" => Ok(ActionType::ChoiceDividendIssue),
+            "CC" => Ok(ActionType::ContactConsolidation),
+            "CA" => Ok(ActionType::ContractSoulte),
+            "CO" => Ok(ActionType::ContractSpinOff),
+            "CS" => Ok(ActionType::ContractSplit),
+            "CI" => Ok(ActionType::ConvertibleIssue),
+            "CP" => Ok(ActionType::CouponPayment),
+            "DW" => Ok(ActionType::DelistWorthless),
+            "DI" => Ok(ActionType::DividendRightsIssue),
+            "ED" => Ok(ActionType::ExpireDividendRight),
+            "FA" => Ok(ActionType::FeeAllocation),
+            "FS" => Ok(ActionType::ForwardSplit),
+            "GV" => Ok(ActionType::GenericVoluntary),
+            "IC" => Ok(ActionType::IssueChange),
+            "FI" => Ok(ActionType::IssueForwardSplit),
+            "TC" => Ok(ActionType::Merger),
+            "PC" => Ok(ActionType::PartialCallIssue),
+            "RS" => Ok(ActionType::ReverseSplit),
+            "PI" => Ok(ActionType::SharePurchaseIssue),
+            "SO" => Ok(ActionType::SpinOff),
+            "SD" => Ok(ActionType::StockDividend),
+            "RI" => Ok(ActionType::SubscribableRightsIssue),
+            "SR" => Ok(ActionType::SubscribeRights),
+            "TM" => Ok(ActionType::TbillMaturity),
+            "TI" => Ok(ActionType::TenderIssue),
+            "UE" => Ok(ActionType::UnknownEvent),
+            "TO" => Ok(ActionType::VoluntaryConversion),
+            &_ => Err(ParseEnumError),
+        }
+    }
+}

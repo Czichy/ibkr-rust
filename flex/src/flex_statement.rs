@@ -3,7 +3,7 @@ use iso_currency::Currency;
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
-use self::open_position::OpenPositions;
+use self::{corporate_actions::CorporateActions, open_position::OpenPositions};
 use crate::{contract::Contract,
             flex_statement::{account_information::AccountInformation, trades::Trades},
             stmt_funds::StmtFunds,
@@ -12,6 +12,7 @@ use crate::{contract::Contract,
 
 pub mod account_information;
 pub mod contract;
+pub mod corporate_actions;
 pub mod open_position;
 pub mod stmt_funds;
 pub mod trades;
@@ -78,13 +79,15 @@ pub struct FlexStatements {
 #[serde(rename_all = "PascalCase")]
 pub struct FlexStatement {
     #[serde(rename = "StmtFunds", default)]
-    pub statement_of_funds:           Option<StmtFunds>,
-    pub cash_transactions:            Option<CashTransactions>,
-    pub fx_positions:                 Option<FxPositions>,
-    pub open_positions:               Option<OpenPositions>,
-    pub trades:                       Option<Trades>,
-    pub transaction_taxes:            Option<TransactionTaxes>,
-    pub account_information:          Option<AccountInformation>,
+    pub statement_of_funds:  Option<StmtFunds>,
+    pub cash_transactions:   Option<CashTransactions>,
+    pub fx_positions:        Option<FxPositions>,
+    pub open_positions:      Option<OpenPositions>,
+    pub trades:              Option<Trades>,
+    pub transaction_taxes:   Option<TransactionTaxes>,
+    pub account_information: Option<AccountInformation>,
+
+    pub corporate_actions:            Option<CorporateActions>,
     //* pub CFDCharges:CFDCharges, */
     //* *
     // * * pub ChangeInDividendAccruals:ChangeInDividendAccruals, */
@@ -112,8 +115,6 @@ pub struct FlexStatement {
     // * * pub SLBActivities:SLBActivities, */
     // * *
     // pub slb_fees: Option<SLBFees>,
-    // * *
-    // pub statement_of_funds:           Option<StmtFunds>,
     // * *
     // * * pub TierInterestDetails:TierInterestDetails, */
     // * *
@@ -293,7 +294,7 @@ mod tests {
     #[test]
     fn flex_deserialize_statement() {
         let xml = r#"
-<FlexStatement accountId="U7502027" fromDate="2021-01-04" toDate="2021-09-27" period="YearToDate" whenGenerated="2021-09-28;04:59:31">
+<FlexStatement accountId="U11213636" fromDate="2021-01-04" toDate="2021-09-27" period="YearToDate" whenGenerated="2021-09-28;04:59:31">
         <StmtFunds>
 <StatementOfFundsLine accountId="U11213636" acctAlias="" model="" currency="EUR" fxRateToBase="1" assetCategory="" symbol="" description="" conid="" securityID="" securityIDType="" cusip="" isin="" listingExchange="" underlyingConid="" underlyingSymbol="" underlyingSecurityID="" underlyingListingExchange="" issuer="" multiplier="" strike="" expiry="" putCall="" principalAdjustFactor="" reportDate="2023-06-13" date="2023-06-13" settleDate="2023-06-13" activityCode="FOREX" activityDescription="Commission from Forex Trade" tradeID="557621623" orderID="" buySell="" tradeQuantity="0" tradePrice="0" tradeGross="0" tradeCommission="0" tradeTax="0" debit="-1.8591" credit="" amount="-1.8591" tradeCode="" balance="12685.5953445" levelOfDetail="Currency" transactionID="1931694399"/>
 <StatementOfFundsLine accountId="U11213636" acctAlias="" model="" currency="EUR" fxRateToBase="1" assetCategory="" symbol="" description="" conid="" securityID="" securityIDType="" cusip="" isin="" listingExchange="" underlyingConid="" underlyingSymbol="" underlyingSecurityID="" underlyingListingExchange="" issuer="" multiplier="" strike="" expiry="" putCall="" principalAdjustFactor="" reportDate="2023-06-13" date="2023-06-13" settleDate="2023-06-15" activityCode="FOREX" activityDescription="Traded Currency Leg from Forex Trade" tradeID="557621623" orderID="" buySell="" tradeQuantity="0" tradePrice="0" tradeGross="0" tradeCommission="0" tradeTax="0" debit="" credit="7555.25" amount="7555.25" tradeCode="" balance="12687.4544445" levelOfDetail="Currency" transactionID="1931691616"/>
@@ -368,6 +369,9 @@ mod tests {
 <OpenPosition accountId="U11213636" acctAlias="" model="" currency="EUR" fxRateToBase="1" assetCategory="BOND" symbol="DBR 1 3/4 02/15/24" description="DBR 1 3/4 02/15/24" conid="142870711" securityID="DE0001102333" securityIDType="ISIN" cusip="" isin="DE0001102333" listingExchange="" underlyingConid="" underlyingSymbol="" underlyingSecurityID="" underlyingListingExchange="" issuer="" multiplier="1" strike="" expiry="" putCall="" principalAdjustFactor="1" reportDate="2023-11-09" position="15000" markPrice="99.502" positionValue="14925.3" openPrice="99.133333333" costBasisPrice="99.133333333" costBasisMoney="14870" percentOfNAV="61.01" fifoPnlUnrealized="55.3" side="Long" levelOfDetail="SUMMARY" openDateTime="" holdingPeriodDateTime="" vestingDate="" code="" originatingOrderID="" originatingTransactionID="" accruedInt="194.9" serialNumber="" deliveryType="" commodityType="" fineness="0.0" weight="0.0 ()"/>
 <OpenPosition accountId="U11213636" acctAlias="" model="" currency="USD" fxRateToBase="0.93732" assetCategory="BOND" symbol="T 2 1/4 03/31/24" description="T 2 1/4 03/31/24" conid="553749289" securityID="US91282CEG24" securityIDType="ISIN" cusip="91282CEG2" isin="US91282CEG24" listingExchange="" underlyingConid="" underlyingSymbol="" underlyingSecurityID="" underlyingListingExchange="" issuer="" multiplier="1" strike="" expiry="" putCall="" principalAdjustFactor="1" reportDate="2023-11-09" position="5000" markPrice="98.828125" positionValue="4941.41" openPrice="96.9284" costBasisPrice="96.9284" costBasisMoney="4846.42" percentOfNAV="18.93" fifoPnlUnrealized="94.99" side="Long" levelOfDetail="SUMMARY" openDateTime="" holdingPeriodDateTime="" vestingDate="" code="" originatingOrderID="" originatingTransactionID="" accruedInt="12.6" serialNumber="" deliveryType="" commodityType="" fineness="0.0" weight="0.0 ()"/>
 </OpenPositions>
+<CorporateActions>
+<CorporateAction accountId="U11213636" acctAlias="" model="" currency="EUR" fxRateToBase="1" assetCategory="BOND" subCategory="" symbol="DBR 1 3/4 02/15/24" description="(DE0001102333) BOND MATURITY FOR EUR 1.00 PER BOND (DBR 1 3/4 02/15/24, DBR 1 3/4 02/15/24, DE0001102333)" conid="142870711" securityID="DE0001102333" securityIDType="ISIN" cusip="" isin="DE0001102333" figi="BBG005WQQ0X0" listingExchange="" underlyingConid="" underlyingSymbol="" underlyingSecurityID="" underlyingListingExchange="" issuer="" issuerCountryCode="DE" multiplier="1" strike="" expiry="" putCall="" principalAdjustFactor="1" reportDate="2024-02-15" dateTime="2024-02-14;20:25:00" actionDescription="(DE0001102333) BOND MATURITY FOR EUR 1.00 PER BOND (DBR 1 3/4 02/15/24, DBR 1 3/4 02/15/24, DE0001102333)" amount="-15000" proceeds="15000" value="0" quantity="-15000" fifoPnlRealized="130" mtmPnl="0" code="" type="BM" transactionID="2495820369" actionID="134853519" levelOfDetail="DETAIL" serialNumber="" deliveryType="" commodityType="" fineness="0.0" weight="0.0"/>
+</CorporateActions>
 </FlexStatement>
 "#;
         let xml = xml.replace('&', "&amp;");
@@ -385,7 +389,7 @@ mod tests {
     #[tokio::test]
     async fn flex_deserialize_statement_full() {
         let response: FlexStatement = flex_statement_from_file(std::path::PathBuf::from(
-            r"/home/czichy/Dokumente/finanzen/ledger/import/ib/U11213636/1-in/2023/U11213636_2023.xml",
+            r"/home/czichy/Dokumente/finanzen/ledger/import/ib/U11213636/1-in/2024/U11213636_2024.xml",
         ))
         .await
         .unwrap();
