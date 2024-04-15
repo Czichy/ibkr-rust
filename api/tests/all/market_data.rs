@@ -1,5 +1,6 @@
 // use futures_util::{pin_mut, stream::StreamExt};
 use std::{net::{IpAddr, Ipv4Addr, SocketAddr},
+          ops::{Div, Neg},
           thread};
 
 use chrono::Utc;
@@ -107,22 +108,33 @@ async fn market_data_historical_data() -> Result<()> {
         tracing::error!("received: {:?}", count);
         assert!(count > 0);
     });
+    let receiver = client.market_data_tracker.bars.clone();
+    thread::spawn(move || {
+        let mut count: i32 = 0;
+        while let Ok(_fill) = receiver.recv() {
+            tracing::error!("received: {:?}", _fill);
+            count += 1;
+            if count > 3 {}
+        }
+        tracing::error!("received: {:?}", count);
+        assert!(count > 0);
+    });
     let _ = client
         .request_historical_data(&HistoricalDataRequest {
             req_id: 1010,
             contract,
-            end_date_time: Utc::now(),
-            duration: Duration::Seconds(1800),
-            bar_size_setting: BarSize::_1Secs,
+            end_date_time: None,
+            duration: Duration::Seconds(60),
+            bar_size_setting: BarSize::_15Secs,
             what_to_show: HistoricalDataType::Trades,
-            use_rth: UseRegularTradingHoursOnly::Use,
+            use_rth: UseRegularTradingHoursOnly::DontUse,
             format_date: IntradayBarDateFormat::UnixEpochSeconds,
-            keep_up_to_date: false,
+            keep_up_to_date: true,
             chart_options: vec![],
         })
         .await?;
 
-    tokio::time::sleep(std::time::Duration::from_secs(10)).await;
+    tokio::time::sleep(std::time::Duration::from_secs(60)).await;
     Ok(())
 }
 
@@ -152,7 +164,7 @@ async fn market_data_historical_schedule() -> Result<()> {
         .request_historical_data(&HistoricalDataRequest {
             req_id: 1010,
             contract,
-            end_date_time: Utc::now(),
+            end_date_time: Some(Utc::now()),
             duration: Duration::Year(20),
             bar_size_setting: BarSize::_1Day,
             what_to_show: HistoricalDataType::Schedule,
@@ -225,7 +237,7 @@ async fn market_data_historical_bars() -> Result<()> {
         .request_historical_data(&HistoricalDataRequest {
             req_id:           1020,
             contract:         contract.clone(),
-            end_date_time:    Utc::now(),
+            end_date_time:    Some(Utc::now()),
             duration:         Duration::Seconds(1800),
             bar_size_setting: BarSize::_1Secs,
             format_date:      IntradayBarDateFormat::YYYYMMDD,

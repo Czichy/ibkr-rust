@@ -366,7 +366,7 @@ impl IBFrame {
             },
 
             Incoming::HistoricalDataUpdate => {
-                Ok(IBFrame::HistoricalBars(HistoricalBars::try_parse_frame(
+                Ok(IBFrame::RealtimeBar(RealtimeBar::try_parse_frame(
                     msg_id,
                     server_version,
                     &mut it,

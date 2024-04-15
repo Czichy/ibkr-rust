@@ -254,7 +254,7 @@ impl IntoIbkrFrame for HeadTimestampRequest {
 pub struct HistoricalDataRequest {
     pub req_id:           RequestId,
     pub contract:         Contract,
-    pub end_date_time:    TimeStamp,
+    pub end_date_time:    Option<TimeStamp>,
     pub duration:         Duration,
     pub bar_size_setting: BarSize,
     pub what_to_show:     HistoricalDataType,
@@ -277,8 +277,9 @@ impl IntoIbkrFrame for HistoricalDataRequest {
         msg.push_str(
             &self
                 .end_date_time
-                .format("%Y%m%d-%H:%M:%S")
-                .to_string()
+                .map_or(String::new(), |end| {
+                    end.format("%Y%m%d-%H:%M:%S").to_string()
+                })
                 .encode(),
         );
         msg.push_str(&self.bar_size_setting.encode());

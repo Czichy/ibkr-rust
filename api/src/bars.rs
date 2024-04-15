@@ -138,24 +138,45 @@ impl ParseIbkrFrame for RealtimeBar {
     where
         Self: Sized,
     {
-        if !matches!(msg_id, Incoming::RealTimeBars) {
-            return Err(ParseError::UnexpectedMessage);
-        }
-        it.next(); // skip version
-        let id = decode(it)?.unwrap();
-        Ok(Self {
-            id,
-            data: Bar {
-                t_stamp: decode(it)?.unwrap(),
-                open:    decode(it)?.unwrap(),
-                high:    decode(it)?.unwrap(),
-                low:     decode(it)?.unwrap(),
-                close:   decode(it)?.unwrap(),
-                volume:  decode(it)?.unwrap(),
-                wap:     decode(it)?.unwrap(),
-                count:   decode(it)?.unwrap(),
+        match msg_id {
+            Incoming::RealTimeBars => {
+                it.next(); // skip version
+                let id = decode(it)?.unwrap();
+                let bar = Self {
+                    id,
+                    data: Bar {
+                        t_stamp: decode(it)?.unwrap(),
+                        open:    decode(it)?.unwrap(),
+                        high:    decode(it)?.unwrap(),
+                        low:     decode(it)?.unwrap(),
+                        close:   decode(it)?.unwrap(),
+                        volume:  decode(it)?.unwrap(),
+                        wap:     decode(it)?.unwrap(),
+                        count:   decode(it)?.unwrap(),
+                    },
+                };
+                Ok(bar)
             },
-        })
+            Incoming::HistoricalDataUpdate => {
+                let id = decode(it)?.unwrap();
+                // it.next(); // skip version
+                let bar = Self {
+                    id,
+                    data: Bar {
+                        count:   decode(it)?.unwrap(),
+                        t_stamp: decode(it)?.unwrap(),
+                        open:    decode(it)?.unwrap(),
+                        close:   decode(it)?.unwrap(),
+                        high:    decode(it)?.unwrap(),
+                        low:     decode(it)?.unwrap(),
+                        wap:     decode(it)?.unwrap(),
+                        volume:  decode(it)?.unwrap(),
+                    },
+                };
+                Ok(bar)
+            },
+            _ => Err(ParseError::UnexpectedMessage),
+        }
     }
 }
 
@@ -174,7 +195,7 @@ impl ParseIbkrFrame for HistoricalBars {
         Self: Sized,
     {
         match msg_id {
-            Incoming::HistoricalDataUpdate | Incoming::HistoricalData => {
+            Incoming::HistoricalData => {
                 let id = decode(it)?.unwrap();
                 let start_dt = decode(it)?.unwrap();
                 let end_dt = decode(it)?.unwrap();
