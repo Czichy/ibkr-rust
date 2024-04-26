@@ -33,7 +33,7 @@ use crate::{contract::Contract,
 /// * regulatory_snapshot - With the US Value Snapshot Bundle for stocks,
 ///   regulatory snapshots are available for 0.01 USD each.
 /// * mkt_data_options - For internal use only. Use default value XYZ.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct MarketDataRequest {
     pub req_id:            RequestId,
     pub contract:          Contract,
@@ -166,7 +166,7 @@ impl IntoIbkrFrame for CancelTickByTickRequest {
 // yyyyMMdd HH:mm:ss, set to 2 to obtain it like system time format in seconds
 // // / /// Note that formatData parameter affects intraday bars only
 // /// 1-day bars always return with date in YYYYMMDD format
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct HeadTimestampRequest {
     pub req_id:       RequestId,
     pub contract:     Contract,
@@ -314,7 +314,7 @@ impl IntoIbkrFrame for HistoricalDataRequest {
 /// * use_rth - Data from regular trading hours (1), or all available hours (0)
 /// * ignore_size - A filter only used when the source price is Bid_Ask
 /// * misc_options - should be defined as null, reserved for internal use
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct HistoricalTicksRequest {
     pub req_id:          RequestId,
     pub contract:        Contract,
@@ -415,7 +415,7 @@ impl IntoIbkrFrame for MarketDataTypeRequest {
 ///   STREAMING DATA IF THIS IS SET TO TRUE
 /// * mkt_depth_options - For internal use only. Use default value XYZ.
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct MarketDepthRequest {
     pub req_id:            RequestId,
     pub contract:          Contract,
@@ -460,7 +460,7 @@ impl IntoIbkrFrame for MarketDepthExchangesRequest {
 ///   "MidPoint".
 /// * number_of_ticks    - number of ticks.
 /// * ignore_size    - ignore size flag./
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct TickByTickRequest {
     pub req_id:          RequestId,
     pub contract:        Contract,
@@ -542,7 +542,7 @@ pub enum HistoricalTickDateTime {
 // historical data request: no more than 60 API queries in more than 600 seconds. Real time bars
 // subscriptions are also included in the calculation of the number of Level 1 market data
 // subscriptions allowed in an account.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct RealtimeBarRequest {
     pub req_id:                 RequestId,
     pub contract:               Contract,
