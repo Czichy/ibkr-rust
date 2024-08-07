@@ -166,7 +166,8 @@ impl IBFrame {
         tracing::debug!("start: {:?} end: {:?} msg_size: {:?}", start, end, msg_size);
         if end < (start + msg_size + 3) {
             tracing::warn!(
-                "incomplete message! expectiong len: {}, msg_size: {}",
+                "incomplete message! message: {:?}\n expectiong len: {}, msg_size: {}",
+                headbuf,
                 end,
                 (start + msg_size + 3)
             );
