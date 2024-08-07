@@ -255,20 +255,44 @@ pub struct ContractDetails {
     pub real_expiration_date: Option<String>,
     pub last_trade_time:      Option<String>,
     pub stock_type:           Option<String>,
-    pub cusip:                Option<String>,
-    pub ratings:              Option<String>,
-    pub desc_append:          Option<String>,
-    pub bond_type:            Option<String>,
-    pub coupon_type:          Option<String>,
-    pub callable:             Option<bool>,
-    pub putable:              Option<bool>,
-    pub coupon:               Option<bool>,
-    pub convertible:          Option<bool>,
-    pub maturity:             Option<bool>,
-    pub issue_date:           Option<bool>,
-    pub next_option_date:     Option<bool>,
-    pub next_option_type:     Option<bool>,
-    pub notes:                Option<String>,
+
+    // Bond Values
+    pub cusip:            Option<String>,
+    pub ratings:          Option<String>,
+    pub desc_append:      Option<String>,
+    pub bond_type:        Option<String>,
+    pub coupon_type:      Option<String>,
+    pub callable:         Option<bool>,
+    pub putable:          Option<bool>,
+    pub coupon:           Option<bool>,
+    pub convertible:      Option<bool>,
+    pub maturity:         Option<bool>,
+    pub issue_date:       Option<bool>,
+    pub next_option_date: Option<bool>,
+    pub next_option_type: Option<bool>,
+    pub notes:            Option<String>,
+
+    // FUND values
+    // std::string fundName;
+    // std::string fundFamily;
+    // std::string fundType;
+    // std::string fundFrontLoad;
+    // std::string fundBackLoad;
+    // std::string fundBackLoadTimeInterval;
+    // std::string fundManagementFee;
+    // bool		fundClosed;
+    // bool		fundClosedForNewInvestors;
+    // bool		fundClosedForNewMoney;
+    // std::string fundNotifyAmount;
+    // std::string fundMinimumInitialPurchase;
+    // std::string fundSubsequentMinimumPurchase;
+    // std::string fundBlueSkyStates;
+    // std::string fundBlueSkyTerritories;
+    // FundDistributionPolicyIndicator fundDistributionPolicyIndicator;
+    // FundAssetType fundAssetType;
+
+    // ineligibility reason list
+    pub ineligibility_reason_list: Option<Vec<String>>,
 }
 
 impl ParseIbkrFrame for ContractDetails {

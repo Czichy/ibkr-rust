@@ -189,7 +189,7 @@ async fn executions_filtered() -> Result<()> {
         client_id: None,
         account_code: "U11213636".to_string(),
         // symbol: "NIO".into(),
-        time: "20220824-00:12:59".to_string(),
+        time: "20240805-00:12:59".to_string(),
         ..Default::default()
     });
     client.request_executions(1, filter).await?;
