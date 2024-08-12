@@ -187,7 +187,7 @@ async fn executions_filtered() -> Result<()> {
     });
     let filter = Some(ExecutionFilter {
         client_id: None,
-        account_code: "U11213636".to_string(),
+        account_code: "U7502027".to_string(),
         // symbol: "NIO".into(),
         time: "20240805-00:12:59".to_string(),
         ..Default::default()

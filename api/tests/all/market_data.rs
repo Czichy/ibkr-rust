@@ -217,9 +217,9 @@ async fn market_data_historical_tick() -> Result<()> {
 #[tokio::test]
 async fn market_data_historical_bars() -> Result<()> {
     let mut client = client::connect(get_client_addr(), 10).await?;
-    tokio::time::sleep(std::time::Duration::from_secs(3)).await;
+    tokio::time::sleep(std::time::Duration::from_secs(20)).await;
     let contract = Contract {
-        symbol: "AMD".to_string(),
+        symbol: "NVDA".to_string(),
         exchange: Some("SMART".to_string()),
         sec_type: SecType::Stock,
         currency: "USD".to_string(),
@@ -238,8 +238,8 @@ async fn market_data_historical_bars() -> Result<()> {
             req_id:           1020,
             contract:         contract.clone(),
             end_date_time:    Some(Utc::now()),
-            duration:         Duration::Seconds(1800),
-            bar_size_setting: BarSize::_1Secs,
+            duration:         Duration::Day(4),
+            bar_size_setting: BarSize::_15Mins,
             format_date:      IntradayBarDateFormat::YYYYMMDD,
             keep_up_to_date:  false,
             chart_options:    vec![],
