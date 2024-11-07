@@ -1,18 +1,14 @@
-use chrono::{NaiveDate, NaiveDateTime};
+use chrono::{NaiveDate};
 use iso_currency::Currency;
 // use ibkr_rust_api::prelude::*;
 use rust_decimal::Decimal;
 use serde::Deserialize;
 
-use crate::{enums::{notes_deserialize, open_close_deserialize, OrderType, *},
+use crate::{enums::{*},
             flex_statement::contract::Contract,
-            trades::Trade,
             utils::de::{deserialize_from_str,
                         deserialize_option_from_str,
-                        naive_date_from_str,
-                        naive_date_time_from_str,
-                        some_naive_date_from_str,
-                        some_naive_date_time_from_str}};
+                        some_naive_date_from_str}};
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct CorporateActions {
