@@ -12,11 +12,18 @@ rust-version = "1.77"
  
 [workspace]
 members = [
-    "api",
-    "flex",
+    "crates/api",
+    "crates/flex",
     ]
 
 [workspace.dependencies]
+[workspace.dependencies]
+# When using alpha-release, always use exact version, e.g. `version = "=0.x.y-alpha.z"
+#
+# crates/build:
+api = { path = "crates/api" } # version = "=0.21.0-alpha.1", default-features = false }
+flex = { path = "crates/flex" } # version = "=0.21.0-alpha.1", default-features = false }
+#
 anyhow = "1.0.40"
 bitvec = "1.0.1"
 bytes = "1.1.0"
