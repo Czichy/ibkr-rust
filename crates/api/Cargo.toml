@@ -1,0 +1,49 @@
+[package]
+name = "ibkr-rust-api"
+version = "0.1.0"
+authors = ["cczichy <christian@czichy.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow.workspace = true
+async-stream.workspace = true
+bitvec.workspace = true
+bytes.workspace = true
+chrono.workspace = true
+chrono-tz.workspace = true
+crossbeam .workspace = true
+derive_more.workspace = true
+enum-ordinalize.workspace = true
+futures.workspace = true
+lazy_static.workspace = true
+num-derive.workspace = true
+num-traits.workspace = true
+regex.workspace = true
+rust_decimal.workspace = true
+rust_decimal_macros.workspace = true
+serde.workspace = true
+strum.workspace = true
+strum_macros.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+tracing-bunyan-formatter.workspace = true
+tracing-log.workspace = true
+tracing-subscriber.workspace = true
+
+[dev-dependencies]
+ctor = "0.1.22"
+# Enable test-utilities in dev mode only. This is mostly for tests.
+tokio = { version = "1.5.0", features = ["test-util"] }
+#tracing-test = "0.2.1"
+pretty_assertions = "1.2.1"
+
+[features]
+default = []
+period_type_u16 = []
+period_type_u32 = []
+period_type_u64 = []
+unsafe_performance = []
+market_data_value_type_f32 = []
