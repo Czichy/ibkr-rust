@@ -29,14 +29,13 @@
       src = nix-filter.lib {
         root = ../.;
         include = [
-          ../Cargo.toml
-          ../Cargo.lock
-          ../taplo.toml
-          ../rustfmt.toml
-          ../rust-toolchain.toml
-          ../.config
-          ../api
-          ../flex
+          "Cargo.toml"
+          "Cargo.lock"
+          "taplo.toml"
+          "rustfmt.toml"
+          "rust-toolchain.toml"
+          "crates/api"
+          "crates/flex"
         ];
       };
 
@@ -81,8 +80,8 @@
           root = ../.;
           include =
             [
-              ../Cargo.toml
-              ../Cargo.lock
+              "Cargo.toml"
+              "Cargo.lock"
             ]
             ++ crateFiles;
         };
@@ -91,79 +90,23 @@
 
       api = craneLib.buildPackage (individualCrateArgs
         // rec {
-          pname = "api";
+          pname = "ibkr-rust-api";
           cargoExtraArgs = "-p ${pname}";
           src = fileSetForCrate [
-            ../crates/api/src
-            ../crates/api/Cargo.toml
+            "crates/api/src"
+            "crates/api/Cargo.toml"
           ];
         });
 
       flex = craneLib.buildPackage (individualCrateArgs
         // rec {
-          pname = "api";
-          cargoExtraArgs = "-p ${pname}";
+          pname = "ibkr-rust-flex";
+          cargoExtraArgs = "--bin ${pname}";
           src = fileSetForCrate [
-            ../crates/flex/src
-            ../crates/flex/Cargo.toml
+            "crates/flex/src"
+            "crates/flex/Cargo.toml"
           ];
         });
-
-      # server = craneLib.buildPackage (individualCrateArgs
-      #   // rec {
-      #     pname = "server";
-      #     cargoExtraArgs = "-p ${pname}";
-      #     src = fileSetForCrate [
-      #       ../crates/api
-      #       ../crates/server/src
-      #       ../crates/server/templates
-      #       ../crates/server/styles
-      #       ../crates/server/Cargo.toml
-      #     ];
-      #   });
-
-      seeking-edge = craneLib.buildPackage (individualCrateArgs
-        // rec {
-          pname = "seeking-edge";
-          cargoExtraArgs = "-p ${pname}";
-          src = fileSetForCrate [
-            ../crates/api
-            ../crates/server/src
-            ../crates/server/Cargo.toml
-          ];
-        });
-      # app = pkgs.writeShellScriptBin pname ''
-      #   WEBSERVER_ASSETS=${assets}/assets ${kickbase}/bin/kickbase
-      # '';
-      # postmanerator-theme = pkgs.stdenv.mkDerivation {
-      #   name = "postmanerator-theme";
-      #   src = pkgs.fetchFromGitHub {
-      #     owner = "aubm";
-      #     repo = "postmanerator-default-theme";
-      #     rev = "c4ffa9d6b8973d8d71897e03d2f92a6b775b0cae";
-      #     hash = "sha256-5EjjFXTuai79h7IjCNfCy9mJCmtg98K8ZlpTjDa6ro4=";
-      #   };
-      #   installPhase = ''
-      #     mkdir -p $out/themes
-      #     cp -r $src $out/themes/default
-      #   '';
-      # };
-      # seeking-edge-api-doc = pkgs.stdenv.mkDerivation rec {
-      #   POSTMANERATOR_PATH = postmanerator-theme;
-      #   name = "kickbase-api-doc";
-      #   pname = name;
-      #   src = ../assets/.;
-      #   buildPhase = ''
-      #     ${pkgs.postmanerator}/bin/postmanerator \
-      #       -collection=kickbase.postman_collection.json \
-      #       -environment=kickbase.postman_environment.json \
-      #       -output=../index.html
-      #   '';
-      #   installPhase = ''
-      #     mkdir -p $out/share
-      #     cp -r index.html $out/share
-      #   '';
-      # };
     in {
       checks = {
         inherit seeking-edge;

@@ -1,6 +1,6 @@
 [workspace.package]
 authors = ["Czichy <christian@czichy.com>"]
-# name = "seeking-edge"
+name = "ibkr-rust"
 version = "0.1.0"
 edition = "2021"
 include = ["../../LICENSE-APACHE", "../../LICENSE-MIT", "**/*.rs", "Cargo.toml"]
@@ -17,10 +17,8 @@ members = [
     ]
 
 [workspace.dependencies]
-[workspace.dependencies]
 # When using alpha-release, always use exact version, e.g. `version = "=0.x.y-alpha.z"
 #
-# crates/build:
 api = { path = "crates/api" } # version = "=0.21.0-alpha.1", default-features = false }
 flex = { path = "crates/flex" } # version = "=0.21.0-alpha.1", default-features = false }
 #
