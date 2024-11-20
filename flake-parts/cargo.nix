@@ -80,6 +80,7 @@
           root = ../.;
           include =
             [
+              "crates"
               "Cargo.toml"
               "Cargo.lock"
             ]
