@@ -66,6 +66,8 @@
           openssl
           udev
         ];
+        LD_LIBRARY_PATH = lib.makeLibraryPath [pkgs.openssl];
+        LIBCLANG_PATH = "${pkgs.libclang.lib}/lib/";
       };
 
       individualCrateArgs =
