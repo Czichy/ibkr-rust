@@ -227,6 +227,7 @@ impl FlexReader {
         query_id: String,
     ) -> Result<String> {
         let url = format!("https://ndcdyn.interactivebrokers.com/AccountManagement/FlexWebService/SendRequest?t={}&q={}&v=3", token, query_id);
+        tracing::error!("Getting statement URL using {}", &url);
         let response: FlexStatementRequestResponse = self.retried_request(&url).await?;
         Ok(response.reference_code)
     }
