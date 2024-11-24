@@ -63,11 +63,14 @@
           glibc
           gtk3
           libxkbcommon
-          openssl
+          openssl.dev
           pkg-config
           udev
         ];
         LD_LIBRARY_PATH = lib.makeLibraryPath [pkgs.openssl];
+        # Needed to get openssl-sys to use pkg-config.
+        # Doesn't seem to like OpenSSL 3
+        OPENSSL_NO_VENDOR = 1;
         PKG_CONFIG_PATH = "${pkgs.openssl.dev}/lib/pkgconfig";
         LIBCLANG_PATH = "${pkgs.libclang.lib}/lib/";
       };
