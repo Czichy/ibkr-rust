@@ -11,7 +11,7 @@
     with inputs; let
       rustToolchain = fenix.packages.${system}.fromToolchainFile {
         file = ../rust-toolchain.toml;
-        sha256 = "sha256-pPTJDlL+ul7gVCTO0JPTRhwPSfZse+Zdng5aw9Ukubg=";
+        sha256 = "sha256-pZJWdNhvEsGbBM5yMD3xGi5IaGb01eyRvhCqUVAtFU8=";
       };
 
       pkgs = import nixpkgs {
