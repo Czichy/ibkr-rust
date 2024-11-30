@@ -45,27 +45,14 @@
         inherit src;
         strictDeps = true;
         nativeBuildInputs = with pkgs; [
-          alsa-lib
-          libxkbcommon
           openssl
           pkg-config
-          udev
+          # udev
         ];
         buildInputs = with pkgs; [
-          clang
-          mold
-          lld
-          flatbuffers
-
-          amdvlk
-          atk
-          glib
-          glibc
-          gtk3
-          libxkbcommon
           openssl.dev
+          openssl
           pkg-config
-          udev
         ];
         LD_LIBRARY_PATH = lib.makeLibraryPath [pkgs.openssl];
         # Needed to get openssl-sys to use pkg-config.
