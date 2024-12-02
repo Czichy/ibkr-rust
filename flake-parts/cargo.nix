@@ -9,11 +9,10 @@
     ...
   }:
     with inputs; let
-      rustToolchain = fenix.packages.${system}.fromToolchainFile {
-        file = ../rust-toolchain.toml;
-        sha256 = "sha256-pZJWdNhvEsGbBM5yMD3xGi5IaGb01eyRvhCqUVAtFU8=";
-      };
-
+      # rustToolchain = fenix.packages.${system}.fromToolchainFile {
+      #   file = ../rust-toolchain.toml;
+      #   sha256 = "sha256-pZJWdNhvEsGbBM5yMD3xGi5IaGb01eyRvhCqUVAtFU8=";
+      # };
       pkgs = import nixpkgs {
         inherit system;
         overlays = [
@@ -23,8 +22,17 @@
           })
         ];
       };
+      fenix-channel = fenix.packages.${system}.latest;
 
-      craneLib = (crane.mkLib pkgs).overrideToolchain rustToolchain;
+      fenix-toolchain = fenix-channel.withComponents [
+        "rustc"
+        "cargo"
+        "clippy"
+        "rust-src"
+        "llvm-tools-preview"
+      ];
+
+      craneLib = (crane.mkLib pkgs).overrideToolchain fenix-toolchain;
 
       src = nix-filter.lib {
         root = ../.;
