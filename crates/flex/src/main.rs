@@ -16,28 +16,28 @@ pub async fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
         })
         .init();
 
-    let token = match Command::new("sh").arg("-c").arg(&opt.token).output() {
-        Ok(output) => String::from_utf8_lossy(&output.stdout).into_owned(),
-        Err(e) => {
-            tracing::error!(
-                "Failed to launch password command for {}: {}",
-                &opt.token,
-                e
-            );
-            return Err(format!(
-                "Failed to launch password command for {}: {}",
-                &opt.token, e
-            )
-            .into());
-        },
-    };
-    tracing::error!("{} - {}", token, opt.query);
+    // let token_cmd = match Command::new("sh").arg("-c").arg(&opt.token).output() {
+    //     Ok(output) => String::from_utf8_lossy(&output.stdout).into_owned(),
+    //     Err(e) => {
+    //         tracing::error!(
+    //             "Failed to launch password command for {}: {}",
+    //             &opt.token,
+    //             e
+    //         );
+    //         return Err(format!(
+    //             "Failed to launch password command for {}: {}",
+    //             &opt.token, e
+    //         )
+    //         .into());
+    //     },
+    // };
+    tracing::error!("{} - {}", opt.token, opt.query);
     let reader = FlexReader {
         write_to_path:      opt.dump_path,
         override_file_name: opt.override_file_name,
     };
     let _response = reader
-        .fetch_flex_statement(token.clone(), opt.query.clone())
+        .fetch_flex_statement(opt.token.clone(), opt.query.clone())
         .await;
     tracing::error!("{:?}", _response);
     // let file = download_flex_statement(token, opt.query, opt.dump_path).await;
@@ -64,6 +64,10 @@ struct Opt {
     /// token file
     #[arg(short, long)]
     token: String,
+
+    /// token file
+    // #[arg(long)]
+    // token_cmd: Option<String>,
 
     /// download files into destination folder
     #[arg(short, long)]

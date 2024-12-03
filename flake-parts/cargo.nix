@@ -9,6 +9,7 @@
     ...
   }:
     with inputs; let
+      manifest = (pkgs.lib.importTOML ../Cargo.toml).package;
       # rustToolchain = fenix.packages.${system}.fromToolchainFile {
       #   file = ../rust-toolchain.toml;
       #   sha256 = "sha256-pZJWdNhvEsGbBM5yMD3xGi5IaGb01eyRvhCqUVAtFU8=";
@@ -92,9 +93,11 @@
       cargoArtifacts = craneLib.buildDepsOnly args;
 
       api = craneLib.buildPackage (individualCrateArgs
-        // rec {
-          pname = "ibkr-rust-api";
-          cargoExtraArgs = "-p ${pname}";
+        // {
+          pname = manifest.name;
+          version = manifest.version;
+          cargoLock.lockFile = ./Cargo.lock;
+          # cargoExtraArgs = "-p ${pname}";
           src = fileSetForCrate [
             "crates/api/src"
             "crates/api/Cargo.toml"
