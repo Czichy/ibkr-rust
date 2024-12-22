@@ -1,15 +1,16 @@
 use crossbeam::channel::Receiver;
 use tokio::{net::ToSocketAddrs, runtime::Runtime};
 
-use crate::{
-    account::AccountData,
-    contract::{Contract, ContractDetails},
-    enums::{GenericTickType, MarketDataType, TickType},
-    order::ExecutionFilter,
-    prelude::TagValue,
-    AccountCode, ClientId, RequestId, Result,
-};
-use crate::{client::ConnectionStatus, order::OrderTracker};
+use crate::{account::AccountData,
+            client::ConnectionStatus,
+            contract::{Contract, ContractDetails},
+            enums::{GenericTickType, MarketDataType, TickType},
+            order::{ExecutionFilter, OrderTracker},
+            prelude::TagValue,
+            AccountCode,
+            ClientId,
+            RequestId,
+            Result};
 
 /// Established connection with a Redis server.
 ///
@@ -29,9 +30,7 @@ pub struct BlockingClient {
 
 impl BlockingClient {
     /// The client_id of the client
-    pub fn client_id(&self) -> ClientId {
-        self.inner.client_id
-    }
+    pub fn client_id(&self) -> ClientId { self.inner.client_id }
 
     /// Checks connection status
     pub fn is_connected(&self) -> bool {
@@ -87,7 +86,7 @@ impl BlockingClient {
     // ///     println!("Got = {:?}", val);
     // /// }
     // /// ```
-    pub fn subscribe_account_updates(&mut self) -> Receiver<AccountData> {
+    pub fn subscribe_account_updates(&self) -> Receiver<AccountData> {
         self.inner.subscribe_account_updates()
     }
 
@@ -105,7 +104,7 @@ impl BlockingClient {
             .block_on(self.inner.request_account_summary(group_name, tags))
     }
 
-    pub fn subscribe_contract_details(&mut self) -> Receiver<ContractDetails> {
+    pub fn subscribe_contract_details(&self) -> Receiver<ContractDetails> {
         self.inner.subscribe_contract_details()
     }
 
@@ -123,9 +122,7 @@ impl BlockingClient {
             .block_on(self.inner.get_contract_details(req_id, contract))
     }
 
-    pub fn subscribe_orders(&mut self) -> OrderTracker {
-        self.inner.subscribe_orders()
-    }
+    pub fn subscribe_orders(&self) -> OrderTracker { self.inner.subscribe_orders() }
 
     pub fn request_completed_orders(&mut self, api_only: bool) -> Result<()> {
         self.rt
@@ -141,9 +138,7 @@ impl BlockingClient {
             .block_on(self.inner.request_auto_open_orders(auto_bind))
     }
 
-    pub fn request_ids(&mut self) -> Result<()> {
-        self.rt.block_on(self.inner.request_ids())
-    }
+    pub fn request_ids(&mut self) -> Result<()> { self.rt.block_on(self.inner.request_ids()) }
 
     pub fn request_current_time(&mut self) -> Result<()> {
         self.rt.block_on(self.inner.request_current_time())
@@ -320,14 +315,11 @@ impl BlockingClient {
     ///
     /// # Arguments
     /// * req_id - The ID that was specified in the call to req_mkt_depth().
-    //
     //  * is_smart_depth - specifies SMART depth request
     pub fn cancel_market_depth(&mut self, req_id: RequestId, is_smart_depth: bool) -> Result<()> {
         self.rt
             .block_on(self.inner.cancel_market_depth(req_id, is_smart_depth))
     }
 
-    pub fn disconnect(&mut self) -> Result<()> {
-        self.inner.disconnect()
-    }
+    pub fn disconnect(&mut self) -> Result<()> { self.inner.disconnect() }
 }

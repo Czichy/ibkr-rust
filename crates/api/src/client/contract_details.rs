@@ -24,7 +24,7 @@ impl Client {
         Ok(())
     }
 
-    pub fn subscribe_contract_details(&mut self) -> Receiver<ResponseWithId<ContractDetails>> {
+    pub fn subscribe_contract_details(&self) -> Receiver<ResponseWithId<ContractDetails>> {
         self.contract_events.clone()
     }
 

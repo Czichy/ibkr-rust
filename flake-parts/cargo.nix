@@ -93,11 +93,10 @@
       cargoArtifacts = craneLib.buildDepsOnly args;
 
       api = craneLib.buildPackage (individualCrateArgs
-        // {
+        // rec {
           pname = manifest.name;
           version = manifest.version;
-          cargoLock.lockFile = ./Cargo.lock;
-          # cargoExtraArgs = "-p ${pname}";
+          cargoExtraArgs = "--lib ${pname}";
           src = fileSetForCrate [
             "crates/api/src"
             "crates/api/Cargo.toml"

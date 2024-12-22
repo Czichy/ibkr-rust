@@ -6,7 +6,7 @@ use crate::{cmd::request_market_data::*,
             Result};
 
 impl Client {
-    pub fn subscribe_market_data_updates(&mut self) -> MarketDataTracker {
+    pub fn subscribe_market_data_updates(&self) -> MarketDataTracker {
         self.market_data_tracker.clone()
     }
 

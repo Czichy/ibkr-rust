@@ -2,20 +2,19 @@ use crossbeam::channel::Receiver;
 use tracing::debug;
 
 use super::Client;
-use crate::{
-    account::AccountData,
-    cmd::{RequestAccountSummary, RequestAccountUpdates},
-    prelude::AccountLastUpdate,
-    AccountCode, Result,
-};
+use crate::{account::AccountData,
+            cmd::{RequestAccountSummary, RequestAccountUpdates},
+            prelude::AccountLastUpdate,
+            AccountCode,
+            Result};
 impl Client {
     // pub fn subscribe_account_updates(self) -> AccountReceiver {
     // self.account_tracker }
-    pub fn subscribe_account_updates(&mut self) -> Receiver<AccountData> {
+    pub fn subscribe_account_updates(&self) -> Receiver<AccountData> {
         self.account_tracker.clone()
     }
 
-    pub fn subscribe_account_last_updates(&mut self) -> Receiver<AccountLastUpdate> {
+    pub fn subscribe_account_last_updates(&self) -> Receiver<AccountLastUpdate> {
         self.account_update_tracker.clone()
     }
 

@@ -2,15 +2,12 @@ use tokio::sync::mpsc;
 use tracing::{debug, instrument};
 
 use super::{Client, Request};
-use crate::{
-    cmd::{PlaceOrder, RequestOrders},
-    order::{Order, OrderTracker},
-    OrderId, Result,
-};
+use crate::{cmd::{PlaceOrder, RequestOrders},
+            order::{Order, OrderTracker},
+            OrderId,
+            Result};
 impl Client {
-    pub fn subscribe_orders(&mut self) -> OrderTracker {
-        self.order_tracker.clone()
-    }
+    pub fn subscribe_orders(&self) -> OrderTracker { self.order_tracker.clone() }
 
     #[instrument(skip(self))]
     pub async fn request_completed_orders(&mut self, api_only: bool) -> Result<()> {

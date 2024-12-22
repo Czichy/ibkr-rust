@@ -310,6 +310,105 @@ async fn run(
 }
 
 impl Client {
+    pub async fn connect<T: ToSocketAddrs + Send>(addr: T, client_id: ClientId) -> Result<Client> {
+        // The `addr` argument is passed directly to `TcpStream::connect`. This
+        // performs any asynchronous DNS lookup and attempts to establish the TCP
+        // connection. An error at either step returns an error, which is then
+        // bubbled up to the caller of `mini_redis` connect.
+        let socket = TcpStream::connect(addr).await?;
+
+        let (recv, trans) = socket.into_split();
+        // Initialize the connection state. This allocates read/write buffers to
+        // perform redis protocol frame parsing.
+        let mut writer = Writer::new(trans);
+        let mut reader = Reader::new(recv);
+        // initiate handshake
+        writer.write_raw(b"API\0").await?;
+        let frame = Api::Init {
+            min_client_version: constants::MIN_CLIENT_VER,
+            max_client_version: constants::MAX_CLIENT_VER,
+        };
+        writer.write_frame(&frame.into_frame()).await?;
+
+        // Read the response
+        let response = reader.read_frame(None).await?;
+        debug!("{:?}", response);
+        let (server_version, _connection_time) = match response {
+            Some(IBFrame::ServerVersion {
+                server_version,
+                connection_time,
+            }) => (server_version, connection_time),
+            _ => return Err("could not get server version".into()),
+        };
+
+        tracing::error!("Server Version: {}", &server_version);
+        // start API
+        let frame = Api::Start {
+            client_id,
+            optional_capabilities: None,
+        };
+        writer.write_frame(&frame.into_frame()).await?;
+
+        let conn_state = ConnectionStatus::CONNECTED;
+
+        // When the provided `shutdown` future completes, we must send a shutdown
+        // message to all active connections. We use a broadcast channel for this
+        // purpose. The call below ignores the receiver of the broadcast pair, and when
+        // a receiver is needed, the subscribe() method on the sender is used to create
+        // one.
+        let (notify_shutdown, _) = broadcast::channel(1);
+        let (shutdown_complete_tx, shutdown_complete_rx) = mpsc::channel(1);
+        let (subscribe_handler_tx, subscribe_handler_rx) = mpsc::channel(100);
+        let (account_tx, account) = unbounded();
+        let (contract_tx, contract) = unbounded();
+        let (message_tx, message) = unbounded();
+        let (account_update_tx, account_update) = unbounded();
+        let (market_data_tracker_tx, market_data_tracker) = MarketDataTracker::new();
+        let (order_tracker_tx, order_tracker) = OrderTracker::new();
+        // init handler
+        let client = Client {
+            writer,
+            // connection,
+            client_id,
+            server_version,
+            conn_state,
+            next_req_id: AtomicUsize::new(0),
+            subscriptions_by_time: HashMap::new(),
+            min_timespan_before_unsubscribe: chrono::Duration::milliseconds(500),
+            notify_shutdown,
+            shutdown_complete_tx,
+            shutdown_complete_rx,
+            subscribe_handler_tx,
+            order_tracker,
+            account_tracker: account,
+            account_update_tracker: account_update,
+            market_data_tracker,
+            contract_events: contract,
+            message_tracker: message,
+        };
+        let test = client.notify_shutdown.subscribe();
+        tokio::spawn(async move {
+            // Process the connection. If an error is encountered, log it.
+            if let Err(err) = run(
+                reader,
+                server_version,
+                subscribe_handler_rx,
+                test,
+                order_tracker_tx,
+                account_tx,
+                account_update_tx,
+                market_data_tracker_tx,
+                contract_tx,
+                message_tx,
+            )
+            .await
+            {
+                tracing::error!(cause = ?err, "connection error");
+            }
+        });
+        Ok(client)
+    }
+
     /// Checks connection status
     pub const fn is_connected(&self) -> bool {
         matches!(self.conn_state, ConnectionStatus::CONNECTED)
@@ -334,7 +433,7 @@ impl Client {
         Ok(())
     }
 
-    pub fn subscribe_message_updates(&mut self) -> Receiver<TwsApiMessage> {
+    pub fn subscribe_message_updates(&self) -> Receiver<TwsApiMessage> {
         self.message_tracker.clone()
     }
 
