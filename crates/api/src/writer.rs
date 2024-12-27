@@ -1,10 +1,8 @@
 use std::io;
 
 // use bytes::BytesMut;
-use tokio::{
-    io::{AsyncWriteExt, BufWriter},
-    net::tcp::OwnedWriteHalf,
-};
+use tokio::{io::{AsyncWriteExt, BufWriter},
+            net::tcp::OwnedWriteHalf};
 
 use crate::frame::Frame;
 

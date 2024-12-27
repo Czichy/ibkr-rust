@@ -1,4 +1,4 @@
-use crossbeam::channel::Receiver;
+use flume::Receiver;
 use tokio::{net::ToSocketAddrs, runtime::Runtime};
 
 use crate::{account::AccountData,

@@ -1,4 +1,4 @@
-use crossbeam::channel::Receiver;
+use flume::Receiver;
 use futures::{Stream, StreamExt};
 use tokio::sync::mpsc;
 use tracing::{debug, instrument};

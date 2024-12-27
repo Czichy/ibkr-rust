@@ -1,6 +1,6 @@
 use std::str::Split;
 
-use crossbeam::channel::{unbounded, Receiver, Sender};
+use flume::{unbounded, Receiver, Sender};
 use rust_decimal::prelude::*;
 use rust_decimal_macros::dec;
 #[cfg(feature = "serde")]

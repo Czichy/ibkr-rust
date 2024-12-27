@@ -16,6 +16,7 @@ chrono-tz.workspace = true
 crossbeam .workspace = true
 derive_more.workspace = true
 enum-ordinalize.workspace = true
+flume.workspace = true
 futures.workspace = true
 lazy_static.workspace = true
 num-derive.workspace = true

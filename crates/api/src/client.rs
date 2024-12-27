@@ -5,7 +5,7 @@ use std::{collections::{HashMap, VecDeque},
           sync::atomic::AtomicUsize};
 
 use chrono::{DateTime, Utc};
-use crossbeam::channel::{unbounded, Receiver, Sender};
+use flume::{unbounded, Receiver, Sender};
 use tokio::{net::{TcpStream, ToSocketAddrs},
             sync::{broadcast, mpsc}};
 use tracing::{debug, error, info, instrument};

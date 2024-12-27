@@ -1,8 +1,8 @@
 use std::str::{FromStr, Split};
 
 use bitvec::prelude::*;
-use crossbeam::channel::{unbounded, Receiver, Sender};
 use derive_more::From;
+use flume::{unbounded, Receiver, Sender};
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
 

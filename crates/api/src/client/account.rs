@@ -1,4 +1,4 @@
-use crossbeam::channel::Receiver;
+use flume::Receiver;
 use tracing::debug;
 
 use super::Client;
