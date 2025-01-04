@@ -262,8 +262,8 @@ pub async fn flex_statement_from_file(path: PathBuf) -> Result<FlexStatement> {
         .unwrap())
 }
 
-pub fn flex_statements_from_str(xml: String) -> Result<Vec<FlexStatement>> {
-    let response: FlexQueryResponse = from_str(&xml)?;
+pub fn flex_statements_from_str(xml: &str) -> Result<Vec<FlexStatement>> {
+    let response: FlexQueryResponse = from_str(xml)?;
     Ok(response.flex_statements.statements)
 }
 #[cfg(test)]
