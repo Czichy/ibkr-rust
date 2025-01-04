@@ -45,7 +45,7 @@ pub(crate) struct FlexStatementRequestResponse {
 
 #[derive(Deserialize, Debug)]
 #[serde(rename_all = "PascalCase")]
-pub(crate) struct FlexQueryResponse {
+pub struct FlexQueryResponse {
     #[allow(dead_code)]
     #[serde(rename = "errors", default)]
     pub errors: Vec<ErrorMessage>,

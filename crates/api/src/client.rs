@@ -57,7 +57,7 @@ pub enum Request {
 //     details: Option<ContractDetails>,
 // }
 
-/// Established connection with a Redis server.
+/// Established connection.
 ///
 /// Backed by a single `TcpStream`, `Client` provides basic network client
 /// functionality (no pooling, retrying, ...). Connections are established using
