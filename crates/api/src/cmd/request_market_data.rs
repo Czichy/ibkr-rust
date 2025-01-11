@@ -1,4 +1,4 @@
-use std::{fmt::{Display, Formatter},
+use std::{fmt::{Display, Formatter, Write},
           str::FromStr};
 
 use bytes::Bytes;
@@ -291,8 +291,11 @@ impl IntoIbkrFrame for HistoricalDataRequest {
         let chart_options_str = self
             .chart_options
             .iter()
-            .map(|x| format!("{}={};", x.tag, x.value))
-            .collect::<String>();
+            .fold(String::new(), |mut output, x| {
+                let _ = write!(output, "{}={};", x.tag, x.value);
+                output
+            });
+
         msg.push_str(&chart_options_str.encode());
         msg.push('\0');
         let msg = msg.as_str().to_ib_message().unwrap();
@@ -359,8 +362,10 @@ impl IntoIbkrFrame for HistoricalTicksRequest {
         let misc_options_str = self
             .misc_options
             .iter()
-            .map(|x| format!("{}={};", x.tag, x.value))
-            .collect::<String>();
+            .fold(String::new(), |mut output, x| {
+                let _ = write!(output, "{}={};", x.tag, x.value);
+                output
+            });
         msg.push_str(&misc_options_str.encode());
         msg.push('\0');
         let msg = msg.as_str().to_ib_message().unwrap();
@@ -567,11 +572,13 @@ impl IntoIbkrFrame for RealtimeBarRequest {
         msg.push_str(&self.what_to_show.encode());
         msg.push_str(&self.use_rth.encode());
 
-        let options_str = self
-            .real_time_bars_options
-            .iter()
-            .map(|x| format!("{}={};", x.tag, x.value))
-            .collect::<String>();
+        let options_str =
+            self.real_time_bars_options
+                .iter()
+                .fold(String::new(), |mut output, x| {
+                    let _ = write!(output, "{}={};", x.tag, x.value);
+                    output
+                });
         msg.push_str(&options_str.encode());
         msg.push('\0');
         let msg = msg.as_str().to_ib_message().unwrap();

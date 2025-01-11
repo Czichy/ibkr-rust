@@ -3,7 +3,7 @@ use iso_currency::Currency;
 use rust_decimal::Decimal;
 use serde::Deserialize;
 
-use crate::{flex_statement::contract::Contract, utils::de::*};
+use crate::{enums::MultiDate, flex_statement::contract::Contract, utils::de::*};
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct StmtFunds {
@@ -74,12 +74,14 @@ pub struct StatementOfFundsLine {
     pub order_id: Option<u64>,
 
     #[serde(rename = "@reportDate")]
-    #[serde(deserialize_with = "naive_date_from_str")]
-    pub report_date: NaiveDate,
+    #[serde(deserialize_with = "multi_date_from_str")]
+    // Note: The XML attribute may contain either a date or a string, i.e. tradeDate="MULTI"
+    pub report_date: Option<MultiDate>,
 
     #[serde(rename = "@settleDate")]
-    #[serde(deserialize_with = "some_naive_date_from_str")]
-    pub settle_date: Option<NaiveDate>,
+    #[serde(deserialize_with = "multi_date_from_str")]
+    // Note: The XML attribute may contain either a date or a string, i.e. tradeDate="MULTI"
+    pub settle_date: Option<MultiDate>,
 
     #[serde(rename = "@tradeCode")]
     #[serde(deserialize_with = "deserialize_option_from_str")]

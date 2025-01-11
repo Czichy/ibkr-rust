@@ -5,6 +5,8 @@ pub mod de {
     use chrono::{NaiveDate, NaiveDateTime};
     use serde::{de, Deserialize, Deserializer};
 
+    use crate::enums::MultiDate;
+
     // You can use this deserializer for any type that implements FromStr
     // and the FromStr::Err implements Display
     pub fn deserialize_from_str<'de, S, D>(deserializer: D) -> core::result::Result<S, D::Error>
@@ -161,6 +163,13 @@ pub mod de {
         D: Deserializer<'de>,
     {
         let s: String = Deserialize::deserialize(deserializer)?;
+        parse_naive_date_from_str::<D>(s)
+    }
+
+    pub fn parse_naive_date_from_str<'de, D>(s: String) -> Result<Option<NaiveDate>, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
         if s.is_empty() {
             return Ok(None);
         }
@@ -178,5 +187,25 @@ pub mod de {
             "unknown date time format: {}",
             s
         )))
+    }
+
+    pub(crate) fn multi_date_from_str<'de, D>(
+        deserializer: D,
+    ) -> core::result::Result<Option<MultiDate>, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let str_sequence = String::deserialize(deserializer)?;
+        Ok(match str_sequence.as_ref() {
+            "MULTI" => Some(MultiDate::Multi),
+            "" => None,
+            _ => {
+                if let Ok(Some(dt)) = parse_naive_date_from_str::<D>(str_sequence.clone()) {
+                    Some(MultiDate::Date(dt))
+                } else {
+                    Some(MultiDate::Other(str_sequence.clone()))
+                }
+            },
+        })
     }
 }

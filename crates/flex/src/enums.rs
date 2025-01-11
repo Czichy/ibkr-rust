@@ -377,3 +377,9 @@ impl FromStr for ActionType {
         }
     }
 }
+#[derive(Debug, Deserialize, Clone, PartialEq, Eq)]
+pub enum MultiDate {
+    Multi,
+    Other(String),
+    Date(chrono::NaiveDate),
+}
