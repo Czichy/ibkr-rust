@@ -33,7 +33,7 @@ pub struct OpenPosition {
 
     #[serde(rename = "@position")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
-    pub position: Option<i64>,
+    pub position: Option<Decimal>,
 
     #[serde(rename = "@markPrice")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
