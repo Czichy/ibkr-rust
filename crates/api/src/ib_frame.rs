@@ -5,9 +5,8 @@ use chrono::{DateTime, TimeZone, Timelike, Utc};
 use derive_more::From;
 
 use crate::{account::{AccountData, AccountLastUpdate, Position},
-            bars::{HistoricalBars, RealtimeBar},
-            contract,
-            contract::Contract,
+            bars::{HistoricalBars, HistoricalDataEnd, RealtimeBar},
+            contract::{self, Contract},
             enums::*,
             order::{CommissionReport, Execution, OrderInformation, OrderStatusUpdate},
             prelude::HistoricalSchedule,
@@ -109,9 +108,11 @@ pub enum IBFrame {
     CurrentTime(TimeStamp),
 
     Error {
-        req_id:  i32,
-        status:  i32,
-        message: Option<String>,
+        req_id:                   i32,
+        timestamp:                TimeStamp,
+        code:                     i32,
+        advanced_order_rejection: Option<String>,
+        message:                  Option<String>,
     },
 
     Execution(Execution),
@@ -119,6 +120,7 @@ pub enum IBFrame {
     HeadTimestamp(HeadTimestamp),
 
     HistoricalBars(HistoricalBars),
+    HistoricalDataEnd(HistoricalDataEnd),
 
     HistoricalSchedule(HistoricalSchedule),
 
@@ -366,6 +368,13 @@ impl IBFrame {
                 )?))
             },
 
+            Incoming::HistoricalDataEnd => {
+                Ok(IBFrame::HistoricalDataEnd(HistoricalDataEnd {
+                    req_id:          decode(&mut it)?.unwrap(),
+                    start_timestamp: decode(&mut it)?.unwrap(),
+                    end_timestamp:   decode(&mut it)?.unwrap(),
+                }))
+            },
             Incoming::HistoricalDataUpdate => {
                 Ok(IBFrame::RealtimeBar(RealtimeBar::try_parse_frame(
                     msg_id,
@@ -396,13 +405,68 @@ impl IBFrame {
             },
 
             Incoming::ErrMsg => {
-                it.next(); // skip version
+                // it.next(); // skip version
                 Ok(IBFrame::Error {
-                    req_id:  decode(&mut it)?.unwrap(),
-                    status:  decode(&mut it)?.unwrap(),
-                    message: decode(&mut it)?,
+                    req_id:                   decode(&mut it)?.unwrap(),
+                    code:                     decode(&mut it)?.unwrap(),
+                    message:                  decode(&mut it)?,
+                    advanced_order_rejection: decode(&mut it)?,
+                    timestamp:                decode(&mut it)?.unwrap(),
                 })
             },
+            // Incoming::MarketDepth => todo!(),
+            // Incoming::MarketDepthL2 => todo!(),
+            // Incoming::NewsBulletins => todo!(),
+            // Incoming::ReceiveFa => todo!(),
+            // Incoming::BondContractData => todo!(),
+            // Incoming::ScannerParameters => todo!(),
+            // Incoming::ScannerData => todo!(),
+            // Incoming::TickOptionComputation => todo!(),
+            // Incoming::TickEfp => todo!(),
+            // Incoming::FundamentalData => todo!(),
+            // Incoming::ExecutionDataEnd => todo!(),
+            // Incoming::DeltaNeutralValidation => todo!(),
+            // Incoming::TickSnapshotEnd => todo!(),
+            // Incoming::MarketDataType => todo!(),
+            // Incoming::PositionData => todo!(),
+            // Incoming::PositionEnd => todo!(),
+            // Incoming::AccountSummaryEnd => todo!(),
+            // Incoming::VerifyMessageApi => todo!(),
+            // Incoming::VerifyCompleted => todo!(),
+            // Incoming::DisplayGroupList => todo!(),
+            // Incoming::DisplayGroupUpdated => todo!(),
+            // Incoming::VerifyAndAuthMessageApi => todo!(),
+            // Incoming::VerifyAndAuthCompleted => todo!(),
+            // Incoming::PositionMulti => todo!(),
+            // Incoming::PositionMultiEnd => todo!(),
+            // Incoming::AccountUpdateMulti => todo!(),
+            // Incoming::AccountUpdateMultiEnd => todo!(),
+            // Incoming::SecurityDefinitionOptionParameter => todo!(),
+            // Incoming::SecurityDefinitionOptionParameterEnd => todo!(),
+            // Incoming::SoftDollarTiers => todo!(),
+            // Incoming::FamilyCodes => todo!(),
+            // Incoming::SymbolSamples => todo!(),
+            // Incoming::MktDepthExchanges => todo!(),
+            // Incoming::TickReqParams => todo!(),
+            // Incoming::SmartComponents => todo!(),
+            // Incoming::NewsArticle => todo!(),
+            // Incoming::TickNews => todo!(),
+            // Incoming::NewsProviders => todo!(),
+            // Incoming::HistoricalNews => todo!(),
+            // Incoming::HistoricalNewsEnd => todo!(),
+            // Incoming::HistogramData => todo!(),
+            // Incoming::RerouteMktDataReq => todo!(),
+            // Incoming::RerouteMktDepthReq => todo!(),
+            // Incoming::MarketRule => todo!(),
+            // Incoming::PnL => todo!(),
+            // Incoming::PnlSingle => todo!(),
+            // Incoming::OrderBound => todo!(),
+            // Incoming::CompletedOrdersEnd => todo!(),
+            // Incoming::ReplaceFAEnd => todo!(),
+            // Incoming::WshMetaData => todo!(),
+            // Incoming::WshEventData => todo!(),
+            // Incoming::UserInfo => todo!(),
+            // Incoming::CurrentTimeInMillis => todo!(),
             _ => Ok(IBFrame::NotImplemented),
         }
     }

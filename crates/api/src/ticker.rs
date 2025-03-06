@@ -6,7 +6,7 @@ use flume::{unbounded, Receiver, Sender};
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
 
-use crate::{bars::{HistoricalBars, HistoricalSchedule, RealtimeBar},
+use crate::{bars::{HistoricalBars, HistoricalDataEnd, HistoricalSchedule, RealtimeBar},
             ib_frame::{ParseError, ParseIbkrFrame, ParseResult},
             prelude::{constants::UNSET_INTEGER,
                       ib_message::{decode, Decodable, Encodable},
@@ -26,6 +26,7 @@ pub struct MarketDataTracker {
     pub market_depth:        Receiver<MarketDepthUpdate>,
     pub historical_ticks:    Receiver<HistoricalTicks>,
     pub historical_bars:     Receiver<HistoricalBars>,
+    pub historical_data_end: Receiver<HistoricalDataEnd>,
     pub historical_schedule: Receiver<HistoricalSchedule>,
     pub head_timestamp:      Receiver<HeadTimestamp>,
 }
@@ -36,6 +37,7 @@ pub(crate) struct MarketDataTrackerSender {
     pub bars_tx:                Sender<RealtimeBar>,
     pub historical_ticks_tx:    Sender<HistoricalTicks>,
     pub historical_bars_tx:     Sender<HistoricalBars>,
+    pub historical_data_end_tx: Sender<HistoricalDataEnd>,
     pub historical_schedule_tx: Sender<HistoricalSchedule>,
     pub head_timestamp_tx:      Sender<HeadTimestamp>,
 }
@@ -46,6 +48,7 @@ impl MarketDataTracker {
         let (bars_tx, bars) = unbounded();
         let (historical_ticks_tx, historical_ticks) = unbounded();
         let (historical_bars_tx, historical_bars) = unbounded();
+        let (historical_data_end_tx, historical_data_end) = unbounded();
         let (historical_schedule_tx, historical_schedule) = unbounded();
         let (head_timestamp_tx, head_timestamp) = unbounded();
         (
@@ -55,6 +58,7 @@ impl MarketDataTracker {
                 market_depth_tx,
                 historical_ticks_tx,
                 historical_bars_tx,
+                historical_data_end_tx,
                 historical_schedule_tx,
                 head_timestamp_tx,
             },
@@ -63,6 +67,7 @@ impl MarketDataTracker {
                 bars,
                 market_depth,
                 historical_bars,
+                historical_data_end,
                 historical_ticks,
                 historical_schedule,
                 head_timestamp,
@@ -447,6 +452,7 @@ pub struct HistoricalTicks {
     pub done:  bool,
 }
 impl ParseIbkrFrame for HistoricalTicks {
+    #[allow(clippy::complexity)]
     fn try_parse_frame(
         msg_id: Incoming,
         server_version: Option<ServerVersion>,

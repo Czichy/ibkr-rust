@@ -1,6 +1,6 @@
 use chrono::{DateTime, Utc};
 
-use crate::RequestId;
+use crate::{RequestId, TimeStamp};
 
 // #[derive(Clone, Debug)]
 // pub struct TwsApiMessage {
@@ -63,9 +63,11 @@ pub enum TwsApiMessage {
     },
 
     TwsError {
-        req_id:  Option<RequestId>,
-        status:  i32,
-        message: Option<String>,
+        req_id:                   Option<RequestId>,
+        code:                     i32,
+        message:                  Option<String>,
+        advanced_order_rejection: Option<String>,
+        timestamp:                TimeStamp,
     },
 
     ServerTime(DateTime<Utc>),

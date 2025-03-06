@@ -6,6 +6,7 @@ use std::{net::{IpAddr, Ipv4Addr, SocketAddr},
 use chrono::Utc;
 use ibkr_rust_api::{client,
                     prelude::{Contract, *}};
+use tracing::error;
 fn get_client_addr() -> SocketAddr {
     SocketAddr::new(IpAddr::V4(Ipv4Addr::new(192, 168, 1, 62)), 1111)
 }
@@ -123,7 +124,8 @@ async fn market_data_historical_data() -> Result<()> {
         .request_historical_data(&HistoricalDataRequest {
             req_id: 1010,
             contract,
-            end_date_time: None,
+            // end_date_time: None,
+            end_date_time: Some(Utc::now()),
             duration: Duration::Seconds(60),
             bar_size_setting: BarSize::_15Secs,
             what_to_show: HistoricalDataType::Trades,
@@ -230,6 +232,7 @@ async fn market_data_historical_bars() -> Result<()> {
         let mut count: i32 = 0;
         while let Ok(_tick) = receiver.recv() {
             count += 1;
+            error!("Bars:{_tick:?}");
         }
         assert!(count > 0);
     });
@@ -239,8 +242,9 @@ async fn market_data_historical_bars() -> Result<()> {
             contract:         contract.clone(),
             end_date_time:    Some(Utc::now()),
             duration:         Duration::Day(4),
-            bar_size_setting: BarSize::_15Mins,
-            format_date:      IntradayBarDateFormat::YYYYMMDD,
+            bar_size_setting: BarSize::_1Min,
+            format_date:      IntradayBarDateFormat::UnixEpochSeconds,
+            // format_date:      IntradayBarDateFormat::YYYYMMDD,
             keep_up_to_date:  false,
             chart_options:    vec![],
             what_to_show:     HistoricalDataType::Trades,

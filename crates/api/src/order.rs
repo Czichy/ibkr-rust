@@ -526,31 +526,54 @@ impl Encodable for Order {
 
 #[derive(Default, Debug, Clone)]
 pub struct OrderState {
-    pub order_id:                      Option<OrderId>,
-    pub perm_id:                       i32,
-    pub status:                        OrderStatus, // Option<String>,
-    pub init_margin_before:            Option<Decimal>,
-    pub maint_margin_before:           Option<Decimal>,
-    pub init_margin_change:            Option<Decimal>,
-    pub equity_with_loan_value_before: Option<Decimal>,
-    pub maint_margin_change:           Option<Decimal>,
-    pub equity_with_loan_change:       Option<Decimal>,
-    pub init_margin_after:             Option<Decimal>,
-    pub maint_margin_after:            Option<Decimal>,
-    pub equity_with_loan_after:        Option<Decimal>,
-    pub commission:                    Option<Decimal>,
-    pub min_commission:                Option<Decimal>,
-    pub max_commission:                Option<Decimal>,
-    pub commission_currency:           Option<String>,
-    pub warning_text:                  Option<String>,
-    pub completed_time:                Option<TimeStamp>,
-    pub completed_status:              Option<String>,
+    pub order_id:                            Option<OrderId>,
+    pub perm_id:                             i32,
+    pub status:                              OrderStatus, // Option<String>,
+    pub init_margin_before:                  Option<Decimal>,
+    pub maint_margin_before:                 Option<Decimal>,
+    pub init_margin_change:                  Option<Decimal>,
+    pub equity_with_loan_value_before:       Option<Decimal>,
+    pub maint_margin_change:                 Option<Decimal>,
+    pub equity_with_loan_change:             Option<Decimal>,
+    pub init_margin_after:                   Option<Decimal>,
+    pub maint_margin_after:                  Option<Decimal>,
+    pub equity_with_loan_after:              Option<Decimal>,
+    pub commission:                          Option<Decimal>,
+    pub min_commission:                      Option<Decimal>,
+    pub max_commission:                      Option<Decimal>,
+    pub commission_currency:                 Option<String>,
+    pub margin_currency:                     Option<String>,
+    pub init_margin_before_outside_rth:      Option<Decimal>,
+    pub maint_margin_before_outside_rth:     Option<Decimal>,
+    pub equity_with_loan_before_outside_rth: Option<Decimal>,
+    pub init_margin_change_outside_rth:      Option<Decimal>,
+    pub maint_margin_change_outside_rth:     Option<Decimal>,
+    pub equity_with_loan_change_outside_rth: Option<Decimal>,
+    pub init_margin_after_outside_rth:       Option<Decimal>,
+    pub maint_margin_after_outside_rth:      Option<Decimal>,
+    pub equity_with_loan_after_outside_rth:  Option<Decimal>,
+    pub suggested_size:                      Option<Decimal>,
+    pub reject_reason:                       Option<String>,
+    pub warning_text:                        Option<String>,
+    pub completed_time:                      Option<TimeStamp>,
+    pub completed_status:                    Option<String>,
 }
 
 #[derive(Default, Debug, Clone)]
 pub struct OrderInformation {
     pub order:       Order,
     pub order_state: OrderState,
+}
+
+#[derive(Debug, Clone)]
+pub struct OrderAllocation {
+    pub account:              String,
+    pub position:             Option<Decimal>,
+    pub position_desired:     Option<Decimal>,
+    pub position_after:       Option<Decimal>,
+    pub position_alloc_qty:   Option<Decimal>,
+    pub position_allowed_qty: Option<Decimal>,
+    pub is_monetary:          bool,
 }
 impl ParseIbkrFrame for OrderInformation {
     #[allow(clippy::cognitive_complexity)]
@@ -686,9 +709,9 @@ impl ParseIbkrFrame for OrderInformation {
         }
         let smart_combo_routing_params_count: Option<usize> = decode(it)?;
         if let Some(n) = smart_combo_routing_params_count {
-            let mut combo_params: Vec<(String, String)> = Vec::with_capacity(n);
+            let mut _combo_params: Vec<(String, String)> = Vec::with_capacity(n);
             for _i in 0..n {
-                combo_params.push((decode(it)?.unwrap(), decode(it)?.unwrap()));
+                _combo_params.push((decode(it)?.unwrap(), decode(it)?.unwrap()));
             }
         }
         order.scale_init_level_size = decode(it)?;
@@ -753,9 +776,50 @@ impl ParseIbkrFrame for OrderInformation {
             min_commission: if !completed { decode(it)? } else { None },
             max_commission: if !completed { decode(it)? } else { None },
             commission_currency: if !completed { decode(it)? } else { None },
-            warning_text: if !completed { decode(it)? } else { None },
+            margin_currency: if !completed { decode(it)? } else { None },
+            init_margin_before_outside_rth: if !completed { decode(it)? } else { None },
+            maint_margin_before_outside_rth: if !completed { decode(it)? } else { None },
+            equity_with_loan_before_outside_rth: if !completed { decode(it)? } else { None },
+            init_margin_change_outside_rth: if !completed { decode(it)? } else { None },
+            maint_margin_change_outside_rth: if !completed { decode(it)? } else { None },
+            equity_with_loan_change_outside_rth: if !completed { decode(it)? } else { None },
+            init_margin_after_outside_rth: if !completed { decode(it)? } else { None },
+            maint_margin_after_outside_rth: if !completed { decode(it)? } else { None },
+            equity_with_loan_after_outside_rth: if !completed { decode(it)? } else { None },
+            suggested_size: if !completed { decode(it)? } else { None },
+            reject_reason: if !completed { decode(it)? } else { None },
+
             ..Default::default()
         };
+        let order_allocations_count: Option<usize> = decode(it)?;
+        if let Some(n) = order_allocations_count {
+            if n > 0 {
+                let mut _allocations = Vec::with_capacity(n);
+                for _i in 0..n {
+                    let order_allocation = OrderAllocation {
+                        account:              if !completed {
+                            decode(it)?.unwrap()
+                        } else {
+                            Default::default()
+                        },
+                        position:             if !completed { decode(it)? } else { None },
+                        position_desired:     if !completed { decode(it)? } else { None },
+                        position_after:       if !completed { decode(it)? } else { None },
+                        position_alloc_qty:   if !completed { decode(it)? } else { None },
+                        position_allowed_qty: if !completed { decode(it)? } else { None },
+                        is_monetary:          if !completed {
+                            decode(it)?.unwrap()
+                        } else {
+                            Default::default()
+                        },
+                    };
+                    _allocations.push(order_allocation);
+                }
+            }
+        }
+
+        order_state.warning_text = if !completed { decode(it)? } else { None };
+
         order.randomize_size = decode(it)?.unwrap();
         order.randomize_price = decode(it)?.unwrap();
         if order.order_type == OrderType::PeggedToBenchmark {

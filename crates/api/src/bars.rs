@@ -29,10 +29,10 @@ pub struct Bar {
 
 #[derive(Debug, Clone)]
 pub struct BarSeries {
-    pub start_dt: TimeStamp,
-    pub end_dt:   TimeStamp,
-    pub n_bars:   usize,
-    pub bars:     Vec<Bar>,
+    // pub start_dt: TimeStamp,
+    // pub end_dt:   TimeStamp,
+    pub n_bars: usize,
+    pub bars:   Vec<Bar>,
 }
 
 #[derive(Debug, Clone)]
@@ -180,6 +180,12 @@ impl ParseIbkrFrame for RealtimeBar {
     }
 }
 
+#[derive(Debug, Clone, Copy)]
+pub struct HistoricalDataEnd {
+    pub req_id:          i32,
+    pub start_timestamp: TimeStamp,
+    pub end_timestamp:   TimeStamp,
+}
 #[derive(Debug, Clone)]
 pub struct HistoricalBars {
     pub id:   RequestId,
@@ -197,8 +203,8 @@ impl ParseIbkrFrame for HistoricalBars {
         match msg_id {
             Incoming::HistoricalData => {
                 let id = decode(it)?.unwrap();
-                let start_dt = decode(it)?.unwrap();
-                let end_dt = decode(it)?.unwrap();
+                // let start_dt = decode(it)?.unwrap();
+                // let end_dt = decode(it)?.unwrap();
                 let n_bars = decode(it)?.unwrap();
                 let data = {
                     let mut bar_data = Vec::with_capacity(n_bars);
@@ -219,8 +225,8 @@ impl ParseIbkrFrame for HistoricalBars {
                 Ok(Self {
                     id,
                     data: BarSeries {
-                        start_dt,
-                        end_dt,
+                        // start_dt,
+                        // end_dt,
                         n_bars,
                         bars: data,
                     },

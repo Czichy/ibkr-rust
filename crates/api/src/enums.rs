@@ -138,6 +138,8 @@ pub enum Incoming {
     WshEventData            = 105,
     HistoricalSchedule      = 106,
     UserInfo                = 107,
+    HistoricalDataEnd       = 108,
+    CurrentTimeInMillis     = 109,
 }
 
 impl FromStr for Incoming {

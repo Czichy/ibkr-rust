@@ -700,6 +700,12 @@ impl Handler {
                     IBFrame::HistoricalBars(bars) => {
                         self.market_data_tracker_tx.historical_bars_tx.send(bars)?;
                     },
+
+                    IBFrame::HistoricalDataEnd(historical_data_end) => {
+                        self.market_data_tracker_tx
+                            .historical_data_end_tx
+                            .send(historical_data_end)?;
+                    },
                     IBFrame::HistoricalSchedule(schedule) => {
                         self.market_data_tracker_tx
                             .historical_schedule_tx
@@ -718,10 +724,12 @@ impl Handler {
                     },
                     IBFrame::Error {
                         req_id,
-                        status,
+                        code,
                         message,
+                        advanced_order_rejection,
+                        timestamp,
                     } => {
-                        error!("id:{}\tcode:{}\t{:#?}", req_id, status, message);
+                        error!("id:{}\tcode:{}\t{:#?}", req_id, code, message);
                         let req_id = if req_id < 0 {
                             None
                         } else {
@@ -729,8 +737,10 @@ impl Handler {
                         };
                         self.message_events_tx.send(TwsApiMessage::TwsError {
                             req_id,
-                            status,
+                            code,
                             message,
+                            advanced_order_rejection,
+                            timestamp,
                         })?;
                     },
                     // TODO: Implement missing IBFrames

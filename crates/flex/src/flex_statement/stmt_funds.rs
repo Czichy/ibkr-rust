@@ -159,7 +159,9 @@ mod tests {
                     level_of_detail:      "BaseCurrency".to_string(),
                     model:                None,
                     order_id:             None,
-                    report_date:          NaiveDate::from_str("2022-02-15").unwrap(),
+                    report_date:          Some(MultiDate::Date(
+                        NaiveDate::from_str("2022-02-15").unwrap()
+                    )),
                     settle_date:          None,
                     trade_code:           None,
                     trade_commission:     Some(dec!(0),),
@@ -186,8 +188,12 @@ mod tests {
                     level_of_detail:      "Currency".to_string(),
                     model:                None,
                     order_id:             None,
-                    report_date:          NaiveDate::from_str("2023-01-30").unwrap(),
-                    settle_date:          Some(NaiveDate::from_str("2023-01-31").unwrap()),
+                    report_date:          Some(MultiDate::Date(
+                        NaiveDate::from_str("2023-01-30").unwrap()
+                    )),
+                    settle_date:          Some(MultiDate::Date(
+                        NaiveDate::from_str("2023-01-31").unwrap()
+                    )),
                     trade_code:           None,
                     trade_commission:     Some(dec!(0)),
                     trade_gross:          Some(dec!(0)),
@@ -234,8 +240,12 @@ mod tests {
                     level_of_detail:      "BaseCurrency".to_string(),
                     model:                None,
                     order_id:             Some(299500993),
-                    report_date:          NaiveDate::from_str("2022-02-14").unwrap(),
-                    settle_date:          Some(NaiveDate::from_str("2022-02-16").unwrap()),
+                    report_date:          Some(MultiDate::Date(
+                        NaiveDate::from_str("2022-02-14").unwrap()
+                    )),
+                    settle_date:          Some(MultiDate::Date(
+                        NaiveDate::from_str("2022-02-16").unwrap()
+                    )),
                     trade_code:           Some("P".to_string()),
                     trade_commission:     Some(dec!(-0.88444),),
                     trade_gross:          Some(dec!(-1557.49884),),
