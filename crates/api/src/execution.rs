@@ -91,7 +91,7 @@ pub struct Execution {
     pub pending_price_revision: bool,
 
     /// Submitter
-    pub submitter: String,
+    pub submitter: Option<String>,
 }
 
 impl ParseIbkrFrame for Execution {
@@ -134,7 +134,7 @@ impl ParseIbkrFrame for Execution {
             model_code: decode(it)?,
             last_liquidity: decode(it)?.unwrap(),
             pending_price_revision: decode(it)?.unwrap(),
-            submitter: decode(it)?.unwrap(),
+            submitter: decode(it)?,
         })
     }
 }
