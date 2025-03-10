@@ -686,6 +686,22 @@ impl Handler {
                     IBFrame::Execution(execution) => {
                         self.order_tracker_tx.executions_tx.send(execution)?;
                     },
+                    IBFrame::ExecutionDataEnd(_req_id) => {
+                        // match self.requests.remove_entry(&req_id) {
+                        //     Some((_, sender)) => {
+                        //         sender
+                        //             .send(ResponseWithId {
+                        //                 req_id,
+                        //                 response: None,
+                        //             })
+                        //             .await?;
+                        //     },
+                        //     None => {
+                        //         debug!("No pending contract details request
+                        // for req_id {}", req_id);
+                        //     },
+                        // };
+                    },
                     IBFrame::CommissionReport(commission) => {
                         self.order_tracker_tx
                             .commission_reports_tx

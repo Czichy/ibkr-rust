@@ -28,10 +28,10 @@ pub enum Liquidity {
 impl Encodable for Liquidity {
     fn encode(&self) -> String {
         match self {
-            Liquidity::Unknown => "None",
-            Liquidity::AddedLiquidity => "Added Liquidity",
-            Liquidity::RemovedLiquidity => "Removed Liquidity",
-            Liquidity::LiquidityRoutedOut => "Liquidity Routed Out",
+            Liquidity::Unknown => "0\0",
+            Liquidity::AddedLiquidity => "1\0",
+            Liquidity::RemovedLiquidity => "2\0",
+            Liquidity::LiquidityRoutedOut => "3\0",
         }
         .to_string()
     }
@@ -42,10 +42,10 @@ impl FromStr for Liquidity {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
-            "None" => Ok(Self::Unknown),
-            "Added Liquidity" => Ok(Self::AddedLiquidity),
-            "Removed Liquidity" => Ok(Self::RemovedLiquidity),
-            "Liquidity Routed Out" => Ok(Self::LiquidityRoutedOut),
+            "0" => Ok(Self::Unknown),
+            "1" => Ok(Self::AddedLiquidity),
+            "2" => Ok(Self::RemovedLiquidity),
+            "3" => Ok(Self::LiquidityRoutedOut),
             &_ => Err(ParseEnumError),
         }
     }
@@ -106,21 +106,23 @@ impl ParseIbkrFrame for Execution {
         if !matches!(msg_id, Incoming::ExecutionData) {
             return Err(ParseError::UnexpectedMessage);
         }
-        it.next(); // skip version
+        // let _req_id: i32 = decode(it)?.unwrap();
         let order_id: i32 = decode(it)?.unwrap();
-        let _req_id: i32 = decode(it)?.unwrap();
         let contract = Contract::try_parse_frame(msg_id, server_version, it)?;
-
+        let exec_id = decode(it)?.unwrap();
+        tracing::debug!("parse execution id - {exec_id}!");
         Ok(Self {
             order_id,
             contract,
-            exec_id: decode(it)?.unwrap(),
+            exec_id,
+            // exec_id: decode(it)?.unwrap(),
             time: decode(it)?.unwrap(),
             acct_number: decode(it)?.unwrap(),
             exchange: decode(it)?,
             side: decode(it)?.unwrap(),
             shares: decode(it)?.unwrap(),
             price: decode(it)?.unwrap(),
+
             perm_id: decode(it)?.unwrap(),
             client_id: decode(it)?.unwrap(),
             liquidation: decode(it)?.unwrap(),

@@ -119,6 +119,9 @@ pub enum IBFrame {
 
     Execution(Execution),
 
+    #[from(ignore)]
+    ExecutionDataEnd(RequestId),
+
     HeadTimestamp(HeadTimestamp),
 
     HistoricalBars(HistoricalBars),
@@ -307,11 +310,17 @@ impl IBFrame {
             },
 
             Incoming::ExecutionData => {
+                let _req_id: usize = decode(&mut it)?.unwrap();
                 Ok(IBFrame::Execution(Execution::try_parse_frame(
                     msg_id,
                     server_version,
                     &mut it,
                 )?))
+            },
+            Incoming::ExecutionDataEnd => {
+                tracing::debug!("execution request end!");
+                it.next(); // skip version
+                Ok(IBFrame::ExecutionDataEnd(decode(&mut it)?.unwrap()))
             },
 
             Incoming::OrderStatus => {
@@ -426,7 +435,6 @@ impl IBFrame {
             // Incoming::TickOptionComputation => todo!(),
             // Incoming::TickEfp => todo!(),
             // Incoming::FundamentalData => todo!(),
-            // Incoming::ExecutionDataEnd => todo!(),
             // Incoming::DeltaNeutralValidation => todo!(),
             // Incoming::TickSnapshotEnd => todo!(),
             // Incoming::MarketDataType => todo!(),

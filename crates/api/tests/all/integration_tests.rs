@@ -185,10 +185,10 @@ async fn executions_filtered() -> Result<()> {
             // tracing::debug!("got order with state:  {:?}", order_state);
         }
     });
-    let filter = Some(ExecutionFilter {
+    let filter = Some(ibkr_rust_api::execution::ExecutionFilter {
         client_id: None,
         account_code: "U7502027".to_string(),
-        // symbol: "NIO".into(),
+        symbol: "TSLA".into(),
         time: "20250301-00:12:59".to_string(),
         ..Default::default()
     });
