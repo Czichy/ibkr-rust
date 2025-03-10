@@ -6,9 +6,11 @@ use derive_more::From;
 
 use crate::{account::{AccountData, AccountLastUpdate, Position},
             bars::{HistoricalBars, HistoricalDataEnd, RealtimeBar},
+            commission_and_fees_report::CommissionAndFeesReport,
             contract::{self, Contract},
             enums::*,
-            order::{CommissionReport, Execution, OrderInformation, OrderStatusUpdate},
+            execution::Execution,
+            order_state::{OrderInformation, OrderStatusUpdate},
             prelude::HistoricalSchedule,
             ticker::{HeadTimestamp,
                      HistoricalTicks,
@@ -94,7 +96,7 @@ pub enum IBFrame {
     #[from(ignore)]
     AccountValue(AccountData),
 
-    CommissionReport(CommissionReport),
+    CommissionReport(CommissionAndFeesReport),
 
     CompletedOrder(OrderInformation),
 
@@ -300,7 +302,7 @@ impl IBFrame {
 
             Incoming::CommissionReport => {
                 Ok(IBFrame::CommissionReport(
-                    CommissionReport::try_parse_frame(msg_id, server_version, &mut it)?,
+                    CommissionAndFeesReport::try_parse_frame(msg_id, server_version, &mut it)?,
                 ))
             },
 

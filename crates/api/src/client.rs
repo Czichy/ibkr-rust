@@ -12,7 +12,8 @@ use tracing::{debug, error, info, instrument};
 
 use crate::{cmd::*,
             ib_frame::IBFrame,
-            order::{OrderTracker, OrderTrackerSender},
+            order_state::OrderState,
+            order_tracker::{OrderTracker, OrderTrackerSender},
             prelude::*,
             reader::Reader,
             shutdown::Shutdown,

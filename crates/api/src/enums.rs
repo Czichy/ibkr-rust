@@ -311,261 +311,6 @@ impl Encodable for FundamentalDataType {
     }
 }
 
-// #[derive(Debug, Clone, Copy)]
-// /// use regular trading hours only, 1 for yes or 0 for no
-// pub enum UseRegularTradingHoursOnly {
-//     DontUse,
-//     Use,
-// }
-
-// impl Encodable for UseRegularTradingHoursOnly {
-//     fn encode(&self) -> String {
-//         match self {
-//             Self::DontUse => "0\0",
-//             Self::Use => "1\0",
-//         }
-//         .to_string()
-//     }
-// }
-
-// impl FromStr for UseRegularTradingHoursOnly {
-//     type Err = ParseEnumError;
-
-//     fn from_str(s: &str) -> Result<Self, Self::Err> {
-//         match s {
-//             "0" => Ok(Self::DontUse),
-//             "1" => Ok(Self::Use),
-//             &_ => Err(ParseEnumError),
-//         }
-//     }
-// }
-
-// impl Decodable for UseRegularTradingHoursOnly {}
-
-// #[derive(Debug, Clone, Copy)]
-// pub enum UsePriceMgmtAlgo {
-//     DontUse,
-//     Use,
-// }
-
-// impl Encodable for UsePriceMgmtAlgo {
-//     fn encode(&self) -> String {
-//         match self {
-//             UsePriceMgmtAlgo::DontUse => "0\0",
-//             UsePriceMgmtAlgo::Use => "1\0",
-//         }
-//         .to_string()
-//     }
-// }
-
-// impl FromStr for UsePriceMgmtAlgo {
-//     type Err = ParseEnumError;
-
-//     fn from_str(s: &str) -> Result<Self, Self::Err> {
-//         match s {
-//             "0" => Ok(UsePriceMgmtAlgo::DontUse),
-//             "1" => Ok(UsePriceMgmtAlgo::Use),
-//             &_ => Err(ParseEnumError),
-//         }
-//     }
-// }
-
-// impl Decodable for UsePriceMgmtAlgo {}
-// #[derive(Debug, Clone, Deserialize, Copy)]
-// pub enum Side {
-//     #[serde(rename = "BUY")]
-//     Buy,
-//     #[serde(rename = "SELL")]
-//     Sell,
-// }
-
-// impl Encodable for Side {
-//     fn encode(&self) -> String {
-//         match self {
-//             Side::Buy => "BOT\0",
-//             Side::Sell => "SLD\0",
-//         }
-//         .to_string()
-//     }
-// }
-
-// impl FromStr for Side {
-//     type Err = ParseEnumError;
-
-//     fn from_str(s: &str) -> Result<Self, Self::Err> {
-//         match s {
-//             "BOT" => Ok(Side::Buy),
-//             "SLD" => Ok(Side::Sell),
-//             "BUY" => Ok(Side::Sell),
-//             "SELL" => Ok(Side::Sell),
-//             &_ => Err(ParseEnumError),
-//         }
-//     }
-// }
-
-// impl Decodable for Side {}
-
-// #[derive(FromPrimitive, Debug, Clone, enum_ordinalize::Ordinalize, Copy)]
-// pub enum OrderConditionType {
-//     Price = 1,
-//     Time = 3,
-//     Margin = 4,
-//     Execution = 5,
-//     Volume = 6,
-//     PercentChange = 7,
-// }
-
-// impl Encodable for OrderConditionType {
-//     fn encode(&self) -> String {
-//         let ord = self.ordinal();
-//         ord.to_string() + "\0"
-//     }
-// }
-
-// impl FromStr for OrderConditionType {
-//     type Err = ParseEnumError;
-
-//     fn from_str(s: &str) -> Result<Self, Self::Err> {
-//         let ord = match s.parse::<i32>() {
-//             Ok(n) => n,
-//             Err(_) => return Err(ParseEnumError),
-//         };
-//         match FromPrimitive::from_i32(ord) {
-//             Some(en_type) => Ok(en_type),
-//             None => Err(ParseEnumError),
-//         }
-//     }
-// }
-
-// #[derive(Debug, Clone, Copy)]
-// pub enum OrderStatus {
-//     /// indicates that you have transmitted the order, but have not yet
-// received     /// confirmation that it has been accepted by the order
-// destination.     /// This order status is not sent by TWS and should be
-// explicitly set by the     /// API developer when an order is submitted.
-//     PendingSubmit,
-
-//     /// PendingCancel - indicates that you have sent a request to cancel the
-//     /// order but have not yet received cancel confirmation from the order
-//     /// destination. At this point, your order is not confirmed canceled.
-//     /// You may still receive an execution while your cancellation request
-//     /// is pending. This order status is not sent by TWS and should be
-//     /// explicitly set by the API developer when an order is canceled.
-//     PendingCancel,
-
-//     /// indicates that a simulated order type has been accepted by the IB
-// system     /// and that this order has yet to be elected. The order is held
-// in the     /// IB system (and the status remains DARK BLUE) until the
-// election     /// criteria are met. At that time the order is transmitted to
-// the order     /// destination as specified (and the order status color will
-// change).     PreSubmitted,
-
-//     /// indicates that your order has been accepted at the order destination
-// and     /// is working.
-//     Submitted,
-
-//     /// indicates that the balance of your order has been confirmed canceled
-// by     /// the IB system. This could occur unexpectedly when IB or the
-//     /// destination has rejected your order.
-//     Cancelled,
-
-//     /// The order has been completely filled.
-//     Filled,
-
-//     /// The Order is inactive
-//     Inactive,
-
-//     /// The order is Partially Filled
-//     PartiallyFilled,
-
-//     /// Api Pending
-//     ApiPending,
-
-//     /// Api Cancelled
-//     ApiCancelled,
-
-//     /// Indicates that there is an error with this order
-//     /// This order status is not sent by TWS and should be explicitly set by
-// the     /// API developer when an error has occured.
-//     Error,
-
-//     /// No Order Status
-//     None,
-// }
-
-// impl Default for OrderStatus {
-//     fn default() -> Self {
-//         OrderStatus::None
-//     }
-// }
-
-// impl Encodable for OrderStatus {
-//     fn encode(&self) -> String {
-//         match self {
-//             OrderStatus::PendingSubmit => "PendingSubmit\0",
-
-//             OrderStatus::PendingCancel => "PendingCancel\0",
-
-//             OrderStatus::PreSubmitted => "PreSubmitted\0",
-
-//             OrderStatus::Submitted => "Submitted\0",
-
-//             OrderStatus::Cancelled => "Cancelled\0",
-
-//             OrderStatus::Filled => "Filled\0",
-
-//             OrderStatus::Inactive => "Inactive\0",
-
-//             OrderStatus::PartiallyFilled => "PartiallyFilled\0",
-
-//             OrderStatus::ApiPending => "ApiPending\0",
-
-//             OrderStatus::ApiCancelled => "ApiCancelled\0",
-
-//             OrderStatus::Error => "Error\0",
-
-//             OrderStatus::None => "\0",
-//         }
-//         .to_string()
-//     }
-// }
-
-// impl FromStr for OrderStatus {
-//     type Err = ParseEnumError;
-
-//     fn from_str(s: &str) -> Result<Self, Self::Err> {
-//         match s {
-//             "PendingSubmit" => Ok(OrderStatus::PendingSubmit),
-
-//             "PendingCancel" => Ok(OrderStatus::PendingCancel),
-
-//             "PreSubmitted" => Ok(OrderStatus::PreSubmitted),
-
-//             "Submitted" => Ok(OrderStatus::Submitted),
-
-//             "Cancelled" => Ok(OrderStatus::Cancelled),
-
-//             "Filled" => Ok(OrderStatus::Filled),
-
-//             "Inactive" => Ok(OrderStatus::Inactive),
-
-//             "PartiallyFilled" => Ok(OrderStatus::PartiallyFilled),
-
-//             "ApiPending" => Ok(OrderStatus::ApiPending),
-
-//             "ApiCancelled" => Ok(OrderStatus::ApiCancelled),
-
-//             "Error" => Ok(OrderStatus::Error),
-
-//             "" => Ok(OrderStatus::None),
-//             &_ => Err(ParseEnumError),
-//         }
-//     }
-// }
-
-// impl Decodable for OrderStatus {}
-
-// impl Decodable for OrderConditionType {}
 #[derive(Clone, Debug, Default)]
 pub struct TagValue {
     pub tag:   String,
@@ -575,232 +320,755 @@ pub struct TagValue {
 impl TagValue {
     pub const fn new(tag: String, value: String) -> Self { TagValue { tag, value } }
 }
-// #[derive(Debug, PartialEq, Eq, Clone, Copy)]
-// pub enum HistoricalDataType {
-//     Trades,
-//     Midpoint,
-//     Bid,
-//     Ask,
-//     BidAsk,
-//     AdjustedLast,
-//     HistoricalVolatility,
-//     OptionImpliedVolatility,
-//     RebateRate,
-//     FeeRate,
-//     YieldBid,
-//     YieldAsk,
-//     YieldBidAsk,
-//     YieldLast,
-//     Schedule,
-// }
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum ComboAction {
+    Buy,
+    Sell,
+    ShortSell,
+}
 
-// impl Encodable for HistoricalDataType {
-//     fn encode(&self) -> String {
-//         match self {
-//             HistoricalDataType::Trades => "TRADES\0",
-//             HistoricalDataType::Midpoint => "MIDPOINT\0",
-//             HistoricalDataType::Bid => "BID\0",
-//             HistoricalDataType::Ask => "ASK\0",
-//             HistoricalDataType::BidAsk => "BID_ASK\0",
-//             HistoricalDataType::AdjustedLast => "ADJUSTED_LAST\0",
-//             HistoricalDataType::HistoricalVolatility =>
-// "HISTORICAL_VOLATILITY\0",
-// HistoricalDataType::OptionImpliedVolatility => "OPTION_IMPLIED_VOLATILITY\0",
-//             HistoricalDataType::RebateRate => "REBATE_RATE\0",
-//             HistoricalDataType::FeeRate => "FEE_RATE\0",
-//             HistoricalDataType::YieldBid => "YIELD_BID\0",
-//             HistoricalDataType::YieldAsk => "YIELD_ASK\0",
-//             HistoricalDataType::YieldBidAsk => "YIELD_BID_ASK\0",
-//             HistoricalDataType::YieldLast => "YIELD_LAST\0",
-//             HistoricalDataType::Schedule => "SCHEDULE\0",
-//         }
-//         .to_string()
-//     }
-// }
-// impl Default for HistoricalDataType {
-//     fn default() -> Self {
-//         Self::Trades
-//     }
-// }
+impl Encodable for ComboAction {
+    fn encode(&self) -> String {
+        match self {
+            ComboAction::Buy => "BUY\0",
+            ComboAction::Sell => "SELL\0",
+            ComboAction::ShortSell => "SSELL\0",
+        }
+        .to_string()
+    }
+}
 
-// impl FromStr for HistoricalDataType {
-//     type Err = ParseEnumError;
+impl FromStr for ComboAction {
+    type Err = ParseEnumError;
 
-//     fn from_str(s: &str) -> Result<Self, Self::Err> {
-//         let res = match s {
-//             "TRADES" => HistoricalDataType::Trades,
-//             "MIDPOINT" => HistoricalDataType::Midpoint,
-//             "BID" => HistoricalDataType::Bid,
-//             "ASK" => HistoricalDataType::Ask,
-//             "BID_ASK" => HistoricalDataType::BidAsk,
-//             "ADJUSTED_LAST" => HistoricalDataType::AdjustedLast,
-//             "HISTORICAL_VOLATILITY" =>
-// HistoricalDataType::HistoricalVolatility,
-// "OPTION_IMPLIED_VOLATILITY" => HistoricalDataType::OptionImpliedVolatility,
-//             "REBATE_RATE" => HistoricalDataType::RebateRate,
-//             "FEE_RATE" => HistoricalDataType::FeeRate,
-//             "YIELD_BID" => HistoricalDataType::YieldBid,
-//             "YIELD_ASK" => HistoricalDataType::YieldAsk,
-//             "YIELD_BID_ASK" => HistoricalDataType::YieldBidAsk,
-//             "YIELD_LAST" => HistoricalDataType::YieldLast,
-//             "SCHEDULE" => HistoricalDataType::Schedule,
-//             &_ => return Err(ParseEnumError),
-//         };
-//         Ok(res)
-//     }
-// }
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "BUY" => Ok(ComboAction::Buy),
+            "SELL" => Ok(ComboAction::Sell),
+            "SSELL" => Ok(ComboAction::ShortSell),
+            &_ => Err(ParseEnumError),
+        }
+    }
+}
 
-// impl Display for HistoricalDataType {
-//     fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
-//         write!(f, "{:?}", self)
-//     }
-// }
+impl Decodable for ComboAction {}
 
-// impl Decodable for HistoricalDataType {}
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum OptionOpenClose {
+    Same,
+    Open,
+    Close,
+    Unknown,
+}
 
-// #[derive(Debug, PartialEq, Eq, Clone, Copy)]
-// pub enum BarSize {
-//     _1Secs,
-//     _5Secs,
-//     _10Secs,
-//     _15Secs,
-//     _30Secs,
-//     _1Min,
-//     _2Mins,
-//     _3Mins,
-//     _5Mins,
-//     _10Mins,
-//     _15Mins,
-//     _20Mins,
-//     _30Mins,
-//     _1Hour,
-//     _4Hours,
-//     _1Day,
-//     _1Week,
-//     _1Month,
-// }
+impl Encodable for OptionOpenClose {
+    fn encode(&self) -> String {
+        match self {
+            OptionOpenClose::Same => "0\0",
+            OptionOpenClose::Open => "1\0",
+            OptionOpenClose::Close => "2\0",
+            OptionOpenClose::Unknown => "3\0",
+        }
+        .to_string()
+    }
+}
 
-// impl Encodable for BarSize {
-//     fn encode(&self) -> String {
-//         match self {
-//             BarSize::_1Secs => "1 secs\0",
-//             BarSize::_5Secs => "5 secs\0",
-//             BarSize::_10Secs => "10 secs\0",
-//             BarSize::_15Secs => "15 secs\0",
-//             BarSize::_30Secs => "30 secs\0",
-//             BarSize::_1Min => "1 min\0",
-//             BarSize::_2Mins => "2 mins\0",
-//             BarSize::_3Mins => "3 mins\0",
-//             BarSize::_5Mins => "5 mins\0",
-//             BarSize::_10Mins => "10 mins\0",
-//             BarSize::_15Mins => "15 mins\0",
-//             BarSize::_20Mins => "20 mins\0",
-//             BarSize::_30Mins => "30 mins\0",
-//             BarSize::_1Hour => "1 hour\0",
-//             BarSize::_4Hours => "4 hours\0",
-//             BarSize::_1Day => "1 day\0",
-//             BarSize::_1Week => "1 week\0",
-//             BarSize::_1Month => "1 month\0",
-//         }
-//         .to_string()
-//     }
-// }
-// impl Default for BarSize {
-//     fn default() -> Self {
-//         Self::_1Min
-//     }
-// }
+impl FromStr for OptionOpenClose {
+    type Err = ParseEnumError;
 
-// impl FromStr for BarSize {
-//     type Err = ParseEnumError;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "0" => Ok(OptionOpenClose::Same),
+            "1" => Ok(OptionOpenClose::Open),
+            "2" => Ok(OptionOpenClose::Close),
+            "3" => Ok(OptionOpenClose::Unknown),
+            &_ => Err(ParseEnumError),
+        }
+    }
+}
 
-//     fn from_str(s: &str) -> Result<Self, Self::Err> {
-//         let res = match s {
-//             "1 secs" => BarSize::_1Secs,
-//             "5 secs" => BarSize::_5Secs,
-//             "10 secs" => BarSize::_10Secs,
-//             "15 secs" => BarSize::_15Secs,
-//             "30 secs" => BarSize::_30Secs,
-//             "1 min" => BarSize::_1Min,
-//             "2 mins" => BarSize::_2Mins,
-//             "3 mins" => BarSize::_3Mins,
-//             "5 mins" => BarSize::_5Mins,
-//             "10 mins" => BarSize::_10Mins,
-//             "15 mins" => BarSize::_15Mins,
-//             "20 mins" => BarSize::_20Mins,
-//             "30 mins" => BarSize::_30Mins,
-//             "1 hour" => BarSize::_1Hour,
-//             "4 hours" => BarSize::_4Hours,
-//             "1 day" => BarSize::_1Day,
-//             "1 week" => BarSize::_1Week,
-//             "1 month" => BarSize::_1Month,
-//             &_ => return Err(ParseEnumError),
-//         };
-//         Ok(res)
-//     }
-// }
+impl Decodable for OptionOpenClose {}
 
-// impl Display for BarSize {
-//     fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
-//         write!(f, "{:?}", self)
-//     }
-// }
-// impl Decodable for BarSize {}
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum ShortSaleSlot {
+    NoSlot,
+    Broker,
+    ThirdParty,
+}
 
-// #[derive(Debug, PartialEq, Eq, Clone, Copy)]
-// pub enum Duration {
-//     Seconds(u32),
-//     Day(u32),
-//     Week(u32),
-//     Month(u32),
-//     Year(u32),
-// }
+impl Encodable for ShortSaleSlot {
+    fn encode(&self) -> String {
+        match self {
+            ShortSaleSlot::NoSlot => "0\0",
+            ShortSaleSlot::Broker => "1\0",
+            ShortSaleSlot::ThirdParty => "2\0",
+        }
+        .to_string()
+    }
+}
 
-// impl Encodable for Duration {
-//     fn encode(&self) -> String {
-//         match self {
-//             Duration::Seconds(value) => format!("{} {}\0", value, 'S'),
-//             Duration::Day(value) => format!("{} {}\0", value, 'D'),
-//             Duration::Week(value) => format!("{} {}\0", value, 'W'),
-//             Duration::Month(value) => format!("{} {}\0", value, 'M'),
-//             Duration::Year(value) => format!("{} {}\0", value, 'Y'),
-//         }
-//     }
-// }
-// impl Default for Duration {
-//     fn default() -> Self {
-//         Self::Day(1)
-//     }
-// }
+impl FromStr for ShortSaleSlot {
+    type Err = ParseEnumError;
 
-// impl FromStr for Duration {
-//     type Err = ParseEnumError;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "0" => Ok(ShortSaleSlot::NoSlot),
+            "1" => Ok(ShortSaleSlot::Broker),
+            "2" => Ok(ShortSaleSlot::ThirdParty),
+            &_ => Err(ParseEnumError),
+        }
+    }
+}
 
-//     fn from_str(s: &str) -> Result<Self, Self::Err> {
-//         let mut s = s.split_whitespace();
-//         // if s.len() != 2 {
-//         //     Err(ParseEnumError)
-//         // } else {
-//         // let res = if let Some(value) =
-//         s.next()
-//             .and_then(|v| v.parse::<u32>().ok())
-//             .and_then(|value| {
-//                 s.next().and_then(|d| d.chars().next()).map(|d| match d {
-//                     'S' => Ok(Duration::Seconds(value)),
-//                     'D' => Ok(Duration::Day(value)),
-//                     'W' => Ok(Duration::Week(value)),
-//                     'M' => Ok(Duration::Month(value)),
-//                     'Y' => Ok(Duration::Year(value)),
-//                     _ => Err(ParseEnumError),
-//                 })
-//             })
-//             .unwrap_or(Err(ParseEnumError))
-//     }
-// }
+impl Decodable for ShortSaleSlot {}
 
-// impl Display for Duration {
-//     fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
-//         write!(f, "{:?}", self)
-//     }
-// }
-// impl Decodable for Duration {}
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+#[derive(Debug, Clone, Copy, Default)]
+pub enum Action {
+    #[default]
+    Buy,
+    Sell,
+    SellShort,
+    SellLong,
+}
+
+impl Encodable for Action {
+    fn encode(&self) -> String {
+        match self {
+            Action::Buy => "BUY\0",
+            Action::Sell => "SELL\0",
+            Action::SellShort => "SSELL\0",
+            Action::SellLong => "SLONG\0",
+        }
+        .to_string()
+    }
+}
+
+impl FromStr for Action {
+    type Err = ParseEnumError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "BUY" => Ok(Action::Buy),
+            "SELL" => Ok(Action::Sell),
+            "SSELL" => Ok(Action::SellShort),
+            "SLONG" => Ok(Action::SellLong),
+            &_ => Err(ParseEnumError),
+        }
+    }
+}
+
+impl Decodable for Action {}
+
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+#[derive(Debug, Clone, Copy)]
+pub enum OrderOpenClose {
+    Open,
+    Close,
+}
+
+impl Encodable for OrderOpenClose {
+    fn encode(&self) -> String {
+        match self {
+            OrderOpenClose::Open => "O\0",
+            OrderOpenClose::Close => "C\0",
+        }
+        .to_string()
+    }
+}
+
+impl FromStr for OrderOpenClose {
+    type Err = ParseEnumError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "O" => Ok(OrderOpenClose::Open),
+            "C" => Ok(OrderOpenClose::Close),
+            &_ => Err(ParseEnumError),
+        }
+    }
+}
+
+impl Decodable for OrderOpenClose {}
+
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Default)]
+pub enum OrderType {
+    NoOrderType, // only legit for deltaNeutralOrderType
+    Limit,
+    #[default]
+    Market,
+    MarketIfTouched,
+    MarketOnClose,
+    MarketOnOpen,
+    PeggedToMarket,
+    PeggedToStock,
+    PeggedToPrimary,
+    BoxTop,
+    LimitIfTouched,
+    LimitOnClose,
+    PassiveRelative,
+    PeggedToMidpoint,
+    MarketToLimit,
+    MarketWithProtection,
+    MidPrice,
+    Stop,
+    StopLimit,
+    StopWithProtection,
+    TrailingStop,
+    TrailingStopLimit,
+    RelativeLimit,
+    RelativeMarket,
+    Volatility,
+    PeggedToBenchmark,
+}
+impl Encodable for OrderType {
+    fn encode(&self) -> String {
+        match self {
+            OrderType::NoOrderType => "None\0",
+            OrderType::Limit => "LMT\0",
+            OrderType::Market => "MKT\0",
+            OrderType::MarketIfTouched => "MIT\0",
+            OrderType::MarketOnClose => "MOC\0",
+            OrderType::MarketOnOpen => "MOO\0",
+            OrderType::PeggedToMarket => "PEG MKT\0",
+            OrderType::PeggedToStock => "PEG STK\0",
+            OrderType::PeggedToPrimary => "REL\0",
+            OrderType::BoxTop => "BOX TOP\0",
+            OrderType::LimitIfTouched => "LIT\0",
+            OrderType::LimitOnClose => "LOC\0",
+            OrderType::PassiveRelative => "PASSV REL\0",
+            OrderType::PeggedToMidpoint => "PEG MID\0",
+            OrderType::MarketToLimit => "MTL\0",
+            OrderType::MarketWithProtection => "MKT PRT\0",
+            OrderType::MidPrice => "MIDPRICE\0",
+            OrderType::Stop => "STP\0",
+            OrderType::StopLimit => "STP LMT\0",
+            OrderType::StopWithProtection => "STP PRT\0",
+            OrderType::TrailingStop => "TRAIL\0",
+            OrderType::TrailingStopLimit => "TRAIL LIMIT\0",
+            OrderType::RelativeLimit => "Rel + LMT\0",
+            OrderType::RelativeMarket => "Rel + MKT\0",
+            OrderType::Volatility => "VOL\0",
+            OrderType::PeggedToBenchmark => "PEG BENCH\0",
+        }
+        .to_string()
+    }
+}
+
+impl FromStr for OrderType {
+    type Err = ParseEnumError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "None" => Ok(OrderType::NoOrderType),
+            "Keine" => Ok(OrderType::NoOrderType),
+            "LMT" => Ok(OrderType::Limit),
+            "MKT" => Ok(OrderType::Market),
+            "MIT" => Ok(OrderType::MarketIfTouched),
+            "MOC" => Ok(OrderType::MarketOnClose),
+            "MOO" => Ok(OrderType::MarketOnOpen),
+            "PEG MKT" => Ok(OrderType::PeggedToMarket),
+            "PEG STK" => Ok(OrderType::PeggedToStock),
+            "REL" => Ok(OrderType::PeggedToPrimary),
+            "BOX TOP" => Ok(OrderType::BoxTop),
+            "LIT" => Ok(OrderType::LimitIfTouched),
+            "LOC" => Ok(OrderType::LimitOnClose),
+            "PASSV REL" => Ok(OrderType::PassiveRelative),
+            "PEG MID" => Ok(OrderType::PeggedToMidpoint),
+            "MTL" => Ok(OrderType::MarketToLimit),
+            "MKT PRT" => Ok(OrderType::MarketWithProtection),
+            "MIDPRICE" => Ok(OrderType::MidPrice),
+            "STP" => Ok(OrderType::Stop),
+            "STP LMT" => Ok(OrderType::StopLimit),
+            "STP PRT" => Ok(OrderType::StopWithProtection),
+            "TRAIL" => Ok(OrderType::TrailingStop),
+            "TRAIL LIMIT" => Ok(OrderType::TrailingStopLimit),
+            "REL + LMT" => Ok(OrderType::RelativeLimit),
+            "REL + MKT" => Ok(OrderType::RelativeMarket),
+            "VOL" => Ok(OrderType::Volatility),
+            "PEG BENCH" => Ok(OrderType::PeggedToBenchmark),
+            &_ => Err(ParseEnumError),
+        }
+    }
+}
+impl Decodable for OrderType {}
+
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+#[derive(Debug, Clone, Copy)]
+pub enum TriggerMethod {
+    Default,
+    DoubleBidAsk,
+    Last,
+    DoubleLast,
+    BidAsk,
+    LastOrBidAsk,
+    MidPoint,
+}
+
+impl Encodable for TriggerMethod {
+    fn encode(&self) -> String {
+        match self {
+            TriggerMethod::Default => "0\0",
+            TriggerMethod::DoubleBidAsk => "1\0",
+            TriggerMethod::Last => "2\0",
+            TriggerMethod::DoubleLast => "3\0",
+            TriggerMethod::BidAsk => "4\0",
+            TriggerMethod::LastOrBidAsk => "7\0",
+            TriggerMethod::MidPoint => "8\0",
+        }
+        .to_string()
+    }
+}
+
+impl FromStr for TriggerMethod {
+    type Err = ParseEnumError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "0" => Ok(TriggerMethod::Default),
+            "1" => Ok(TriggerMethod::DoubleBidAsk),
+            "2" => Ok(TriggerMethod::Last),
+            "3" => Ok(TriggerMethod::DoubleLast),
+            "4" => Ok(TriggerMethod::BidAsk),
+            "7" => Ok(TriggerMethod::LastOrBidAsk),
+            "8" => Ok(TriggerMethod::MidPoint),
+            &_ => Err(ParseEnumError),
+        }
+    }
+}
+
+impl Decodable for TriggerMethod {}
+
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+#[derive(Debug, Clone, Copy)]
+pub enum TimeInForce {
+    Day,
+    GoodTillCancel,
+    ImmediateOrCancel,
+    GoodUntilDate,
+    GoodOnOpen,
+    FillOrKill,
+    DayUntilCancel,
+}
+
+impl Encodable for TimeInForce {
+    fn encode(&self) -> String {
+        match self {
+            TimeInForce::Day => "DAY\0",
+            TimeInForce::GoodTillCancel => "GTC\0",
+            TimeInForce::ImmediateOrCancel => "IOC\0",
+            TimeInForce::GoodUntilDate => "GTD\0",
+            TimeInForce::GoodOnOpen => "OPG\0",
+            TimeInForce::FillOrKill => "FOK\0",
+            TimeInForce::DayUntilCancel => "DTC\0",
+        }
+        .to_string()
+    }
+}
+
+impl FromStr for TimeInForce {
+    type Err = ParseEnumError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "DAY" => Ok(TimeInForce::Day),
+            "GTC" => Ok(TimeInForce::GoodTillCancel),
+            "IOC" => Ok(TimeInForce::ImmediateOrCancel),
+            "GTD" => Ok(TimeInForce::GoodTillCancel),
+            "OPG" => Ok(TimeInForce::GoodOnOpen),
+            "FOK" => Ok(TimeInForce::FillOrKill),
+            "DTC" => Ok(TimeInForce::DayUntilCancel),
+            &_ => Err(ParseEnumError),
+        }
+    }
+}
+
+impl Decodable for TimeInForce {}
+
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+#[derive(Debug, Clone, Copy)]
+pub enum Rule80A {
+    Individual,
+    Agency,
+    AgentOtherMember,
+    IndividualPTIA,
+    AgencyPTIA,
+    AgentOtherMemberPTIA,
+    IndividualPT,
+    AgencyPT,
+    AgentOtherMemberPT,
+    None,
+}
+
+impl Encodable for Rule80A {
+    fn encode(&self) -> String {
+        match *self {
+            Rule80A::Individual => "I\0",
+            Rule80A::Agency => "A\0",
+            Rule80A::AgentOtherMember => "W\0",
+            Rule80A::IndividualPTIA => "J\0",
+            Rule80A::AgencyPTIA => "U\0",
+            Rule80A::AgentOtherMemberPTIA => "M\0",
+            Rule80A::IndividualPT => "K\0",
+            Rule80A::AgencyPT => "Y\0",
+            Rule80A::AgentOtherMemberPT => "N\0",
+            Rule80A::None => "0\0",
+        }
+        .to_string()
+    }
+}
+
+impl FromStr for Rule80A {
+    type Err = ParseEnumError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "I" => Ok(Rule80A::Individual),
+            "A" => Ok(Rule80A::Agency),
+            "W" => Ok(Rule80A::AgentOtherMember),
+            "J" => Ok(Rule80A::IndividualPTIA),
+            "U" => Ok(Rule80A::AgencyPTIA),
+            "M" => Ok(Rule80A::AgentOtherMemberPTIA),
+            "K" => Ok(Rule80A::IndividualPT),
+            "Y" => Ok(Rule80A::AgencyPT),
+            "N" => Ok(Rule80A::AgentOtherMemberPT),
+            "0" => Ok(Rule80A::None),
+            &_ => Err(ParseEnumError),
+        }
+    }
+}
+
+impl Decodable for Rule80A {}
+
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+#[derive(Debug, Clone, Copy)]
+pub enum Origin {
+    Customer,
+    Firm,
+    Unknown,
+}
+
+impl Encodable for Origin {
+    fn encode(&self) -> String {
+        match self {
+            Origin::Customer => "0\0",
+            Origin::Firm => "1\0",
+            Origin::Unknown => "2\0",
+        }
+        .to_string()
+    }
+}
+
+impl FromStr for Origin {
+    type Err = ParseEnumError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "0" => Ok(Origin::Customer),
+            "1" => Ok(Origin::Firm),
+            "2" => Ok(Origin::Unknown),
+            &_ => Err(ParseEnumError),
+        }
+    }
+}
+
+impl Decodable for Origin {}
+
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+#[derive(Debug, Clone, Copy)]
+pub enum AuctionStrategy {
+    NoAuctionStrategy,
+    Match,
+    Improvement,
+    Transparent,
+}
+
+impl Encodable for AuctionStrategy {
+    fn encode(&self) -> String {
+        match self {
+            Self::NoAuctionStrategy => "0\0",
+            Self::Match => "1\0",
+            Self::Improvement => "2\0",
+            Self::Transparent => "3\0",
+        }
+        .to_string()
+    }
+}
+
+impl FromStr for AuctionStrategy {
+    type Err = ParseEnumError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "0" => Ok(Self::NoAuctionStrategy),
+            "1" => Ok(Self::Match),
+            "2" => Ok(Self::Improvement),
+            "3" => Ok(Self::Transparent),
+
+            &_ => Err(ParseEnumError),
+        }
+    }
+}
+
+impl Decodable for AuctionStrategy {}
+
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+#[derive(Debug, Clone, Copy)]
+pub enum OCAType {
+    NoOCAType,
+    CancelWithBlock,
+    ReduceWithBlock,
+    ReduceNonBlock,
+}
+
+impl Encodable for OCAType {
+    fn encode(&self) -> String {
+        match self {
+            OCAType::NoOCAType => "0\0",
+            OCAType::CancelWithBlock => "1\0",
+            OCAType::ReduceWithBlock => "2\0",
+            OCAType::ReduceNonBlock => "3\0",
+        }
+        .to_string()
+    }
+}
+
+impl FromStr for OCAType {
+    type Err = ParseEnumError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "0" => Ok(OCAType::NoOCAType),
+            "1" => Ok(OCAType::CancelWithBlock),
+            "2" => Ok(OCAType::ReduceWithBlock),
+            "3" => Ok(OCAType::ReduceNonBlock),
+            &_ => Err(ParseEnumError),
+        }
+    }
+}
+
+impl Decodable for OCAType {}
+
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+#[derive(Debug, Clone, Copy)]
+pub enum VolatilityType {
+    NoVolType,
+    Daily,
+    Annual,
+}
+
+impl Encodable for VolatilityType {
+    fn encode(&self) -> String {
+        match self {
+            VolatilityType::NoVolType => "0\0",
+            VolatilityType::Daily => "1\0",
+            VolatilityType::Annual => "2\0",
+        }
+        .to_string()
+    }
+}
+
+impl FromStr for VolatilityType {
+    type Err = ParseEnumError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "0" => Ok(VolatilityType::NoVolType),
+            "1" => Ok(VolatilityType::Daily),
+            "2" => Ok(VolatilityType::Annual),
+            &_ => Err(ParseEnumError),
+        }
+    }
+}
+
+impl Decodable for VolatilityType {}
+
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+#[derive(Debug, Clone, Copy)]
+pub enum ReferencePriceType {
+    NoRefPriceType,
+    Average,
+    BidOrAsk,
+}
+
+impl Encodable for ReferencePriceType {
+    fn encode(&self) -> String {
+        match self {
+            ReferencePriceType::NoRefPriceType => "0\0",
+            ReferencePriceType::Average => "1\0",
+            ReferencePriceType::BidOrAsk => "2\0",
+        }
+        .to_string()
+    }
+}
+
+impl FromStr for ReferencePriceType {
+    type Err = ParseEnumError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "0" => Ok(ReferencePriceType::NoRefPriceType),
+            "1" => Ok(ReferencePriceType::Average),
+            "2" => Ok(ReferencePriceType::BidOrAsk),
+            &_ => Err(ParseEnumError),
+        }
+    }
+}
+
+impl Decodable for ReferencePriceType {}
+
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+#[derive(Debug, Clone, Copy)]
+pub enum BasisPointsType {
+    Undefined,
+}
+
+impl Encodable for BasisPointsType {
+    fn encode(&self) -> String {
+        match self {
+            BasisPointsType::Undefined => "?\0",
+        }
+        .to_string()
+    }
+}
+
+impl FromStr for BasisPointsType {
+    type Err = ParseEnumError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "?" => Ok(BasisPointsType::Undefined),
+            &_ => Err(ParseEnumError),
+        }
+    }
+}
+
+impl Decodable for BasisPointsType {}
+
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+#[derive(PartialEq, Debug, Clone, Copy, Eq)]
+pub enum HedgeType {
+    Undefined,
+    Delta,
+    Beta,
+    Forex,
+    Pair,
+}
+
+impl Encodable for HedgeType {
+    fn encode(&self) -> String {
+        match self {
+            HedgeType::Undefined => "?\0",
+            HedgeType::Delta => "D\0",
+            HedgeType::Beta => "B\0",
+            HedgeType::Forex => "F\0",
+            HedgeType::Pair => "P\0",
+        }
+        .to_string()
+    }
+}
+
+impl FromStr for HedgeType {
+    type Err = ParseEnumError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "?" => Ok(HedgeType::Undefined),
+            "D" => Ok(HedgeType::Delta),
+            "B" => Ok(HedgeType::Beta),
+            "F" => Ok(HedgeType::Forex),
+            "P" => Ok(HedgeType::Pair),
+            &_ => Err(ParseEnumError),
+        }
+    }
+}
+
+impl Decodable for HedgeType {}
+
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+#[derive(Debug, Clone, Copy)]
+pub enum ClearingIntent {
+    InteractiveBrokers,
+    Away,
+    PTA,
+}
+
+impl Encodable for ClearingIntent {
+    fn encode(&self) -> String {
+        match self {
+            ClearingIntent::InteractiveBrokers => "IB\0",
+            ClearingIntent::Away => "Away\0",
+            ClearingIntent::PTA => "PTA\0",
+        }
+        .to_string()
+    }
+}
+
+impl FromStr for ClearingIntent {
+    type Err = ParseEnumError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "IB" => Ok(ClearingIntent::InteractiveBrokers),
+            "Away" => Ok(ClearingIntent::Away),
+            "PTA" => Ok(ClearingIntent::PTA),
+            &_ => Err(ParseEnumError),
+        }
+    }
+}
+
+impl Decodable for ClearingIntent {}
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+#[derive(Debug, Clone, Copy)]
+pub enum Side {
+    Buy,
+    Sell,
+}
+
+impl Encodable for Side {
+    fn encode(&self) -> String {
+        match self {
+            Side::Buy => "BOT\0",
+            Side::Sell => "SLD\0",
+        }
+        .to_string()
+    }
+}
+
+impl FromStr for Side {
+    type Err = ParseEnumError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "BOT" => Ok(Side::Buy),
+            "SLD" => Ok(Side::Sell),
+            "BUY" => Ok(Side::Sell),
+            "SELL" => Ok(Side::Sell),
+            &_ => Err(ParseEnumError),
+        }
+    }
+}
+
+impl Decodable for Side {}

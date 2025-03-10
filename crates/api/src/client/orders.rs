@@ -3,7 +3,8 @@ use tracing::{debug, instrument};
 
 use super::{Client, Request};
 use crate::{cmd::{PlaceOrder, RequestOrders},
-            order::{Order, OrderTracker},
+            order::Order,
+            order_tracker::OrderTracker,
             OrderId,
             Result};
 impl Client {

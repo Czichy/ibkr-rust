@@ -1,11 +1,11 @@
 use tracing::debug;
 
 use super::Client;
-use crate::{cmd::RequestExecutions, order::ExecutionFilter, RequestId, Result};
+use crate::{cmd::RequestExecutions, execution::ExecutionFilter, RequestId, Result};
 impl Client {
     //#########################################################################
-    //################## Executions
-    //################## #######################################################
+    //# Executions
+    //# ################# #######################################################
 
     /// When this function is called, the execution reports that meet the
     /// filter criteria are downloaded to the client via the execDetails()

@@ -189,10 +189,27 @@ async fn executions_filtered() -> Result<()> {
         client_id: None,
         account_code: "U7502027".to_string(),
         // symbol: "NIO".into(),
-        time: "20240805-00:12:59".to_string(),
+        time: "20250301-00:12:59".to_string(),
         ..Default::default()
     });
     client.request_executions(1, filter).await?;
+    tokio::time::sleep(std::time::Duration::from_secs(60)).await;
+    // signal::ctrl_c().await.expect("failed to listen for event");
+    Ok(())
+}
+
+#[tokio::test]
+async fn executions_unfiltered() -> Result<()> {
+    let mut client = client::connect(get_client_addr(), 0).await?;
+    tokio::time::sleep(std::time::Duration::from_secs(3)).await;
+    let receiver = client.order_tracker.executions.clone();
+    thread::spawn(move || {
+        while let Ok(fill) = receiver.recv() {
+            tracing::error!("got order:  {:?}", fill);
+            // tracing::debug!("got order with state:  {:?}", order_state);
+        }
+    });
+    client.request_executions(1, None).await?;
     tokio::time::sleep(std::time::Duration::from_secs(60)).await;
     // signal::ctrl_c().await.expect("failed to listen for event");
     Ok(())

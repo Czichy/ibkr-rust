@@ -30,11 +30,15 @@ pub mod api_message;
 pub mod bars;
 pub mod client;
 pub mod cmd;
+pub mod commission_and_fees_report;
 pub mod contract;
 pub mod enums;
+pub mod execution;
 mod frame;
 mod ib_frame;
 pub mod order;
+pub mod order_state;
+pub mod order_tracker;
 mod reader;
 mod shutdown;
 pub mod ticker;
@@ -50,11 +54,24 @@ pub type TimeStamp = DateTime<Utc>;
 
 pub mod prelude {
     #[doc(hidden)]
-    pub use crate::{
-        account::*, account_summary_tags::*, api_message::*, bars::*, client::*, cmd::*,
-        contract::*, enums::*, order::*, ticker::*, utils::*, AccountCode, ClientId, Error,
-        OrderId, RequestId, Result, TimeStamp,
-    };
+    pub use crate::{account::*,
+                    account_summary_tags::*,
+                    api_message::*,
+                    bars::*,
+                    client::*,
+                    cmd::*,
+                    contract::*,
+                    enums::*,
+                    order::*,
+                    ticker::*,
+                    utils::*,
+                    AccountCode,
+                    ClientId,
+                    Error,
+                    OrderId,
+                    RequestId,
+                    Result,
+                    TimeStamp};
 }
 // use parse::{Parse, ParseError};
 

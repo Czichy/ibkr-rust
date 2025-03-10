@@ -1,12 +1,10 @@
 use bytes::Bytes;
 
-use crate::{
-    enums::Outgoing,
-    frame::Frame,
-    order::ExecutionFilter,
-    utils::ib_message::{Encodable, IBMessage},
-    RequestId,
-};
+use crate::{enums::Outgoing,
+            execution::ExecutionFilter,
+            frame::Frame,
+            utils::ib_message::{Encodable, IBMessage},
+            RequestId};
 
 const VERSION: i32 = 3;
 #[derive(Debug)]
