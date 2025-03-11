@@ -64,7 +64,7 @@ impl Reader {
     pub async fn read_frame(
         &mut self,
         server_version: Option<ServerVersion>,
-    ) -> crate::prelude::Result<Option<IBFrame>> {
+    ) -> crate::Result<Option<IBFrame>> {
         loop {
             tracing::trace!("read frame ...");
             // Attempt to parse a frame from the buffered data. If enough data
@@ -99,7 +99,7 @@ impl Reader {
     fn parse_frame(
         &mut self,
         server_version: Option<ServerVersion>,
-    ) -> crate::prelude::Result<Option<IBFrame>> {
+    ) -> crate::Result<Option<IBFrame>> {
         use ib_frame::ParseError::Incomplete;
 
         // Cursor is used to track the "current" location in the

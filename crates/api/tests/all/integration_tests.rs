@@ -1,8 +1,8 @@
 use std::{net::{IpAddr, Ipv4Addr, SocketAddr},
           thread};
 
-use ibkr_rust_api::{client,
-                    prelude::{Contract, *}};
+use ibkr_rust_api::{client, contract::*, orders::*, Result};
+
 fn get_client_addr() -> SocketAddr {
     // SocketAddr::new(IpAddr::V4(Ipv4Addr::new(192, 168, 1, 62)), 4444)
     SocketAddr::new(IpAddr::V4(Ipv4Addr::new(192, 168, 1, 62)), 1111)
@@ -185,7 +185,7 @@ async fn executions_filtered() -> Result<()> {
             // tracing::debug!("got order with state:  {:?}", order_state);
         }
     });
-    let filter = Some(ibkr_rust_api::execution::ExecutionFilter {
+    let filter = Some(ibkr_rust_api::orders::execution::ExecutionFilter {
         client_id: None,
         account_code: "U7502027".to_string(),
         symbol: "TSLA".into(),

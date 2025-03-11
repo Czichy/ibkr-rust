@@ -5,12 +5,12 @@ use bytes::Bytes;
 use chrono::{DateTime, Local};
 
 use super::IntoIbkrFrame;
-use crate::{contract::Contract,
-            enums::{MarketDataType, Outgoing},
+use crate::{bars::{BarSize, Duration},
+            contract::Contract,
+            enums::{MarketDataType, Outgoing, ParseEnumError},
             frame::Frame,
-            prelude::{ib_message::Decodable, BarSize, Duration, ParseEnumError},
             ticker::{GenericTickType, TickByTickType},
-            utils::ib_message::{Encodable, IBMessage},
+            utils::ib_message::{Decodable, Encodable, IBMessage},
             RequestId,
             TimeStamp};
 

@@ -5,13 +5,10 @@ use chrono::{DateTime, TimeZone, Timelike, Utc};
 use derive_more::From;
 
 use crate::{account::{AccountData, AccountLastUpdate, Position},
-            bars::{HistoricalBars, HistoricalDataEnd, RealtimeBar},
-            commission_and_fees_report::CommissionAndFeesReport,
+            bars::{HistoricalBars, HistoricalDataEnd, HistoricalSchedule, RealtimeBar},
             contract::{self, Contract},
             enums::*,
-            execution::Execution,
-            order_state::{OrderInformation, OrderStatusUpdate},
-            prelude::HistoricalSchedule,
+            orders::{CommissionAndFeesReport, Execution, Order, OrderStatusUpdate},
             ticker::{HeadTimestamp,
                      HistoricalTicks,
                      Tick,
@@ -21,6 +18,7 @@ use crate::{account::{AccountData, AccountLastUpdate, Position},
                      TickString},
             utils::ib_message::{decode, IbDecodeError},
             AccountCode,
+            Error,
             OrderId,
             RequestId,
             ServerVersion,
@@ -36,7 +34,7 @@ pub enum ParseError {
     Incomplete,
 
     #[error("Invalid message encoding")]
-    Other(crate::prelude::Error),
+    Other(Error),
 
     #[error("Unexpected variant: {}", _0)]
     UnexpectedVariant(String),
@@ -98,7 +96,7 @@ pub enum IBFrame {
 
     CommissionReport(CommissionAndFeesReport),
 
-    CompletedOrder(OrderInformation),
+    CompletedOrder(Order),
 
     ContractDetails {
         req_id:           RequestId,
@@ -135,7 +133,7 @@ pub enum IBFrame {
     NotImplemented,
 
     #[from(ignore)]
-    OpenOrder(OrderInformation),
+    OpenOrder(Order),
 
     #[from(ignore)]
     OpenOrderEnd,
@@ -294,8 +292,7 @@ impl IBFrame {
                 Ok(IBFrame::OpenOrderEnd)
             },
             Incoming::OpenOrder | Incoming::CompletedOrder => {
-                let order_information =
-                    OrderInformation::try_parse_frame(msg_id, server_version, &mut it)?;
+                let order_information = Order::try_parse_frame(msg_id, server_version, &mut it)?;
                 match msg_id {
                     Incoming::OpenOrder => Ok(IBFrame::OpenOrder(order_information)),
                     Incoming::CompletedOrder => Ok(IBFrame::CompletedOrder(order_information)),

@@ -9,8 +9,8 @@ use rust_decimal::prelude::*;
 // use serde::{Deserialize, Serialize};
 use crate::{enums::*,
             ib_frame::{ParseError, ParseIbkrFrame, ParseResult},
-            prelude::ib_message::{decode, Decodable},
             utils::ib_message::Encodable,
+            utils::ib_message::{decode, Decodable},
             ServerVersion};
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ComboLeg {
@@ -62,8 +62,7 @@ pub struct Contract {
     pub include_expired:                   Option<bool>,
     pub sec_id_type:                       Option<SecIdType>,
     pub sec_id:                            Option<String>,
-    pub combo_legs_description:            Option<String>,
-    pub combo_legs:                        Option<Vec<ComboLeg>>,
+    pub combo_legs:                        Option<ComboLegs>,
     pub delta_neutral_contract:            Option<DeltaNeutralContract>,
     pub issuer_id:                         Option<String>,
 }
@@ -392,6 +391,75 @@ impl ContractDetails {
         Some(ret)
     }
 }
+
+#[derive(Debug, Clone, Default, PartialEq, Eq, Hash)]
+pub struct ComboLegs {
+    pub description: Option<String>,
+    pub legs:        Vec<ComboLeg>,
+}
+
+// TODO: Check None
+impl ParseIbkrFrame for ComboLegs {
+    #[allow(clippy::cognitive_complexity)]
+    fn try_parse_frame(
+        msg_id: Incoming,
+        server_version: Option<ServerVersion>,
+        it: &mut Split<&str>,
+    ) -> ParseResult<Self>
+    where
+        Self: Sized,
+    {
+        if !matches!(msg_id, Incoming::OpenOrder | Incoming::CompletedOrder) {
+            return Err(ParseError::UnexpectedMessage);
+        }
+        let server_version = server_version.ok_or(ParseError::MissingServerVersion)?;
+        let mut result = Self {
+            description: decode(it)?,
+            ..Default::default()
+        };
+
+        let combo_legs_count: Option<usize> = decode(it)?;
+        if let Some(n) = combo_legs_count {
+            let mut legs = Vec::with_capacity(n);
+            for _i in 0..n {
+                legs.push(ComboLeg {
+                    con_id:              decode(it)?.unwrap(),
+                    ratio:               decode(it)?.unwrap(),
+                    action:              decode(it)?.unwrap(),
+                    exchange:            decode(it)?.unwrap(),
+                    open_close:          decode(it)?,
+                    shortsale_slot:      decode(it)?,
+                    designated_location: decode(it)?,
+                    exempt_code:         decode(it)?,
+                })
+            }
+            result.legs = legs;
+        } else {
+            result.legs = Vec::new();
+        }
+        Ok(result)
+    }
+}
+
+impl Encodable for ComboLegs {
+    fn encode(&self) -> String {
+        let mut code = String::new();
+        let legs = &self.legs;
+        code.push_str(&legs.len().encode());
+        for leg in legs {
+            code.push_str(&leg.con_id.encode());
+            code.push_str(&leg.ratio.encode());
+            code.push_str(&leg.action.encode());
+            code.push_str(&leg.exchange.encode());
+            code.push_str(&leg.open_close.encode());
+            code.push_str(&leg.shortsale_slot.encode());
+            code.push_str(&leg.designated_location.encode());
+            code.push_str(&leg.exempt_code.encode());
+        }
+        code
+    }
+}
+
 #[allow(dead_code)]
 #[derive(Debug, Clone)]
 pub struct ContractDescription {

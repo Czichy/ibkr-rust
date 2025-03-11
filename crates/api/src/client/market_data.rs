@@ -1,7 +1,7 @@
 use chrono::Utc;
 
-use crate::{cmd::request_market_data::*,
-            prelude::{Client, IntoIbkrFrame},
+use crate::{client::Client,
+            cmd::{request_market_data::*, IntoIbkrFrame},
             ticker::MarketDataTracker,
             Result};
 

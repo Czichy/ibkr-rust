@@ -5,11 +5,10 @@ use std::{convert::TryFrom,
 use chrono::{NaiveDate, Utc};
 use chrono_tz::Tz;
 
-use crate::{ib_frame::{ParseError, ParseIbkrFrame, ParseResult},
-            prelude::{dateparser::Parse,
-                      ib_message::{decode, Decodable, Encodable},
-                      Incoming,
-                      ParseEnumError},
+use crate::{enums::{Incoming, ParseEnumError},
+            ib_frame::{ParseError, ParseIbkrFrame, ParseResult},
+            utils::{dateparser::Parse,
+                    ib_message::{decode, Decodable, Encodable}},
             MarketDataValueType,
             RequestId,
             ServerVersion,

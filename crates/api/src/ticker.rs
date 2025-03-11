@@ -7,13 +7,10 @@ use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
 
 use crate::{bars::{HistoricalBars, HistoricalDataEnd, HistoricalSchedule, RealtimeBar},
+            cmd::{DepthSide, MarketDepthOperation},
+            enums::{constants::UNSET_INTEGER, Incoming, ParseEnumError},
             ib_frame::{ParseError, ParseIbkrFrame, ParseResult},
-            prelude::{constants::UNSET_INTEGER,
-                      ib_message::{decode, Decodable, Encodable},
-                      DepthSide,
-                      Incoming,
-                      MarketDepthOperation,
-                      ParseEnumError},
+            utils::ib_message::{decode, Decodable, Encodable},
             MarketDataValueType,
             RequestId,
             ServerVersion,
@@ -103,6 +100,7 @@ impl ParseIbkrFrame for Tick {
     where
         Self: Sized,
     {
+        let _ = server_version;
         if !matches!(msg_id, Incoming::TickByTick) {
             tracing::error!("Unexpected Message (TickByTick): {msg_id:?}");
             return Err(ParseError::UnexpectedMessage);

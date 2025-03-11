@@ -1,5 +1,5 @@
 use flume::Receiver;
-use futures::{Stream, StreamExt};
+use futures::Stream;
 use tokio::sync::mpsc;
 use tracing::{debug, instrument};
 

@@ -2,9 +2,8 @@ use flume::Receiver;
 use tracing::debug;
 
 use super::Client;
-use crate::{account::AccountData,
+use crate::{account::{AccountData, AccountLastUpdate},
             cmd::{RequestAccountSummary, RequestAccountUpdates},
-            prelude::AccountLastUpdate,
             AccountCode,
             Result};
 impl Client {

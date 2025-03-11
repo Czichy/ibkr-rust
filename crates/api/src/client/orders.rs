@@ -3,8 +3,7 @@ use tracing::{debug, instrument};
 
 use super::{Client, Request};
 use crate::{cmd::{PlaceOrder, RequestOrders},
-            order::Order,
-            order_tracker::OrderTracker,
+            orders::{order_tracker::OrderTracker, Order},
             OrderId,
             Result};
 impl Client {
@@ -52,8 +51,8 @@ impl Client {
     ///   placed with an order ID less than or equal to the order ID of a
     ///   previous order an error will occur.
     /// * 'order'   the order
-    pub async fn place_order(&mut self, order_id: OrderId, order: Order) -> Result<()> {
-        let frame = PlaceOrder::new(order_id, order);
+    pub async fn place_order(&mut self, order: Order) -> Result<()> {
+        let frame = PlaceOrder::new(order);
 
         debug!(request = ?frame);
         // Write the frame to the socket
