@@ -667,28 +667,24 @@ impl Handler {
                         let state = OrderState {
                             order_id: order_information.order.order_id,
                             perm_id: order_information.order.perm_id,
-                            ..order_information.order_state
+                            ..order_information.order_state.clone()
                         };
                         self.order_tracker_tx.order_state_tx.send(state)?;
-                        self.order_tracker_tx
-                            .order_tx
-                            .send(order_information.order)?;
+                        self.order_tracker_tx.order_tx.send(order_information)?;
                     },
                     IBFrame::CompletedOrder(order_information) => {
                         let _order_id = order_information.order.order_id;
                         let state = OrderState {
                             order_id: order_information.order.order_id,
                             perm_id: order_information.order.perm_id,
-                            ..order_information.order_state
+                            ..order_information.order_state.clone()
                         };
                         debug!(
                             "completed order:\norder:{:?}\nstate:{:#?}",
                             &order_information.order, &state
                         );
                         self.order_tracker_tx.order_state_tx.send(state)?;
-                        self.order_tracker_tx
-                            .order_tx
-                            .send(order_information.order)?;
+                        self.order_tracker_tx.order_tx.send(order_information)?;
                     },
                     IBFrame::Execution(execution) => {
                         self.order_tracker_tx.executions_tx.send(execution)?;
