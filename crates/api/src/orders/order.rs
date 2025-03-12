@@ -639,12 +639,10 @@ impl ParseIbkrFrame for Order {
         }
         order.solicited = decode(it)?.unwrap();
         order.what_if = if !completed { decode(it)? } else { None };
-        tracing::error!("{order:#?}");
         // ####################################################################
         let mut order_state = match msg_id {
             Incoming::OpenOrder => OrderState::try_parse_frame(msg_id, Some(server_version), it)?,
             Incoming::CompletedOrder => {
-                tracing::error!("{order:#?}");
                 OrderState {
                     status: decode(it)?.unwrap(),
                     ..Default::default()
@@ -653,7 +651,6 @@ impl ParseIbkrFrame for Order {
             _ => OrderState::default(),
         };
 
-        tracing::error!("{order:#?}");
         // ####################################################################
         order.randomize_size = decode(it)?.unwrap();
         order.randomize_price = decode(it)?.unwrap();
@@ -677,7 +674,6 @@ impl ParseIbkrFrame for Order {
             }
         }
         // ####################################################################
-        tracing::error!("{order:#?}");
         let adj_order = AdjustedOrder::try_parse_frame(msg_id, Some(server_version), it)?;
 
         if adj_order.adjusted_order_type.is_some()
@@ -705,7 +701,6 @@ impl ParseIbkrFrame for Order {
                 })
             }
         }
-        tracing::error!("{order:#?}");
         order.cash_qty = decode(it)?;
         order.dont_use_auto_price_for_hedge = decode(it)?.unwrap();
         order.is_oms_container = decode(it)?.unwrap();
