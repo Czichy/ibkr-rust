@@ -188,10 +188,12 @@ impl IBFrame {
         server_version: Option<ServerVersion>,
     ) -> ParseResult<IBFrame> {
         let msg = read(src)?;
+        tracing::debug!("trying to parse message: {:?}", src);
         let utf8msg = String::from_utf8_lossy(msg);
         tracing::debug!("trying to parse message: {:?}", utf8msg);
         #[allow(clippy::single_char_pattern)]
         let mut it = utf8msg.split("\0");
+        tracing::debug!("trying to parse message: {:?}", it);
         let msg_id: Incoming = it
             .next()
             .unwrap()

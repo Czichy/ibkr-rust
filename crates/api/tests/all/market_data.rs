@@ -9,6 +9,7 @@ fn get_client_addr() -> SocketAddr {
     SocketAddr::new(IpAddr::V4(Ipv4Addr::new(192, 168, 1, 62)), 1111)
 }
 #[tokio::test]
+#[cfg_attr(not(feature = "ibkr_client_test"), ignore)]
 async fn market_data_realtime_bars() -> Result<()> {
     let mut client = client::connect(get_client_addr(), 10).await?;
     tokio::time::sleep(std::time::Duration::from_secs(3)).await;
@@ -47,6 +48,7 @@ async fn market_data_realtime_bars() -> Result<()> {
 }
 
 #[tokio::test]
+#[cfg_attr(not(feature = "ibkr_client_test"), ignore)]
 async fn market_data_market_data() -> Result<()> {
     let mut client = client::connect(get_client_addr(), 10).await?;
     tokio::time::sleep(std::time::Duration::from_secs(3)).await;
@@ -85,6 +87,7 @@ async fn market_data_market_data() -> Result<()> {
 }
 
 #[tokio::test]
+#[cfg_attr(not(feature = "ibkr_client_test"), ignore)]
 async fn market_data_historical_data() -> Result<()> {
     let mut client = client::connect(get_client_addr(), 10).await?;
     tokio::time::sleep(std::time::Duration::from_secs(3)).await;
@@ -139,6 +142,7 @@ async fn market_data_historical_data() -> Result<()> {
 }
 
 #[tokio::test]
+#[cfg_attr(not(feature = "ibkr_client_test"), ignore)]
 async fn market_data_historical_schedule() -> Result<()> {
     let mut client = client::connect(get_client_addr(), 10).await?;
     tokio::time::sleep(std::time::Duration::from_secs(3)).await;
@@ -180,6 +184,7 @@ async fn market_data_historical_schedule() -> Result<()> {
 }
 
 #[tokio::test]
+#[cfg_attr(not(feature = "ibkr_client_test"), ignore)]
 async fn market_data_historical_tick() -> Result<()> {
     let mut client = client::connect(get_client_addr(), 10).await?;
     tokio::time::sleep(std::time::Duration::from_secs(3)).await;
@@ -215,6 +220,7 @@ async fn market_data_historical_tick() -> Result<()> {
     Ok(())
 }
 #[tokio::test]
+#[cfg_attr(not(feature = "ibkr_client_test"), ignore)]
 async fn market_data_historical_bars() -> Result<()> {
     let mut client = client::connect(get_client_addr(), 10).await?;
     tokio::time::sleep(std::time::Duration::from_secs(20)).await;
@@ -254,6 +260,7 @@ async fn market_data_historical_bars() -> Result<()> {
     Ok(())
 }
 #[tokio::test]
+#[cfg_attr(not(feature = "ibkr_client_test"), ignore)]
 async fn market_data_historical_head_timestamp() -> Result<()> {
     let mut client = client::connect(get_client_addr(), 10).await?;
     tokio::time::sleep(std::time::Duration::from_secs(3)).await;
@@ -287,6 +294,7 @@ async fn market_data_historical_head_timestamp() -> Result<()> {
     Ok(())
 }
 #[tokio::test]
+#[cfg_attr(not(feature = "ibkr_client_test"), ignore)]
 async fn market_data_tick_by_tick() -> Result<()> {
     let mut client = client::connect(get_client_addr(), 10).await?;
     tokio::time::sleep(std::time::Duration::from_secs(3)).await;

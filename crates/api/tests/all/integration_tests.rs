@@ -8,6 +8,7 @@ fn get_client_addr() -> SocketAddr {
     SocketAddr::new(IpAddr::V4(Ipv4Addr::new(192, 168, 1, 62)), 1111)
 }
 #[tokio::test]
+#[cfg_attr(not(feature = "ibkr_client_test"), ignore)]
 async fn request_account_updates() -> Result<()> {
     let mut client = client::connect(get_client_addr(), 99).await?;
     client
@@ -35,6 +36,7 @@ async fn request_account_updates() -> Result<()> {
 }
 
 #[tokio::test]
+#[cfg_attr(not(feature = "ibkr_client_test"), ignore)]
 async fn request_next_valid_order_id() -> Result<()> {
     let mut client = client::connect(get_client_addr(), 99).await?;
     let order_id = &client.request_ids().await?;
@@ -43,6 +45,7 @@ async fn request_next_valid_order_id() -> Result<()> {
     Ok(())
 }
 #[tokio::test]
+#[cfg_attr(not(feature = "ibkr_client_test"), ignore)]
 async fn request_contract_details() -> Result<()> {
     // Open a connection to the mini-redis address.
     let mut client = client::connect(get_client_addr(), 1).await?;
@@ -67,6 +70,7 @@ async fn request_contract_details() -> Result<()> {
 }
 
 #[tokio::test]
+#[cfg_attr(not(feature = "ibkr_client_test"), ignore)]
 async fn request_contract_details_stream() -> Result<()> {
     // Open a connection to the mini-redis address.
     let mut client = client::connect(get_client_addr(), 1).await?;
@@ -97,6 +101,7 @@ async fn request_contract_details_stream() -> Result<()> {
 // try_iter().filter(|c| c.callable) }
 
 #[tokio::test]
+#[cfg_attr(not(feature = "ibkr_client_test"), ignore)]
 async fn orders_auto_open() -> Result<()> {
     let mut client = client::connect(get_client_addr(), 0).await?;
     let orders = client.order_tracker.order.clone();
@@ -117,6 +122,7 @@ async fn orders_auto_open() -> Result<()> {
 }
 
 #[tokio::test]
+#[cfg_attr(not(feature = "ibkr_client_test"), ignore)]
 async fn orders_all_open() -> Result<()> {
     let mut client = client::connect(get_client_addr(), 0).await?;
     tokio::time::sleep(std::time::Duration::from_secs(3)).await;
@@ -145,6 +151,7 @@ async fn orders_all_open() -> Result<()> {
 }
 
 #[tokio::test]
+#[cfg_attr(not(feature = "ibkr_client_test"), ignore)]
 async fn orders_completed() -> Result<()> {
     let mut client = client::connect(get_client_addr(), 0).await?;
     tokio::time::sleep(std::time::Duration::from_secs(3)).await;
@@ -175,6 +182,7 @@ async fn orders_completed() -> Result<()> {
     Ok(())
 }
 #[tokio::test]
+#[cfg_attr(not(feature = "ibkr_client_test"), ignore)]
 async fn executions_filtered() -> Result<()> {
     let mut client = client::connect(get_client_addr(), 0).await?;
     tokio::time::sleep(std::time::Duration::from_secs(3)).await;
@@ -199,6 +207,7 @@ async fn executions_filtered() -> Result<()> {
 }
 
 #[tokio::test]
+#[cfg_attr(not(feature = "ibkr_client_test"), ignore)]
 async fn executions_unfiltered() -> Result<()> {
     let mut client = client::connect(get_client_addr(), 0).await?;
     tokio::time::sleep(std::time::Duration::from_secs(3)).await;
@@ -216,6 +225,7 @@ async fn executions_unfiltered() -> Result<()> {
 }
 
 #[tokio::test]
+#[cfg_attr(not(feature = "ibkr_client_test"), ignore)]
 async fn place_market_order() -> Result<()> {
     // let mut client = client::connect(get_client_addr(), 2).await?;
     //// client.request_auto_open_orders(true).await?;
