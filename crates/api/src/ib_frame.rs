@@ -309,7 +309,7 @@ impl IBFrame {
             },
 
             Incoming::ExecutionData => {
-                let _req_id: usize = decode(&mut it)?.unwrap();
+                let _req_id: i32 = decode(&mut it)?.unwrap();
                 Ok(IBFrame::Execution(Execution::try_parse_frame(
                     msg_id,
                     server_version,

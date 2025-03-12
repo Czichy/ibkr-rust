@@ -44,7 +44,7 @@ mod writer;
 pub type ClientId = i32;
 pub type ServerVersion = i32;
 pub type OrderId = i32;
-pub type RequestId = usize;
+pub type RequestId = i32;
 pub type AccountCode = String;
 pub type TimeStamp = DateTime<Utc>;
 

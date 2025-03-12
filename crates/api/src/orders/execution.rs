@@ -105,7 +105,6 @@ impl ParseIbkrFrame for Execution {
         if !matches!(msg_id, Incoming::ExecutionData) {
             return Err(ParseError::UnexpectedMessage);
         }
-        // let _req_id: i32 = decode(it)?.unwrap();
         let order_id: i32 = decode(it)?.unwrap();
         let contract = Contract::try_parse_frame(msg_id, server_version, it)?;
         let exec_id = decode(it)?.unwrap();
