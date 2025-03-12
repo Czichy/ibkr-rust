@@ -3,12 +3,12 @@ use flume::{unbounded, Receiver, Sender};
 use crate::{orders::{commission_and_fees_report::CommissionAndFeesReport,
                      execution::Execution,
                      order_state::{OrderState, OrderStatusUpdate},
-                     OrderData},
+                     Order},
             OrderId};
 
 #[derive(Debug, Clone)]
 pub struct OrderTracker {
-    pub order:              Receiver<OrderData>,
+    pub order:              Receiver<Order>,
     pub order_id:           Receiver<OrderId>,
     pub error:              Option<(i32, String)>,
     pub order_state:        Receiver<OrderState>,
@@ -18,7 +18,7 @@ pub struct OrderTracker {
 }
 pub(crate) struct OrderTrackerSender {
     pub executions_tx:         Sender<Execution>,
-    pub order_tx:              Sender<OrderData>,
+    pub order_tx:              Sender<Order>,
     pub order_id_tx:           Sender<OrderId>,
     pub order_status_tx:       Sender<OrderStatusUpdate>,
     pub order_state_tx:        Sender<OrderState>,
