@@ -2,7 +2,7 @@
 //!
 //! Provides an async connect and methods for issuing the supported commands.
 use std::{collections::{HashMap, VecDeque},
-          sync::atomic::AtomicUsize};
+          sync::atomic::{AtomicI32, AtomicUsize}};
 
 use chrono::{DateTime, Utc};
 use flume::{unbounded, Receiver, Sender};
@@ -86,7 +86,7 @@ pub struct Client {
     pub client_id:                   ClientId,
     server_version:                  ServerVersion,
     pub conn_state:                  ConnectionStatus,
-    next_req_id:                     AtomicUsize,
+    next_req_id:                     AtomicI32,
     #[allow(dead_code)]
     subscriptions_by_time:           HashMap<RequestId, DateTime<Utc>>,
     #[allow(dead_code)]
@@ -209,7 +209,7 @@ pub async fn connect<T: ToSocketAddrs + Send>(addr: T, client_id: ClientId) -> R
         client_id,
         server_version,
         conn_state,
-        next_req_id: AtomicUsize::new(0),
+        next_req_id: AtomicI32::new(0),
         subscriptions_by_time: HashMap::new(),
         min_timespan_before_unsubscribe: chrono::Duration::milliseconds(500),
         notify_shutdown,
@@ -380,7 +380,7 @@ impl Client {
             client_id,
             server_version,
             conn_state,
-            next_req_id: AtomicUsize::new(0),
+            next_req_id: AtomicI32::new(0),
             subscriptions_by_time: HashMap::new(),
             min_timespan_before_unsubscribe: chrono::Duration::milliseconds(500),
             notify_shutdown,
@@ -477,7 +477,7 @@ impl Client {
         Ok(())
     }
 
-    fn get_next_req_id(&mut self) -> usize {
+    fn get_next_req_id(&mut self) -> RequestId {
         let req_id = self.next_req_id.get_mut();
         let id = *req_id;
         *req_id += 1;
@@ -529,7 +529,7 @@ struct Handler {
     subscribe_handler_rx: mpsc::Receiver<Request>,
     /// track order details request and send the result to the corresponsing
     /// receivers
-    requests:             HashMap<usize, mpsc::Sender<ResponseWithId<ContractDetails>>>,
+    requests:             HashMap<RequestId, mpsc::Sender<ResponseWithId<ContractDetails>>>,
 
     // track market data request, send the incomming frames to the corresponding receivers
     // ticker_reqs: HashMap<usize, mpsc::Sender<Option<contract::ContractDetails>>>,
@@ -750,11 +750,7 @@ impl Handler {
                         timestamp,
                     } => {
                         error!("id:{}\tcode:{}\t{:#?}", req_id, code, message);
-                        let req_id = if req_id < 0 {
-                            None
-                        } else {
-                            Some(req_id as usize)
-                        };
+                        let req_id = if req_id < 0 { None } else { Some(req_id) };
                         self.message_events_tx.send(TwsApiMessage::TwsError {
                             req_id,
                             code,

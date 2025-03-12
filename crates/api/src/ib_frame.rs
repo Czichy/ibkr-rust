@@ -138,6 +138,7 @@ pub enum IBFrame {
     #[from(ignore)]
     OpenOrderEnd,
 
+    #[from(ignore)]
     OrderId(OrderId),
 
     OrderStatus(OrderStatusUpdate),
@@ -272,7 +273,7 @@ impl IBFrame {
             },
             Incoming::ContractData => {
                 tracing::debug!("decode ContractData");
-                let req_id: usize = decode(&mut it)?.unwrap();
+                let req_id: RequestId = decode(&mut it)?.unwrap();
                 let details =
                     contract::ContractDetails::try_parse_frame(msg_id, server_version, &mut it)?;
                 Ok(IBFrame::ContractDetails {
