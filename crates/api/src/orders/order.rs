@@ -642,10 +642,9 @@ impl ParseIbkrFrame for Order {
         tracing::error!("{order:#?}");
         // ####################################################################
         let mut order_state = match msg_id {
+            Incoming::OpenOrder => OrderState::try_parse_frame(msg_id, Some(server_version), it)?,
             Incoming::CompletedOrder => {
-                OrderState::try_parse_frame(msg_id, Some(server_version), it)?
-            },
-            Incoming::OpenOrder => {
+                tracing::error!("{order:#?}");
                 OrderState {
                     status: decode(it)?.unwrap(),
                     ..Default::default()
@@ -654,6 +653,7 @@ impl ParseIbkrFrame for Order {
             _ => OrderState::default(),
         };
 
+        tracing::error!("{order:#?}");
         // ####################################################################
         order.randomize_size = decode(it)?.unwrap();
         order.randomize_price = decode(it)?.unwrap();

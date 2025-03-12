@@ -1,7 +1,6 @@
 use std::str::Split;
 
 use rust_decimal::prelude::*;
-use serde::{Deserialize, Serialize};
 
 use crate::{enums::*,
             ib_frame::{ParseError, ParseIbkrFrame, ParseResult},
@@ -113,10 +112,11 @@ impl ParseIbkrFrame for OrderState {
     where
         Self: Sized,
     {
-        if !matches!(msg_id, Incoming::CompletedOrder) {
+        if !matches!(msg_id, Incoming::OpenOrder) {
             return Err(ParseError::UnexpectedMessage);
         }
         let server_version = server_version.ok_or(ParseError::MissingServerVersion)?;
+        tracing::error!("order_state");
         let mut order_state = Self {
             status: decode(it)?.unwrap(),
 
@@ -150,6 +150,8 @@ impl ParseIbkrFrame for OrderState {
 
             ..Default::default()
         };
+
+        tracing::error!("{order_state:#?}");
         let order_allocations_count: Option<usize> = decode(it)?;
         if let Some(n) = order_allocations_count {
             if n > 0 {
