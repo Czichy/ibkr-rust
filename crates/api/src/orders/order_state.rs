@@ -116,7 +116,6 @@ impl ParseIbkrFrame for OrderState {
             return Err(ParseError::UnexpectedMessage);
         }
         let server_version = server_version.ok_or(ParseError::MissingServerVersion)?;
-        tracing::error!("order_state");
         let mut order_state = Self {
             status: decode(it)?.unwrap(),
 
@@ -151,7 +150,6 @@ impl ParseIbkrFrame for OrderState {
             ..Default::default()
         };
 
-        tracing::error!("{order_state:#?}");
         let order_allocations_count: Option<usize> = decode(it)?;
         if let Some(n) = order_allocations_count {
             if n > 0 {
