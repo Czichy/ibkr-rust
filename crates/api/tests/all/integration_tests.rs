@@ -71,6 +71,28 @@ async fn request_contract_details() -> Result<()> {
 
 #[tokio::test]
 #[cfg_attr(not(feature = "ibkr_client_test"), ignore)]
+async fn request_contract_details_con_id() -> Result<()> {
+    // Open a connection to the mini-redis address.
+    let mut client = client::connect(get_client_addr(), 1).await?;
+    let contracts = client.subscribe_contract_details().clone();
+    tokio::time::sleep(std::time::Duration::from_secs(1)).await;
+    thread::spawn(move || {
+        while let Ok(contract) = contracts.recv() {
+            tracing::error!("got contracts:  {:#?}", contract);
+        }
+    });
+    let _contract2 = Contract {
+        con_id: Some(14204),
+        ..Default::default()
+    };
+
+    let _ = &client.request_contract_details(1, _contract2).await?;
+    tokio::time::sleep(std::time::Duration::from_secs(10)).await;
+    Ok(())
+}
+
+#[tokio::test]
+#[cfg_attr(not(feature = "ibkr_client_test"), ignore)]
 async fn request_contract_details_stream() -> Result<()> {
     // Open a connection to the mini-redis address.
     let mut client = client::connect(get_client_addr(), 1).await?;

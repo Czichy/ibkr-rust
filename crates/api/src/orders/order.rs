@@ -255,7 +255,7 @@ pub struct OrderData {
     pub manual_order_indicator: Option<i32>,
 
     /// Submitter
-    pub submitter: String,
+    pub submitter: Option<String>,
 }
 
 impl OrderData {
@@ -743,7 +743,7 @@ impl ParseIbkrFrame for Order {
             order.manual_order_indicator = decode(it)?;
         }
 
-        order.submitter = decode(it)?.unwrap();
+        order.submitter = decode(it)?;
         if !completed {
             order.imbalance_only = decode(it)?.unwrap();
         }
