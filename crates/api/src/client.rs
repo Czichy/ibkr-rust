@@ -2,7 +2,7 @@
 //!
 //! Provides an async connect and methods for issuing the supported commands.
 use std::{collections::{HashMap, VecDeque},
-          sync::atomic::{AtomicI32, AtomicUsize}};
+          sync::atomic::AtomicI32};
 
 use chrono::{DateTime, Utc};
 use flume::{unbounded, Receiver, Sender};
@@ -669,6 +669,10 @@ impl Handler {
                             perm_id: order_information.order.perm_id,
                             ..order_information.order_state.clone()
                         };
+                        debug!(
+                            "completed order:\norder:{:?}\nstate:{:#?}",
+                            &order_information.order, &state
+                        );
                         self.order_tracker_tx.order_state_tx.send(state)?;
                         self.order_tracker_tx.order_tx.send(order_information)?;
                     },

@@ -600,6 +600,7 @@ impl ParseIbkrFrame for Order {
                 _combo_params.push((decode(it)?.unwrap(), decode(it)?.unwrap()));
             }
         }
+
         // ####################################################################
         order.scale_order_parameter =
             ScaleOrderParameter::try_parse_frame(msg_id, Some(server_version), it)?;

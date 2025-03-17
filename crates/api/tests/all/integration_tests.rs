@@ -5,7 +5,7 @@ use ibkr_rust_api::{client, contract::*, orders::*, Result};
 
 fn get_client_addr() -> SocketAddr {
     // SocketAddr::new(IpAddr::V4(Ipv4Addr::new(192, 168, 1, 62)), 4444)
-    SocketAddr::new(IpAddr::V4(Ipv4Addr::new(192, 168, 1, 62)), 1111)
+    SocketAddr::new(IpAddr::V4(Ipv4Addr::new(192, 168, 1, 62)), 4444)
 }
 #[tokio::test]
 #[cfg_attr(not(feature = "ibkr_client_test"), ignore)]
@@ -153,17 +153,17 @@ async fn orders_all_open() -> Result<()> {
     let rec_status = client.subscribe_orders().order_status.clone();
     thread::spawn(move || {
         while let Ok(order) = rec_order.recv() {
-            tracing::debug!("got order:  {:#?}", order);
+            tracing::error!("got order:  {:#?}", order);
         }
     });
     thread::spawn(move || {
         while let Ok(state) = rec_state.recv() {
-            tracing::debug!("got state:  {:#?}", state);
+            tracing::error!("got state:  {:#?}", state);
         }
     });
     thread::spawn(move || {
         while let Ok(status) = rec_status.recv() {
-            tracing::debug!("got status:  {:?}", status);
+            tracing::error!("got status:  {:?}", status);
         }
     });
     let _ = client.request_all_open_orders().await?;

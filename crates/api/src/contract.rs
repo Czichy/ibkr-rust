@@ -483,6 +483,7 @@ pub enum SecType {
     Commodity,
     News,
     MutualFund,
+    ContractForDifference,
 }
 
 impl Encodable for SecType {
@@ -500,6 +501,7 @@ impl Encodable for SecType {
             SecType::Commodity => "CMDTY\0",
             SecType::News => "NEWS\0",
             SecType::MutualFund => "FUND\0",
+            SecType::ContractForDifference => "CFD\0",
         }
         .to_string()
     }
@@ -525,6 +527,7 @@ impl FromStr for SecType {
             "CMDTY" => SecType::Commodity,
             "NEWS" => SecType::News,
             "FUND" => SecType::MutualFund,
+            "CFD" => SecType::ContractForDifference,
             &_ => return Err(ParseEnumError),
         };
         Ok(res)
