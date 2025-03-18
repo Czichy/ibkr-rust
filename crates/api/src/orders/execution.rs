@@ -1,8 +1,6 @@
-use std::str::Split;
+use std::str::{FromStr, Split};
 
-use rust_decimal::prelude::*;
-#[cfg(feature = "serde")]
-use serde::{Deserialize, Serialize};
+use fastnum::{decimal::Decimal, D256};
 
 use crate::{contract::Contract,
             enums::*,
@@ -15,8 +13,6 @@ use crate::{contract::Contract,
             TimeStamp};
 
 /// describing the liquidity type of an execution.
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Liquidity {
     Unknown,
@@ -66,8 +62,8 @@ pub struct Execution {
     pub acct_number:    String,
     pub exchange:       Option<String>,
     pub side:           Side,
-    pub shares:         Decimal,
-    pub price:          Decimal,
+    pub shares:         D256,
+    pub price:          D256,
     pub perm_id:        i32,
     /// The API client identifier which placed the order which originated this
     /// execution.
@@ -76,11 +72,11 @@ pub struct Execution {
     pub order_id:       OrderId,
     pub contract:       Contract,
     pub liquidation:    i32,
-    pub cum_qty:        Decimal,
-    pub avg_price:      Decimal,
+    pub cum_qty:        D256,
+    pub avg_price:      D256,
     pub order_ref:      Option<String>,
     pub ev_rule:        Option<String>,
-    pub ev_multiplier:  Option<Decimal>,
+    pub ev_multiplier:  Option<D256>,
     pub model_code:     Option<String>,
     /// The liquidity type of the execution. Requires TWS 968+ and API v973.05+.
     /// Python API specifically requires API v973.06+.

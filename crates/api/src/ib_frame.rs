@@ -55,7 +55,6 @@ pub trait FromIbkrFrame {
     ///
     /// This is called by the client when encoding a command
     /// to send to the server.
-
     #[allow(clippy::wrong_self_convention)]
     fn try_into_frame(msg_id: Incoming, it: Split<&str>) -> ParseResult<IBFrame>
     where
@@ -67,7 +66,6 @@ pub trait ParseIbkrFrame {
     ///
     /// This is called by the client when encoding a command
     /// to send to the server.
-
     #[allow(clippy::wrong_self_convention)]
     fn try_parse_frame(
         msg_id: Incoming,

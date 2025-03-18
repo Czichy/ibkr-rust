@@ -1,6 +1,6 @@
 use std::str::Split;
 
-use rust_decimal::prelude::*;
+use fastnum::{decimal::Decimal, D256};
 
 use crate::{enums::*,
             ib_frame::{ParseError, ParseIbkrFrame, ParseResult},
@@ -10,13 +10,13 @@ use crate::{enums::*,
 #[derive(Debug, Clone, Default)]
 pub struct AdjustedOrder {
     pub adjusted_order_type:       Option<String>,
-    pub trail_stop_price:          Option<Decimal>,
-    pub trigger_price:             Option<Decimal>,
-    pub adjusted_stop_price:       Option<Decimal>,
-    pub adjusted_stop_limit_price: Option<Decimal>,
-    pub adjusted_trailing_amount:  Option<Decimal>,
+    pub trail_stop_price:          Option<D256>,
+    pub trigger_price:             Option<D256>,
+    pub adjusted_stop_price:       Option<D256>,
+    pub adjusted_stop_limit_price: Option<D256>,
+    pub adjusted_trailing_amount:  Option<D256>,
     pub adjustable_trailing_unit:  i32,
-    pub lmt_price_offset:          Option<Decimal>,
+    pub lmt_price_offset:          Option<D256>,
 }
 
 // // TODO: Check None

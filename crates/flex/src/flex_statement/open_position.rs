@@ -1,5 +1,5 @@
 ﻿use chrono::NaiveDateTime;
-use rust_decimal::Decimal;
+use fastnum::{decimal::Decimal, D256};
 use serde::Deserialize;
 
 use crate::{enums::LongShort, flex_statement::contract::Contract, utils::de::*};
@@ -26,42 +26,42 @@ pub struct OpenPosition {
 
     #[serde(rename = "@fxRateToBase")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
-    pub fx_rate_to_base: Option<Decimal>,
+    pub fx_rate_to_base: Option<D256>,
 
     #[serde(flatten)]
     pub contract: Option<Contract>,
 
     #[serde(rename = "@position")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
-    pub position: Option<Decimal>,
+    pub position: Option<D256>,
 
     #[serde(rename = "@markPrice")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
-    pub mark_price: Option<Decimal>,
+    pub mark_price: Option<D256>,
 
     #[serde(rename = "@positionValue")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
-    pub position_value: Option<Decimal>,
+    pub position_value: Option<D256>,
 
     #[serde(rename = "@openPrice")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
-    pub open_price: Option<Decimal>,
+    pub open_price: Option<D256>,
 
     #[serde(rename = "@costBasisPrice")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
-    pub cost_basis_price: Option<Decimal>,
+    pub cost_basis_price: Option<D256>,
 
     #[serde(rename = "@costBasisMoney")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
-    pub cost_basis_money: Option<Decimal>,
+    pub cost_basis_money: Option<D256>,
 
     #[serde(rename = "@percentOfNAV")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
-    pub percent_of_nav: Option<Decimal>,
+    pub percent_of_nav: Option<D256>,
 
     #[serde(rename = "@fifoPnlUnrealized")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
-    pub fifo_pnl_unrealized: Option<Decimal>,
+    pub fifo_pnl_unrealized: Option<D256>,
 
     #[serde(rename = "@side")]
     pub side: LongShort,
@@ -91,7 +91,7 @@ pub struct OpenPosition {
 
     #[serde(rename = "@accruedInt")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
-    pub accrued_int: Option<Decimal>,
+    pub accrued_int: Option<D256>,
 }
 #[cfg(test)]
 mod tests {

@@ -1,6 +1,6 @@
 use std::str::Split;
 
-use rust_decimal::prelude::*;
+use fastnum::{decimal::Decimal, D256};
 
 use crate::{enums::*,
             ib_frame::{ParseError, ParseIbkrFrame, ParseResult},
@@ -11,10 +11,10 @@ use crate::{enums::*,
 pub struct ScaleOrderParameter {
     pub scale_init_level_size:       Option<i32>,
     pub scale_subs_level_size:       Option<i32>,
-    pub scale_price_increment:       Option<Decimal>,
-    pub scale_price_adjust_value:    Option<Decimal>,
+    pub scale_price_increment:       Option<D256>,
+    pub scale_price_adjust_value:    Option<D256>,
     pub scale_price_adjust_interval: Option<i32>,
-    pub scale_profit_offset:         Option<Decimal>,
+    pub scale_profit_offset:         Option<D256>,
     pub scale_auto_reset:            bool,
     pub scale_init_position:         Option<i32>,
     pub scale_init_fill_qty:         Option<i32>,
@@ -44,7 +44,7 @@ impl ParseIbkrFrame for ScaleOrderParameter {
             ..Default::default()
         };
         if let Some(incr) = result.scale_price_increment {
-            if incr > rust_decimal_macros::dec!(0.0) {
+            if incr > Decimal::ZERO {
                 result.scale_price_adjust_value = decode(it)?;
                 result.scale_price_adjust_interval = decode(it)?;
                 result.scale_profit_offset = decode(it)?;
@@ -65,7 +65,7 @@ impl crate::utils::ib_message::Encodable for ScaleOrderParameter {
         code.push_str(&self.scale_subs_level_size.encode());
         code.push_str(&self.scale_price_increment.encode());
         if let Some(inc) = self.scale_price_increment {
-            if inc > rust_decimal_macros::dec!(0.0) {
+            if inc > Decimal::ZERO {
                 code.push_str(&self.scale_price_adjust_value.encode());
                 code.push_str(&self.scale_price_adjust_interval.encode());
                 code.push_str(&self.scale_profit_offset.encode());

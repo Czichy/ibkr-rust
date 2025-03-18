@@ -1,10 +1,12 @@
 pub mod dateparser;
 
 pub mod ib_message {
-    use std::{convert::TryInto, str};
+    use std::{convert::TryInto,
+              str::{self, FromStr}};
 
     use chrono::{Local, NaiveDate, Utc};
-    use rust_decimal::prelude::*;
+    use fastnum::{decimal::{Context, Decimal, ParseError},
+                  D256};
     use tracing::log::error;
 
     use crate::{contract::OptionRight, TimeStamp};
@@ -31,7 +33,7 @@ pub mod ib_message {
     #[derive(Debug, thiserror::Error)]
     pub enum IbDecodeError {
         #[error("Unknown decimal value: '{1}'")]
-        UnknownDecimal(#[source] rust_decimal::Error, Box<str>),
+        UnknownDecimal(#[source] ParseError, Box<str>),
 
         #[error("Unknown datetime value: '{1}'")]
         UnknownDateTime(#[source] anyhow::Error, Box<str>),
@@ -69,14 +71,11 @@ pub mod ib_message {
     impl Decodable for usize {}
     impl Decodable for isize {}
     impl Decodable for f64 {}
-    impl Decodable for Decimal {
+    impl Decodable for D256 {
         fn decode_str(val: &str) -> Result<Self, IbDecodeError> {
-            match Decimal::from_str(val) {
+            match D256::from_str(val, Context::default()) {
                 Ok(decimal) => Ok(decimal),
-                Err(_) => {
-                    Ok(Decimal::from_scientific(val)
-                        .map_err(|e| IbDecodeError::UnknownDecimal(e, val.into()))?)
-                },
+                Err(e) => Err(IbDecodeError::UnknownDecimal(e, val.into())),
             }
         }
     }
@@ -158,7 +157,7 @@ pub mod ib_message {
     impl Encodable for i64 {
         fn encode(&self) -> String { self.to_string() + "\0" }
     }
-    impl Encodable for Decimal {
+    impl Encodable for D256 {
         fn encode(&self) -> String { self.to_string() + "\0" }
     }
     impl Encodable for usize {
@@ -213,8 +212,8 @@ pub mod ib_message {
 mod tests {
 
     use chrono::{Local, NaiveDate, TimeZone, Utc};
+    use fastnum::{decimal::Decimal, D256};
     use pretty_assertions::assert_eq;
-    use rust_decimal::prelude::*;
     use rust_decimal_macros::dec;
 
     use crate::{utils::ib_message::*, TimeStamp};
@@ -303,10 +302,10 @@ mod tests {
     #[test]
     fn decode_decimal() {
         let val = "1234.3";
-        let decimal: Decimal = Decimal::decode_str(val).unwrap();
-        assert_eq!(dec!(1234.3), decimal, "Decimal conversion");
+        let decimal: D256 = D256::decode_str(val).unwrap();
+        assert_eq!(dec!(1234.3), decimal, "D256 conversion");
         let val = "7.55E-4";
-        let decimal: Decimal = Decimal::decode_str(val).unwrap();
-        assert_eq!(dec!(0.000755), decimal, "Decimal conversion");
+        let decimal: D256 = D256::decode_str(val).unwrap();
+        assert_eq!(dec!(0.000755), decimal, "D256 conversion");
     }
 }

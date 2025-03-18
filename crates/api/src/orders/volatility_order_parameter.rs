@@ -1,6 +1,6 @@
 use std::str::Split;
 
-use rust_decimal::prelude::*;
+use fastnum::{decimal::Decimal, D256};
 
 use crate::{enums::*,
             ib_frame::{ParseError, ParseIbkrFrame, ParseResult},
@@ -10,7 +10,7 @@ use crate::{enums::*,
 #[derive(Debug, Clone, Default)]
 pub struct VolatilityOrderParameter {
     /// The option price in volatility
-    pub volatility:                        Option<Decimal>,
+    pub volatility:                        Option<D256>,
     ///     Values include:
     /// 1 – Daily Volatility
     /// 2 – Annual Volatility.
@@ -22,7 +22,7 @@ pub struct VolatilityOrderParameter {
     /// Use this field to enter a value if the value in the
     /// deltaNeutralOrderType field is an order type that requires an Aux price,
     /// such as a REL order. VOL orders only.
-    pub delta_neutral_aux_price:           Option<Decimal>,
+    pub delta_neutral_aux_price:           Option<D256>,
     /// The unique contract identifier specifying the security in Delta Neutral
     /// order.
     pub delta_neutral_con_id:              usize,

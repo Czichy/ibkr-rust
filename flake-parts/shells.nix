@@ -49,7 +49,7 @@
     in {
       devShells = {
         default = pkgs.mkShell {
-          name = "Seeking-Edge-shell";
+          name = "IBKR-shell";
           RUST_SRC_PATH = "${self'.packages.rust-toolchain}/lib/rustlib/src/rust/src";
           AMD_VULKAN_ICD = "RADV";
 
@@ -64,23 +64,20 @@
             ]}";
           packages = devTools ++ cargoExtraPackages ++ ciPackages;
 
-          shellHook = ''
-            # cargo install puffin_viewer -q
-            # cargo install cargo-machete -q
-            # cargo install cargo-nextest-q
-            export EDITOR=hx
-            # zellij session
-            alias zj="zellij --layout dev-layout.kdl"
+          # shellHook = ''
+          # export LD_LIBRARY_PATH="${
+          #   lib.makeLibraryPath libraries
+          # }:$LD_LIBRARY_PATH"
 
-            SESSION="seeking-edge-dev"
-            ZJ_SESSIONS=$(zellij list-sessions -n | rg 'seeking-edge-dev' ) #$SESSION )
+          # export OPENSSL_INCLUDE_DIR="${openssl.dev}/include/openssl"
 
-             if [[ $ZJ_SESSIONS == *"seeking-edge-dev"* ]]; then
-               # exec zellij attach seeking-edge-dev options --default-layout ./dev-layout.kdl
-             else
-               # exec zellij --session seeking-edge-dev --layout ./dev-layout.kdl
-             fi
-          '';
+          # export OPENSSL_LIB_DIR="${openssl.out}/lib"
+
+          # export OPENSSL_ROOT_DIR="${openssl.out}"
+
+          # export RUST_SRC_PATH="${toolchain}/lib/rustlib/src/rust/library"
+          # export EDITOR=hx
+          # '';
         };
       };
     };

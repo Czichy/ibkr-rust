@@ -8,7 +8,7 @@
 
         pub Currency:Option<Currency>,
 
-        pub FxRateToBase:Option<Decimal>,
+        pub FxRateToBase:Option<D256>,
 
         pub AssetCategory:Option<AssetCategory>,
 
@@ -40,7 +40,7 @@
 
         pub Multiplier:Option<i32>,
 
-        pub Strike:Option<Decimal>,
+        pub Strike:Option<D256>,
 
         [Format(Constants.DateFormat)]
         pub Expiry:Option<NaiveDateTime>,
@@ -52,11 +52,11 @@
         [Format(Constants.DateFormat)]
         pub Date:Option<NaiveDateTime>,
 
-        pub Received:Option<Decimal>,
+        pub Received:Option<D256>,
 
-        pub Paid:Option<Decimal>,
+        pub Paid:Option<D256>,
 
-        pub Total:Option<Decimal>,
+        pub Total:Option<D256>,
 
         pub TransactionID:string,
     }

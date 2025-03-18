@@ -1,6 +1,6 @@
 use crate::domain::*;
 use chrono::NaiveDateTime;
-use rust_decimal::Decimal;
+use fastnum::{decimal::Decimal, D256};
 use serde::Deserialize;
 #[derive(Debug, Deserialize)]
 pub struct TradeConfirms {
@@ -49,7 +49,7 @@ pub struct TradeConfirm {
 
     pub Multiplier: Option<i32>,
 
-    pub Strike: Option<Decimal>,
+    pub Strike: Option<D256>,
 
     pub Expiry: Option<NaiveDateTime>,
 
@@ -72,21 +72,21 @@ pub struct TradeConfirm {
 
     pub Exchange: String,
 
-    pub Quantity: Option<Decimal>,
+    pub Quantity: Option<D256>,
 
-    pub Proceeds: Option<Decimal>,
+    pub Proceeds: Option<D256>,
 
-    pub Tax: Option<Decimal>,
+    pub Tax: Option<D256>,
 
-    pub Commission: Option<Decimal>,
+    pub Commission: Option<D256>,
 
     pub CommissionCurrency: Option<Currency>,
 
-    pub Price: Option<Decimal>,
+    pub Price: Option<D256>,
 
-    pub Amount: Option<Decimal>,
+    pub Amount: Option<D256>,
 
-    pub OrigTradePrice: Option<Decimal>,
+    pub OrigTradePrice: Option<D256>,
 
     pub OrigTradeDate: Option<NaiveDateTime>,
 
@@ -117,17 +117,17 @@ pub struct TradeConfirm {
     pub IsAPIOrder: String,
 
     //pub Code: Option<Notes>,
-    pub BrokerExecutionCommission: Option<Decimal>,
+    pub BrokerExecutionCommission: Option<D256>,
 
-    pub BrokerClearingCommission: Option<Decimal>,
+    pub BrokerClearingCommission: Option<D256>,
 
-    pub ThirdPartyExecutionCommission: Option<Decimal>,
+    pub ThirdPartyExecutionCommission: Option<D256>,
 
-    pub ThirdPartyClearingCommission: Option<Decimal>,
+    pub ThirdPartyClearingCommission: Option<D256>,
 
-    pub ThirdPartyRegulatoryCommission: Option<Decimal>,
+    pub ThirdPartyRegulatoryCommission: Option<D256>,
 
-    pub OtherCommission: Option<Decimal>,
+    pub OtherCommission: Option<D256>,
 
     pub AllocatedTo: String,
 }

@@ -30,7 +30,7 @@
 
         pub Multiplier:Option<i32>,
 
-        pub Strike:Option<Decimal>,
+        pub Strike:Option<D256>,
 
         [Format(Constants.DateFormat)]
         pub Expiry:Option<NaiveDateTime>,

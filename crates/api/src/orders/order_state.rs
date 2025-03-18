@@ -1,6 +1,6 @@
-use std::str::Split;
+use std::str::{FromStr, Split};
 
-use rust_decimal::prelude::*;
+use fastnum::{decimal::Decimal, D256};
 
 use crate::{enums::*,
             ib_frame::{ParseError, ParseIbkrFrame, ParseResult},
@@ -17,59 +17,59 @@ pub struct OrderState {
     /// The order's current status
     pub status:                              OrderStatus, // Option<String>,
     /// The account's current initial margin.
-    pub init_margin_before:                  Option<Decimal>,
+    pub init_margin_before:                  Option<D256>,
     /// The account's current maintenance margin
-    pub maint_margin_before:                 Option<Decimal>,
+    pub maint_margin_before:                 Option<D256>,
     /// The account's current equity with loan
-    pub init_margin_change:                  Option<Decimal>,
+    pub init_margin_change:                  Option<D256>,
     /// The change of the account's initial margin.
-    pub equity_with_loan_value_before:       Option<Decimal>,
+    pub equity_with_loan_value_before:       Option<D256>,
     /// The change of the account's maintenance margin
-    pub maint_margin_change:                 Option<Decimal>,
+    pub maint_margin_change:                 Option<D256>,
     /// The change of the account's equity with loan
-    pub equity_with_loan_change:             Option<Decimal>,
+    pub equity_with_loan_change:             Option<D256>,
     /// The order's impact on the account's initial margin.
-    pub init_margin_after:                   Option<Decimal>,
+    pub init_margin_after:                   Option<D256>,
     /// The order's impact on the account's maintenance margin
-    pub maint_margin_after:                  Option<Decimal>,
+    pub maint_margin_after:                  Option<D256>,
     /// Shows the impact the order would have on the account's equity with loan
-    pub equity_with_loan_after:              Option<Decimal>,
+    pub equity_with_loan_after:              Option<D256>,
     /// The order's generated commission.
-    pub commission_and_fees:                 Option<Decimal>,
+    pub commission_and_fees:                 Option<D256>,
     // The execution's minimum commission.
-    pub min_commission_and_fees:             Option<Decimal>,
+    pub min_commission_and_fees:             Option<D256>,
     /// The executions maximum commission.
-    pub max_commission_and_fees:             Option<Decimal>,
+    pub max_commission_and_fees:             Option<D256>,
     /// The generated commission currency
     pub commission_and_fees_currency:        Option<String>,
     pub margin_currency:                     Option<String>,
     /// The account’s expected initial margin outside of regular trading hours.
-    pub init_margin_before_outside_rth:      Option<Decimal>,
+    pub init_margin_before_outside_rth:      Option<D256>,
     /// The account’s expected maintenance margin outside of regular trading
     /// hours.
-    pub maint_margin_before_outside_rth:     Option<Decimal>,
+    pub maint_margin_before_outside_rth:     Option<D256>,
     /// The account’s expected equity with loan outside of regular trading
     /// hours.
-    pub equity_with_loan_before_outside_rth: Option<Decimal>,
+    pub equity_with_loan_before_outside_rth: Option<D256>,
     /// The expected change of the account’s initial margin outside of regular
     /// trading hours.
-    pub init_margin_change_outside_rth:      Option<Decimal>,
+    pub init_margin_change_outside_rth:      Option<D256>,
     /// The expected change of the account’s maintenance margin outside of
     /// regular trading hours.
-    pub maint_margin_change_outside_rth:     Option<Decimal>,
+    pub maint_margin_change_outside_rth:     Option<D256>,
     /// The expected change of the account’s equity with loan outside of regular
     /// trading hours.
-    pub equity_with_loan_change_outside_rth: Option<Decimal>,
+    pub equity_with_loan_change_outside_rth: Option<D256>,
     /// The order’s expected impact on the account’s initial margin outside of
     /// regular trading hours.
-    pub init_margin_after_outside_rth:       Option<Decimal>,
+    pub init_margin_after_outside_rth:       Option<D256>,
     /// The order’s expected impact on the account’s maintenance margin outside
     /// of regular trading hours.
-    pub maint_margin_after_outside_rth:      Option<Decimal>,
+    pub maint_margin_after_outside_rth:      Option<D256>,
     /// Shows the expected impact the order would have on the account’s equity
     /// with loan outside of regular trading hours.
-    pub equity_with_loan_after_outside_rth:  Option<Decimal>,
-    pub suggested_size:                      Option<Decimal>,
+    pub equity_with_loan_after_outside_rth:  Option<D256>,
+    pub suggested_size:                      Option<D256>,
     pub reject_reason:                       Option<String>,
     /// Order allocations
     pub order_allocations:                   Option<Vec<OrderAllocation>>,
@@ -86,17 +86,17 @@ pub struct OrderAllocation {
     /// References the Account ID, i.e. U1234567, being allocated to.
     pub account:              String,
     /// References the current position of the account being allocated to.
-    pub position:             Option<Decimal>,
+    pub position:             Option<D256>,
     /// States the full position increase intended by the current trade.
-    pub position_desired:     Option<Decimal>,
+    pub position_desired:     Option<D256>,
     /// References the increase to position from the current trade. Unless the
     /// order is partially filled, this should reflect the PositionDesired
     /// value.
-    pub position_after:       Option<Decimal>,
+    pub position_after:       Option<D256>,
     /// Reference the quantity to increase by based on allocation.
-    pub position_alloc_qty:   Option<Decimal>,
+    pub position_alloc_qty:   Option<D256>,
     /// References the maximum allowed quantity increase.
-    pub position_allowed_qty: Option<Decimal>,
+    pub position_allowed_qty: Option<D256>,
     /// Denotes whether the order is a monetary allocation (true) or whole share
     /// allocation (false).
     pub is_monetary:          bool,
@@ -180,12 +180,12 @@ impl ParseIbkrFrame for OrderState {
 pub struct OrderStatusUpdate {
     pub order_id:        OrderId,
     pub status:          OrderStatus,
-    pub filled:          Decimal,
-    pub remaining:       Decimal,
-    pub avg_fill_price:  Decimal,
+    pub filled:          D256,
+    pub remaining:       D256,
+    pub avg_fill_price:  D256,
     pub perm_id:         i32,
     pub parent_id:       OrderId,
-    pub last_fill_price: Decimal,
+    pub last_fill_price: D256,
     pub client_id:       usize,
     pub why_held:        Option<String>,
 }

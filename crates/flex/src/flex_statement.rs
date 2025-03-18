@@ -1,6 +1,6 @@
 use chrono::{NaiveDate, NaiveDateTime};
 use iso_currency::Currency;
-use rust_decimal::Decimal;
+use fastnum::{decimal::Decimal, D256};
 use serde::{Deserialize, Serialize};
 
 use self::{corporate_actions::CorporateActions, open_position::OpenPositions};
@@ -163,7 +163,7 @@ pub struct CashTransaction {
     #[serde(rename = "transactionID")]
     pub transaction_id: String,
     pub date_time:      String,
-    pub amount:         Decimal,
+    pub amount:         D256,
 }
 
 #[derive(Debug, Deserialize, Clone)]
@@ -174,9 +174,9 @@ pub struct FxPosition {
     /// The currency of this forex position
     pub fx_currency:         String,
     /// The amount of forex currency
-    pub quantity:            Decimal,
+    pub quantity:            D256,
     /// The value of the forex currency in the default account currency
-    pub value:               Decimal,
+    pub value:               D256,
 }
 
 #[derive(Debug, Deserialize, Clone)]
@@ -203,7 +203,7 @@ pub struct TransactionTax {
     pub currency: Option<Currency>,
 
     #[serde(rename = "@fxRateToBase")]
-    pub fx_rate_to_base: Option<Decimal>,
+    pub fx_rate_to_base: Option<D256>,
 
     #[serde(rename = "@principalAdjustFactor")]
     pub principal_adjust_factor: String,
@@ -215,7 +215,7 @@ pub struct TransactionTax {
     pub tax_description: String,
 
     #[serde(rename = "@quantity")]
-    pub quantity: Option<Decimal>,
+    pub quantity: Option<D256>,
 
     // Note: The reportDate XML attribute may contain either a date or aString, i.e.
     // reportDate="MULTI"
@@ -223,13 +223,13 @@ pub struct TransactionTax {
     pub report_date: String,
 
     #[serde(rename = "@taxAmount")]
-    pub tax_amount: Option<Decimal>,
+    pub tax_amount: Option<D256>,
 
     #[serde(rename = "@tradeId")]
     pub trade_id: Option<i64>,
 
     #[serde(rename = "@tradePrice")]
-    pub trade_price: Option<Decimal>,
+    pub trade_price: Option<D256>,
 
     #[serde(rename = "@source")]
     pub source: String,

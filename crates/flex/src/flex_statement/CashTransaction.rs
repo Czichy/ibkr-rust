@@ -8,7 +8,7 @@
 
         pub Currency:Option<Currency>,
 
-        pub FxRateToBase:Option<Decimal>,
+        pub FxRateToBase:Option<D256>,
 
         pub AssetCategory:Option<AssetCategory>,
 
@@ -40,7 +40,7 @@
 
         pub Multiplier:Option<i32>,
 
-        pub Strike:Option<Decimal>,
+        pub Strike:Option<D256>,
 
         [Format(Constants.DateFormat)]
         pub Expiry:Option<NaiveDateTime>,
@@ -52,7 +52,7 @@
         [Format(Constants.DateFormat), Format(Constants.DateTimeFormat, order: 1)]
         pub DateTime:Option<NaiveDateTime>,
 
-        pub Amount:Option<Decimal>,
+        pub Amount:Option<D256>,
 
         pub Type:Option<CashTransactionType>,
 

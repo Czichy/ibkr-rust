@@ -278,7 +278,7 @@ mod tests {
     //};
     use pretty_assertions::assert_eq;
     use quick_xml::de::from_str;
-    use rust_decimal::Decimal;
+    use fastnum::{decimal::Decimal, D256};
     use rust_decimal_macros::dec;
     use tracing_bunyan_formatter::{BunyanFormattingLayer, JsonStorageLayer};
     use tracing_log::LogTracer;
@@ -380,7 +380,7 @@ mod tests {
                         underlying_security_id:      None,
                         underlying_listing_exchange: None,
                         issuer:                      None,
-                        multiplier:                  Some(Decimal::new(100, 2)),
+                        multiplier:                  Some(D256::new(100, 2)),
                         strike:                      None,
                         expiry:                      None,
                         put_call:                    None,

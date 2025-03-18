@@ -1,6 +1,7 @@
-use std::{fmt, str::Split};
+use std::{fmt,
+          str::{FromStr, Split}};
 
-use rust_decimal::prelude::*;
+use fastnum::{decimal::Decimal, D256};
 use tokio::sync::watch;
 
 use crate::{account_summary_tags::AccountValueKey,
@@ -71,7 +72,7 @@ pub type AccountLastUpdate = TimeStamp;
 #[derive(Debug, Clone)]
 pub enum AccountValue {
     Property { value: String },
-    Balance { value: Decimal },
+    Balance { value: D256 },
 }
 impl fmt::Display for AccountValue {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -95,7 +96,7 @@ pub struct AccountPropertyKey {
 // pub struct AccountBalance {
 //    pub key:      AccountValueKey,
 //    pub currency: Currency,
-//    //pub value: Decimal,
+//    //pub value: D256,
 //}
 
 // pub struct InteractivebrokersAccountData {
@@ -103,7 +104,7 @@ pub struct AccountPropertyKey {
 //    pub account_properties: HashMap<AccountProperty, String>,
 //
 //    /// The account cash balances indexed by currency
-//    pub cash_balances: HashMap<AccountProperty, Decimal>,
+//    pub cash_balances: HashMap<AccountProperty, D256>,
 //}
 // pub struct InteractivebrokersAccount {
 //    pub summaries: HashMap<AccountCode, InteractivebrokersAccountData>,
@@ -114,12 +115,12 @@ type Sender<T> = watch::Sender<Option<T>>;
 #[derive(Debug)]
 pub struct Position {
     pub contract:       Contract,
-    pub position:       Option<Decimal>,
-    pub market_price:   Option<Decimal>,
-    pub market_value:   Option<Decimal>,
-    pub average_cost:   Option<Decimal>,
-    pub unrealized_pnl: Option<Decimal>,
-    pub realized_pnl:   Option<Decimal>,
+    pub position:       Option<D256>,
+    pub market_price:   Option<D256>,
+    pub market_value:   Option<D256>,
+    pub average_cost:   Option<D256>,
+    pub unrealized_pnl: Option<D256>,
+    pub realized_pnl:   Option<D256>,
 }
 
 #[derive(Debug, Clone)]
@@ -127,13 +128,13 @@ pub struct AccountReceiver {
     pub update_time_rx:            Updating<String>,
     pub account_code_rx:           Updating<String>,
     pub account_type_rx:           Updating<String>,
-    pub cash_balance_rx:           Updating<Decimal>,
-    pub equity_with_loan_value_rx: Updating<Decimal>,
-    pub excess_liquidity_rx:       Updating<Decimal>,
-    pub net_liquidation_rx:        Updating<Decimal>,
-    pub realized_pnl_rx:           Updating<Decimal>,
-    pub unrealized_pnl_rx:         Updating<Decimal>,
-    pub total_cash_balance_rx:     Updating<Decimal>,
+    pub cash_balance_rx:           Updating<D256>,
+    pub equity_with_loan_value_rx: Updating<D256>,
+    pub excess_liquidity_rx:       Updating<D256>,
+    pub net_liquidation_rx:        Updating<D256>,
+    pub realized_pnl_rx:           Updating<D256>,
+    pub unrealized_pnl_rx:         Updating<D256>,
+    pub total_cash_balance_rx:     Updating<D256>,
     pub portfolio_rx:              Updating<Vec<Position>>,
 }
 #[derive(Debug)]
@@ -141,13 +142,13 @@ pub struct AccountSender {
     pub update_time:            Sender<String>,
     pub account_code:           Sender<String>,
     pub account_type:           Sender<String>,
-    pub cash_balance:           Sender<Decimal>,
-    pub equity_with_loan_value: Sender<Decimal>,
-    pub excess_liquidity:       Sender<Decimal>,
-    pub net_liquidation:        Sender<Decimal>,
-    pub realized_pnl:           Sender<Decimal>,
-    pub unrealized_pnl:         Sender<Decimal>,
-    pub total_cash_balance:     Sender<Decimal>,
+    pub cash_balance:           Sender<D256>,
+    pub equity_with_loan_value: Sender<D256>,
+    pub excess_liquidity:       Sender<D256>,
+    pub net_liquidation:        Sender<D256>,
+    pub realized_pnl:           Sender<D256>,
+    pub unrealized_pnl:         Sender<D256>,
+    pub total_cash_balance:     Sender<D256>,
     pub portfolio:              Sender<Vec<Position>>,
 }
 pub fn init_account_channel() -> (AccountSender, AccountReceiver) {
@@ -195,7 +196,7 @@ impl AccountReceiver {
         (*self.update_time_rx.borrow()).as_ref().cloned()
     }
 
-    pub fn unrealized_pnl(&self) -> Option<Decimal> {
+    pub fn unrealized_pnl(&self) -> Option<D256> {
         (*self.unrealized_pnl_rx.borrow()).as_ref().cloned()
     }
 }

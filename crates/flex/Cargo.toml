@@ -7,19 +7,18 @@ edition = "2018"
 
 [dependencies]
 chrono.workspace = true
+clap.workspace = true
+fastnum.workspace = true
 iso_currency.workspace = true
 log.workspace = true
 quick-xml.workspace = true
 reqwest.workspace = true
-rust_decimal.workspace = true
-rust_decimal_macros.workspace = true
 serde.workspace = true
-clap.workspace = true
 tokio.workspace = true
-tracing.workspace = true
 tracing-bunyan-formatter.workspace = true
 tracing-log.workspace = true
 tracing-subscriber.workspace = true
+tracing.workspace = true
 
 [dev-dependencies]
 pretty_assertions = "1.1.0"

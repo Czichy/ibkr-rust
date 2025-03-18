@@ -1,6 +1,6 @@
 use chrono::NaiveDate;
 use iso_currency::Currency;
-use rust_decimal::Decimal;
+use fastnum::{decimal::Decimal, D256};
 use serde::Deserialize;
 
 use crate::{enums::MultiDate, flex_statement::contract::Contract, utils::de::*};
@@ -40,15 +40,15 @@ pub struct StatementOfFundsLine {
 
     #[serde(rename = "@amount")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
-    pub amount: Option<Decimal>,
+    pub amount: Option<D256>,
 
     #[serde(rename = "@balance")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
-    pub balance: Option<Decimal>,
+    pub balance: Option<D256>,
 
     #[serde(rename = "@credit")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
-    pub credit: Option<Decimal>,
+    pub credit: Option<D256>,
 
     #[serde(rename = "@date")]
     #[serde(deserialize_with = "naive_date_from_str")]
@@ -56,11 +56,11 @@ pub struct StatementOfFundsLine {
 
     #[serde(rename = "@debit")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
-    pub debit: Option<Decimal>,
+    pub debit: Option<D256>,
 
     #[serde(rename = "@fxRateToBase")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
-    pub fx_rate_to_base: Option<Decimal>,
+    pub fx_rate_to_base: Option<D256>,
 
     #[serde(rename = "@levelOfDetail")]
     pub level_of_detail: String,
@@ -89,11 +89,11 @@ pub struct StatementOfFundsLine {
 
     #[serde(rename = "@tradeCommission")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
-    pub trade_commission: Option<Decimal>,
+    pub trade_commission: Option<D256>,
 
     #[serde(rename = "@tradeGross")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
-    pub trade_gross: Option<Decimal>,
+    pub trade_gross: Option<D256>,
 
     #[serde(rename = "@tradeID")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
@@ -101,15 +101,15 @@ pub struct StatementOfFundsLine {
 
     #[serde(rename = "@tradePrice")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
-    pub trade_price: Option<Decimal>,
+    pub trade_price: Option<D256>,
 
     #[serde(rename = "@tradeQuantity")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
-    pub trade_quantity: Option<Decimal>,
+    pub trade_quantity: Option<D256>,
 
     #[serde(rename = "@tradeTax")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
-    pub trade_tax: Option<Decimal>,
+    pub trade_tax: Option<D256>,
 
     #[serde(rename = "@transactionID")]
     #[serde(deserialize_with = "deserialize_option_from_str")]

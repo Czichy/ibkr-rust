@@ -22,7 +22,6 @@ pub(crate) trait IntoIbkrFrame {
     ///
     /// This is called by the client when encoding a command
     /// to send to the server.
-
     #[allow(clippy::wrong_self_convention)]
     fn into_frame(&self) -> crate::frame::Frame;
 }

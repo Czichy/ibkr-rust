@@ -9,111 +9,111 @@
         //Note: The reportDate XML attribute may contain either a date or aString, i.e. reportDate="MULTI"
         pub ReportDate:string,
 
-        pub Cash:Option<Decimal>,
+        pub Cash:Option<D256>,
 
-        pub CashLong:Option<Decimal>,
+        pub CashLong:Option<D256>,
 
-        pub CashShort:Option<Decimal>,
+        pub CashShort:Option<D256>,
 
-        pub SlbCashCollateral:Option<Decimal>,
+        pub SlbCashCollateral:Option<D256>,
 
-        pub SlbCashCollateralLong:Option<Decimal>,
+        pub SlbCashCollateralLong:Option<D256>,
 
-        pub SlbCashCollateralShort:Option<Decimal>,
+        pub SlbCashCollateralShort:Option<D256>,
 
-        pub Stock:Option<Decimal>,
+        pub Stock:Option<D256>,
 
-        pub StockLong:Option<Decimal>,
+        pub StockLong:Option<D256>,
 
-        pub StockShort:Option<Decimal>,
+        pub StockShort:Option<D256>,
 
-        pub SlbDirectSecuritiesBorrowed:Option<Decimal>,
+        pub SlbDirectSecuritiesBorrowed:Option<D256>,
 
-        pub SlbDirectSecuritiesBorrowedLong:Option<Decimal>,
+        pub SlbDirectSecuritiesBorrowedLong:Option<D256>,
 
-        pub SlbDirectSecuritiesBorrowedShort:Option<Decimal>,
+        pub SlbDirectSecuritiesBorrowedShort:Option<D256>,
 
-        pub SlbDirectSecuritiesLent:Option<Decimal>,
+        pub SlbDirectSecuritiesLent:Option<D256>,
 
-        pub SlbDirectSecuritiesLentLong:Option<Decimal>,
+        pub SlbDirectSecuritiesLentLong:Option<D256>,
 
-        pub SlbDirectSecuritiesLentShort:Option<Decimal>,
+        pub SlbDirectSecuritiesLentShort:Option<D256>,
 
-        pub Options:Option<Decimal>,
+        pub Options:Option<D256>,
 
-        pub OptionsLong:Option<Decimal>,
+        pub OptionsLong:Option<D256>,
 
-        pub OptionsShort:Option<Decimal>,
+        pub OptionsShort:Option<D256>,
 
-        pub Commodities:Option<Decimal>,
+        pub Commodities:Option<D256>,
 
-        pub CommoditiesLong:Option<Decimal>,
+        pub CommoditiesLong:Option<D256>,
 
-        pub CommoditiesShort:Option<Decimal>,
+        pub CommoditiesShort:Option<D256>,
 
-        pub Bonds:Option<Decimal>,
+        pub Bonds:Option<D256>,
 
-        pub BondsLong:Option<Decimal>,
+        pub BondsLong:Option<D256>,
 
-        pub BondsShort:Option<Decimal>,
+        pub BondsShort:Option<D256>,
 
-        pub Notes:Option<Decimal>,
+        pub Notes:Option<D256>,
 
-        pub NotesLong:Option<Decimal>,
+        pub NotesLong:Option<D256>,
 
-        pub NotesShort:Option<Decimal>,
+        pub NotesShort:Option<D256>,
 
-        pub Funds:Option<Decimal>,
+        pub Funds:Option<D256>,
 
-        pub FundsLong:Option<Decimal>,
+        pub FundsLong:Option<D256>,
 
-        pub FundsShort:Option<Decimal>,
+        pub FundsShort:Option<D256>,
 
-        pub InterestAccruals:Option<Decimal>,
+        pub InterestAccruals:Option<D256>,
 
-        pub InterestAccrualsLong:Option<Decimal>,
+        pub InterestAccrualsLong:Option<D256>,
 
-        pub InterestAccrualsShort:Option<Decimal>,
+        pub InterestAccrualsShort:Option<D256>,
 
-        pub SoftDollars:Option<Decimal>,
+        pub SoftDollars:Option<D256>,
 
-        pub SoftDollarsLong:Option<Decimal>,
+        pub SoftDollarsLong:Option<D256>,
 
-        pub SoftDollarsShort:Option<Decimal>,
+        pub SoftDollarsShort:Option<D256>,
 
-        pub ForexCfdUnrealizedPl:Option<Decimal>,
+        pub ForexCfdUnrealizedPl:Option<D256>,
 
-        pub ForexCfdUnrealizedPlLong:Option<Decimal>,
+        pub ForexCfdUnrealizedPlLong:Option<D256>,
 
-        pub ForexCfdUnrealizedPlShort:Option<Decimal>,
+        pub ForexCfdUnrealizedPlShort:Option<D256>,
 
-        pub CfdUnrealizedPl:Option<Decimal>,
+        pub CfdUnrealizedPl:Option<D256>,
 
-        pub CfdUnrealizedPlLong:Option<Decimal>,
+        pub CfdUnrealizedPlLong:Option<D256>,
 
-        pub CfdUnrealizedPlShort:Option<Decimal>,
+        pub CfdUnrealizedPlShort:Option<D256>,
 
-        pub DividendAccruals:Option<Decimal>,
+        pub DividendAccruals:Option<D256>,
 
-        pub DividendAccrualsLong:Option<Decimal>,
+        pub DividendAccrualsLong:Option<D256>,
 
-        pub DividendAccrualsShort:Option<Decimal>,
+        pub DividendAccrualsShort:Option<D256>,
 
-        pub FdicInsuredBankSweepAccountCashComponent:Option<Decimal>,
+        pub FdicInsuredBankSweepAccountCashComponent:Option<D256>,
 
-        pub FdicInsuredBankSweepAccountCashComponentLong:Option<Decimal>,
+        pub FdicInsuredBankSweepAccountCashComponentLong:Option<D256>,
 
-        pub FdicInsuredBankSweepAccountCashComponentShort:Option<Decimal>,
+        pub FdicInsuredBankSweepAccountCashComponentShort:Option<D256>,
 
-        pub FdicInsuredAccountInterestAccrualsComponent:Option<Decimal>,
+        pub FdicInsuredAccountInterestAccrualsComponent:Option<D256>,
 
-        pub FdicInsuredAccountInterestAccrualsComponentLong:Option<Decimal>,
+        pub FdicInsuredAccountInterestAccrualsComponentLong:Option<D256>,
 
-        pub FdicInsuredAccountInterestAccrualsComponentShort:Option<Decimal>,
+        pub FdicInsuredAccountInterestAccrualsComponentShort:Option<D256>,
 
-        pub Total:Option<Decimal>,
+        pub Total:Option<D256>,
 
-        pub TotalLong:Option<Decimal>,
+        pub TotalLong:Option<D256>,
 
-        pub TotalShort:Option<Decimal>,
+        pub TotalShort:Option<D256>,
     }

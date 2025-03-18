@@ -1,6 +1,6 @@
 use std::str::Split;
 
-use rust_decimal::Decimal;
+use fastnum::{decimal::Decimal, D256};
 
 use crate::{enums::Incoming,
             ib_frame::{ParseError, ParseIbkrFrame, ParseResult},
@@ -13,13 +13,13 @@ pub struct CommissionAndFeesReport {
     /// the execution's id this commission and fees belongs to.
     pub exec_id:               String,
     /// the commission and fees cost.
-    pub commission_and_fees:   Decimal,
+    pub commission_and_fees:   D256,
     /// the reporting currency.
     pub currency:              String,
     /// the realized profit and loss
-    pub realized_pnl:          Option<Decimal>,
+    pub realized_pnl:          Option<D256>,
     /// The income return.
-    pub yield_amount:          Option<Decimal>,
+    pub yield_amount:          Option<D256>,
     /// date expressed in yyyymmdd format.
     pub yield_redemption_date: Option<i32>,
 }

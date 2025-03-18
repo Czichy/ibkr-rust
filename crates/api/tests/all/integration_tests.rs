@@ -259,7 +259,7 @@ async fn place_market_order() -> Result<()> {
     //    currency: "USD".to_string(),
     //    ..Default::default()
     //};
-    // let order = Order::market(contract, Action::Buy, Decimal::new(1, 0));
+    // let order = Order::market(contract, Action::Buy, D256::new(1, 0));
     // match &mut client.place_order(*order_id, order).await {
     //    Ok(()) => {
     //        tokio::time::sleep(std::time::Duration::from_secs(1)).await;
@@ -321,7 +321,7 @@ async fn place_market_order() -> Result<()> {
 //        ..Default::default()
 //    };
 //
-//    let mut order = Order::market(contract, Action::Buy, Decimal::new(10,0));
+//    let mut order = Order::market(contract, Action::Buy, D256::new(10,0));
 //    order.smart_combo_routing_params = Some(vec![("NonGuaranteed".to_string(),
 // "1".to_string())]);    match &mut client.place_order(&order).await {
 //        Ok(tracker) => {

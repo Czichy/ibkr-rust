@@ -3,7 +3,7 @@ use std::{fmt::{Display, Formatter},
 
 use chrono::{DateTime, NaiveDateTime, TimeZone};
 use chrono_tz::{Tz, US, UTC};
-use rust_decimal::prelude::*;
+use fastnum::{decimal::Decimal, D256};
 
 // #[cfg(feature = "serde")]
 // use serde::{Deserialize, Serialize};
@@ -41,8 +41,8 @@ impl ComboLeg {
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct DeltaNeutralContract {
     pub con_id: i32,
-    pub delta:  Decimal,
-    pub price:  Decimal,
+    pub delta:  D256,
+    pub price:  D256,
 }
 
 #[derive(Debug, Clone, Default, PartialEq, Eq, Hash)]
@@ -51,9 +51,9 @@ pub struct Contract {
     pub symbol:                            String,
     pub sec_type:                          SecType,
     pub last_trade_date_or_contract_month: Option<String>,
-    pub strike:                            Option<Decimal>,
+    pub strike:                            Option<D256>,
     pub right:                             Option<OptionRight>,
-    pub multiplier:                        Option<Decimal>,
+    pub multiplier:                        Option<D256>,
     pub exchange:                          Option<String>,
     pub currency:                          String,
     pub local_symbol:                      Option<String>,

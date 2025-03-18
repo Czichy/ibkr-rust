@@ -8,7 +8,7 @@
 
         pub Currency:Option<Currency>,
 
-        pub FxRateToBase:Option<Decimal>,
+        pub FxRateToBase:Option<D256>,
 
         pub Code:string,
 
@@ -16,25 +16,25 @@
 
         pub FromAcct:string,
 
-        pub TotalInterest:Option<Decimal>,
+        pub TotalInterest:Option<D256>,
 
-        pub IbuklInterest:Option<Decimal>,
+        pub IbuklInterest:Option<D256>,
 
-        pub CommoditiesInterest:Option<Decimal>,
+        pub CommoditiesInterest:Option<D256>,
 
-        pub SecuritiesInterest:Option<Decimal>,
+        pub SecuritiesInterest:Option<D256>,
 
-        pub Rate:Option<Decimal>,
+        pub Rate:Option<D256>,
 
-        pub TotalPrincipal:Option<Decimal>,
+        pub TotalPrincipal:Option<D256>,
 
-        pub IbuklPrincipal:Option<Decimal>,
+        pub IbuklPrincipal:Option<D256>,
 
-        pub CommoditiesPrincipal:Option<Decimal>,
+        pub CommoditiesPrincipal:Option<D256>,
 
-        pub SecuritiesPrincipal:Option<Decimal>,
+        pub SecuritiesPrincipal:Option<D256>,
 
-        pub BalanceThreshold:Option<Decimal>,
+        pub BalanceThreshold:Option<D256>,
 
         pub TierBreak:string,
 

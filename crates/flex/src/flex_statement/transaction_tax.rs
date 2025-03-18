@@ -8,7 +8,7 @@
 
         pub Currency:Option<Currency>,
 
-        pub FxRateToBase:Option<Decimal>,
+        pub FxRateToBase:Option<D256>,
 
         pub AssetCategory:Option<AssetCategory>,
 
@@ -40,7 +40,7 @@
 
         pub Multiplier:Option<i32>,
 
-        pub Strike:Option<Decimal>,
+        pub Strike:Option<D256>,
 
         [Format(Constants.DateFormat)]
         pub Expiry:Option<NaiveDateTime>,
@@ -54,16 +54,16 @@
 
         pub TaxDescription:string,
 
-        pub Quantity:Option<Decimal>,
+        pub Quantity:Option<D256>,
 
         //Note: The reportDate XML attribute may contain either a date or aString, i.e. reportDate="MULTI"
         pub ReportDate:string,
 
-        pub TaxAmount:Option<Decimal>,
+        pub TaxAmount:Option<D256>,
 
         pub TradeID:Option<i64>,
 
-        pub TradePrice:Option<Decimal>,
+        pub TradePrice:Option<D256>,
 
         pub Source:string,
 

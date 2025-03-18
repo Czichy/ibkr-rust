@@ -1,6 +1,6 @@
 use chrono::NaiveDateTime;
 use iso_currency::Currency;
-use rust_decimal::Decimal;
+use fastnum::{decimal::Decimal, D256};
 use serde::Deserialize;
 
 use crate::{enums::*,
@@ -27,7 +27,7 @@ pub struct UnbundledCommissionDetail {
     pub acct_alias: Option<String>,
 
     #[serde(rename = "@quantity")]
-    pub quantity: Option<Decimal>,
+    pub quantity: Option<D256>,
 
     #[serde(flatten)]
     pub contract: Contract,
@@ -54,40 +54,40 @@ pub struct UnbundledCommissionDetail {
     pub model: Option<String>,
 
     #[serde(rename = "@fxRateToBase")]
-    pub fx_rate_to_base: Decimal,
+    pub fx_rate_to_base: D256,
 
     #[serde(rename = "@other")]
-    pub other: Decimal,
+    pub other: D256,
 
     #[serde(rename = "@regOther")]
-    pub reg_other: Decimal,
+    pub reg_other: D256,
 
     #[serde(rename = "@regSection31TransactionFee")]
-    pub reg_section31_transaction_fee: Decimal,
+    pub reg_section31_transaction_fee: D256,
 
     #[serde(rename = "@regFINRATradingActivityFee")]
-    pub reg_finratrading_activity_fee: Decimal,
+    pub reg_finratrading_activity_fee: D256,
 
     #[serde(rename = "@thirdPartyRegulatoryCharge")]
-    pub third_party_regulatory_charge: Decimal,
+    pub third_party_regulatory_charge: D256,
 
     #[serde(rename = "@thirdPartyClearingCharge")]
-    pub third_party_clearing_charge: Decimal,
+    pub third_party_clearing_charge: D256,
 
     #[serde(rename = "@thirdPartyExecutionCharge")]
-    pub third_party_execution_charge: Decimal,
+    pub third_party_execution_charge: D256,
 
     #[serde(rename = "@brokerClearingCharge")]
-    pub broker_clearing_charge: Decimal,
+    pub broker_clearing_charge: D256,
 
     #[serde(rename = "@brokerExecutionCharge")]
-    pub broker_execution_charge: Decimal,
+    pub broker_execution_charge: D256,
 
     #[serde(rename = "@totalCommission")]
-    pub total_commission: Decimal,
+    pub total_commission: D256,
 
     #[serde(rename = "@price")]
-    pub price: Decimal,
+    pub price: D256,
 }
 
 #[cfg(test)]

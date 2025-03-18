@@ -6,7 +6,7 @@
 
         pub LevelOfDetail:string,
 
-        pub Quantity:Option<Decimal>,
+        pub Quantity:Option<D256>,
 
         pub PrincipalAdjustFactor:string,
 
@@ -16,7 +16,7 @@
 
         pub Multiplier:Option<i32>,
 
-        pub Strike:Option<Decimal>,
+        pub Strike:Option<D256>,
 
         [Format(Constants.DateFormat)]
         pub Expiry:Option<NaiveDateTime>,
@@ -47,9 +47,9 @@
 
         pub UnderlyingListingExchange:string,
 
-        pub MtmPnl:Option<Decimal>,
+        pub MtmPnl:Option<D256>,
 
-        pub Value:Option<Decimal>,
+        pub Value:Option<D256>,
 
-        pub ClosePrice:Option<Decimal>,
+        pub ClosePrice:Option<D256>,
     }

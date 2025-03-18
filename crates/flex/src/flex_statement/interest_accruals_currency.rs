@@ -15,13 +15,13 @@
         //Note: IB does not use a standard currency code here.  It is a value like BASE_SUMMARY.
         pub Currency:string,
 
-        pub EndingAccrualBalance:Option<Decimal>,
+        pub EndingAccrualBalance:Option<D256>,
 
-        pub FxTranslation:Option<Decimal>,
+        pub FxTranslation:Option<D256>,
 
-        pub AccrualReversal:Option<Decimal>,
+        pub AccrualReversal:Option<D256>,
 
-        pub InterestAccrued:Option<Decimal>,
+        pub InterestAccrued:Option<D256>,
 
-        pub StartingAccrualBalance:Option<Decimal>,
+        pub StartingAccrualBalance:Option<D256>,
     }

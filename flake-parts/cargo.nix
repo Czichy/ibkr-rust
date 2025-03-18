@@ -1,7 +1,6 @@
 {inputs, ...}: {
   perSystem = {
     config,
-    # pkgs,
     system,
     inputs',
     self',
@@ -9,11 +8,7 @@
     ...
   }:
     with inputs; let
-      manifest = (pkgs.lib.importTOML ../Cargo.toml).package;
-      # rustToolchain = fenix.packages.${system}.fromToolchainFile {
-      #   file = ../rust-toolchain.toml;
-      #   sha256 = "sha256-pZJWdNhvEsGbBM5yMD3xGi5IaGb01eyRvhCqUVAtFU8=";
-      # };
+      manifest = (pkgs.lib.importTOML ../Cargo.toml).workspace.package;
       pkgs = import nixpkgs {
         inherit system;
         overlays = [
@@ -35,138 +30,234 @@
 
       craneLib = (crane.mkLib pkgs).overrideToolchain fenix-toolchain;
 
-      src = nix-filter.lib {
-        root = ../.;
-        include = [
-          "Cargo.toml"
+      common-build-args = {
+        src = lib.cleanSourceWith {
+          src = ../.;
+          filter = path: type: (lib.hasSuffix ".wgsl" path) || (craneLib.filterCargoSources path type);
+        };
+        # src = filterWorkspaceFiles ../.;
+        strictDeps = true;
+        extraPackages = [
+          pkgs.pkg-config
+        ];
+        bevyDependencies = with pkgs; [
+          llvmPackages.bintools
+          udev
+          alsa-lib
+          vulkan-loader
+          xorg.libX11
+          xorg.libXcursor
+          xorg.libXrandr
+          xorg.libXi
+          libxkbcommon
+          wayland
+          clang
+        ];
+        nativeBuildInputs = with pkgs;
+          [
+            openssl
+          ]
+          ++ common-build-args.extraPackages
+          ++ common-build-args.bevyDependencies;
+        buildInputs = with pkgs; [
+          # clang
+          mold
+          lld
+          flatbuffers
+
+          amdvlk
+          atk
+          glib
+          glibc
+          gtk3
+          libxkbcommon
+          openssl
+          vulkan-headers
+          vulkan-tools
+          vulkan-validation-layers
+        ];
+      };
+
+      # filter source code at path `src` to include only the list of `modules`
+      filterModules = modules: src: let
+        basePath = toString src + "/";
+      in
+        lib.cleanSourceWith {
+          filter = path: type: let
+            relPath = lib.removePrefix basePath (toString path);
+            includePath =
+              (type
+                == "directory"
+                && builtins.match "^[^/]+$" relPath != null)
+              || lib.any (re: builtins.match re relPath != null)
+              (["Cargo.lock" "Cargo.toml" ".*/Cargo.toml"]
+                ++ builtins.concatLists
+                (map (name: [name "${name}/.*"]) modules));
+            # uncomment to debug:
+          in
+            # builtins.trace "${relPath}: ${lib.boolToString includePath}"
+            includePath;
+          inherit src;
+        };
+
+      # Filter only files needed to build project dependencies
+      #
+      # To get good build times it's vitally important to not have to
+      # rebuild derivation needlessly. The way Nix caches things
+      # is very simple: if any input file changed, derivation needs to
+      # be rebuild.
+      #
+      # For this reason this filter function strips the `src` from
+      # any files that are not relevant to the build.
+      #
+      # Lile `filterWorkspaceFiles` but doesn't even need *.rs files
+      # (because they are not used for building dependencies)
+      filterWorkspaceDepsBuildFiles = src:
+        filterSrcWithRegexes ["Cargo.lock" "Cargo.toml" ".*/Cargo.toml"]
+        src;
+
+      # Filter only files relevant to building the workspace
+      filterWorkspaceFiles = src:
+        filterSrcWithRegexes [
           "Cargo.lock"
-          "taplo.toml"
-          "rustfmt.toml"
-          "rust-toolchain.toml"
+          "Cargo.toml"
+          "crates"
+          ".cargo"
+          ".cargo/.*"
+          ".*/Cargo.toml"
+          ".*\.rs"
+          ".*.rs"
+          "*.rs"
+          ".*/rc/doc/.*.md"
+          ".*.txt"
+          ".*.json"
+          ".*.otf"
+          ".*.png"
+          ".*.jpg"
+        ]
+        src;
+
+      filterSrcWithRegexes = regexes: src: let
+        basePath = toString src + "/";
+      in
+        lib.cleanSourceWith {
+          filter = path: type: let
+            relPath = lib.removePrefix basePath (toString path);
+            includePath =
+              (type == "directory")
+              || lib.any (re: builtins.match re relPath != null) regexes;
+            # uncomment to debug:
+          in
+            # builtins.trace "${relPath}: ${lib.boolToString includePath}"
+            includePath;
+          inherit src;
+        };
+
+      workspaceDeps = craneLib.buildDepsOnly (common-build-args
+        // {
+          src = filterWorkspaceDepsBuildFiles ../.;
+          pname = "workspace-deps";
+          version = manifest.version;
+          buildPhaseCargoCommand = "cargo doc && cargo check --profile release --all-targets && cargo build --profile release --all-targets";
+          doCheck = false;
+        });
+
+      # a function to define cargo&nix package, listing
+      # all the dependencies (as dir) to help limit the
+      # amount of things that need to rebuild when some
+      # file change
+      pkg = {
+        name ? null,
+        dir,
+        extraDirs ? [],
+      }: {
+        package = craneLib.buildPackage (common-build-args
+          // {
+            cargoArtifacts = workspaceDeps;
+
+            # src = filterModules ([dir] ++ extraDirs) ../.;
+            # filter the source to reduce cache misses
+            # add a path here if you need other files, e.g. bc of `include_str!()`
+            src = nix-filter {
+              root = ../.;
+              include = [
+                (nix-filter.lib.matchExt "toml")
+                "Cargo.lock"
+                "crates"
+              ];
+            };
+
+            # if needed we will check the whole workspace at once with `workspaceBuild`
+            doCheck = false;
+          }
+          // lib.optionalAttrs (name != null) {
+            pname = name;
+            version = manifest.version;
+            cargoExtraArgs = "--bin ${name}";
+          });
+      };
+
+      workspaceBuild = craneLib.cargoBuild (common-build-args
+        // {
+          pname = "workspace-build";
+          version = manifest.version;
+          cargoArtifacts = workspaceDeps;
+          doCheck = false;
+        });
+
+      workspaceTest = craneLib.cargoBuild (common-build-args
+        // {
+          pname = "workspace-test";
+          cargoArtifacts = workspaceBuild;
+          doCheck = true;
+        });
+
+      # Note: can't use `cargoClippy` because it implies `--all-targets`, while
+      # we can't build benches on stable
+      # See: https://github.com/ipetkov/crane/issues/64
+      workspaceClippy = craneLib.cargoBuild (common-build-args
+        // {
+          pname = "workspace-clippy";
+          cargoArtifacts = workspaceBuild;
+
+          cargoBuildCommand = "cargo clippy --profile release --no-deps --lib --bins --tests --examples --workspace -- --deny warnings";
+          doInstallCargoArtifacts = false;
+          doCheck = false;
+        });
+
+      workspaceDoc = craneLib.cargoBuild (common-build-args
+        // {
+          pname = "workspace-doc";
+          cargoArtifacts = workspaceBuild;
+          cargoBuildCommand = "env RUSTDOCFLAGS='-D rustdoc::broken_intra_doc_links' cargo doc --no-deps --document-private-items && cp -a target/doc $out";
+          doCheck = false;
+        });
+
+      ibkr = pkg {
+        name = manifest.name;
+        dir = "../crates";
+        extraDirs = [
+          # "crates/seeking-edge"
+
           "crates/api"
           "crates/flex"
         ];
       };
-
-      inherit (craneLib.crateNameFromCargoToml {inherit src;}) pname version;
-
-      args = {
-        inherit src;
-        strictDeps = true;
-        nativeBuildInputs = with pkgs; [
-          openssl
-          pkg-config
-          # udev
-        ];
-        buildInputs = with pkgs; [
-          openssl.dev
-          openssl
-          pkg-config
-        ];
-        LD_LIBRARY_PATH = lib.makeLibraryPath [pkgs.openssl];
-        # Needed to get openssl-sys to use pkg-config.
-        # Doesn't seem to like OpenSSL 3
-        OPENSSL_NO_VENDOR = 1;
-        PKG_CONFIG_PATH = "${pkgs.openssl.dev}/lib/pkgconfig";
-        LIBCLANG_PATH = "${pkgs.libclang.lib}/lib/";
-      };
-
-      individualCrateArgs =
-        args
-        // {
-          inherit cargoArtifacts version;
-          doCheck = false;
-        };
-
-      fileSetForCrate = crateFiles:
-        nix-filter.lib {
-          root = ../.;
-          include =
-            [
-              "crates"
-              "Cargo.toml"
-              "Cargo.lock"
-            ]
-            ++ crateFiles;
-        };
-
-      cargoArtifacts = craneLib.buildDepsOnly args;
-
-      api = craneLib.buildPackage (individualCrateArgs
-        // rec {
-          pname = manifest.name;
-          version = manifest.version;
-          cargoExtraArgs = "--lib ${pname}";
-          src = fileSetForCrate [
-            "crates/api/src"
-            "crates/api/Cargo.toml"
-          ];
-        });
-
-      flex = craneLib.buildPackage (individualCrateArgs
-        // rec {
-          pname = "ibkr-rust-flex";
-          cargoExtraArgs = "--bin ${pname}";
-          src = fileSetForCrate [
-            "crates/flex/src"
-            "crates/flex/Cargo.toml"
-          ];
-        });
     in {
-      checks = {
-        inherit seeking-edge;
-        # inherit app api server kickbase assets kickbase-api-doc;
-        inherit (self.packages.${system}) services;
-
-        clippy = craneLib.cargoClippy (args
-          // {
-            inherit cargoArtifacts;
-            cargoClippyExtraArgs = "--all-targets -- --deny warnings";
-          });
-
-        doc = craneLib.cargoDoc (args
-          // {
-            inherit cargoArtifacts;
-          });
-
-        fmt = craneLib.cargoFmt {
-          inherit src;
-        };
-
-        toml-fmt = craneLib.taploFmt {
-          src = pkgs.lib.sources.sourceFilesBySuffices src [".toml"];
-          taploExtraArgs = "--config ../taplo.toml";
-        };
-
-        audit = craneLib.cargoAudit {
-          inherit src advisory-db;
-        };
-
-        deny = craneLib.cargoDeny {
-          inherit src;
-        };
-
-        nextest = craneLib.cargoNextest (args
-          // {
-            inherit cargoArtifacts;
-            partitions = 1;
-            partitionType = "count";
-          });
-      };
-
       packages = {
-        inherit flex api;
-        inherit (self.checks.${system}) coverage;
-        default = self.packages.${system}.flex;
+        default = ibkr.package;
+        ibkr = ibkr.package;
+        # inherit (self.checks.${system}) coverage;
+        deps = workspaceDeps;
+        workspaceBuild = workspaceBuild;
+        workspaceClippy = workspaceClippy;
+        workspaceTest = workspaceTest;
+        workspaceDoc = workspaceDoc;
+        # container = {seeking-edge = seeking-edge.container;};
       };
       legacyPackages = {
-        cargoExtraPackages = args.nativeBuildInputs;
-      };
-
-      apps = {
-        default = {
-          program = self.packages.${system}.flex;
-        };
+        cargoExtraPackages = common-build-args.nativeBuildInputs;
+        bevyDependencies = bevyDependencies;
       };
 
       formatter = pkgs.alejandra;

@@ -446,14 +446,6 @@ impl Client {
     }
 
     //----------------------------------------------------------------------------------------------
-    /// Gets the connection time
-    // pub fn tws_connection_time(&mut self) -> String {
-    //    //"""Returns the time the API client made a connection to TWS."""
-
-    //    self.conn_time.clone()
-    //}
-
-    //----------------------------------------------------------------------------------------------
     // Request the current time according to TWS or IB Gateway
     pub async fn request_current_time(&mut self) -> Result<()> {
         let frame = Api::RequestCurrentTime;

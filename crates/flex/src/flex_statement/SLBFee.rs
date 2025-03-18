@@ -8,7 +8,7 @@
 
         pub Currency:Option<Currency>,
 
-        pub FxRateToBase:Option<Decimal>,
+        pub FxRateToBase:Option<D256>,
 
         pub AssetCategory:Option<AssetCategory>,
 
@@ -40,7 +40,7 @@
 
         pub Multiplier:Option<i32>,
 
-        pub Strike:Option<Decimal>,
+        pub Strike:Option<D256>,
 
         [Format(Constants.DateFormat)]
         pub Expiry:Option<NaiveDateTime>,
@@ -51,7 +51,7 @@
 
         pub Exchange:string,
 
-        pub Quantity:Option<Decimal>,
+        pub Quantity:Option<D256>,
 
         pub Code:string,
 
@@ -68,23 +68,23 @@
 
         pub UniqueID:string,
 
-        pub NetLendFee:Option<Decimal>,
+        pub NetLendFee:Option<D256>,
 
-        pub NetLendFeeRate:Option<Decimal>,
+        pub NetLendFeeRate:Option<D256>,
 
-        pub GrossLendFee:Option<Decimal>,
+        pub GrossLendFee:Option<D256>,
 
-        pub MarketFeeRate:Option<Decimal>,
+        pub MarketFeeRate:Option<D256>,
 
-        pub TotalCharges:Option<Decimal>,
+        pub TotalCharges:Option<D256>,
 
-        pub TicketCharge:Option<Decimal>,
+        pub TicketCharge:Option<D256>,
 
-        pub CarryCharge:Option<Decimal>,
+        pub CarryCharge:Option<D256>,
 
-        pub Fee:Option<Decimal>,
+        pub Fee:Option<D256>,
 
-        pub FeeRate:Option<Decimal>,
+        pub FeeRate:Option<D256>,
 
         [Format(Constants.DateFormat)]
         pub StartDate:Option<NaiveDateTime>,

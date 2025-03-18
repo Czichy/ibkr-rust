@@ -1,6 +1,6 @@
 use std::str::Split;
 
-use rust_decimal::prelude::*;
+use fastnum::{decimal::Decimal, D256};
 
 use super::{AdjustedOrder,
             FinancialAdvisor,
@@ -55,17 +55,17 @@ pub struct OrderData {
     /// position not yet delivered is being sold.
     pub action:     Action,
     /// The number of positions being bought/sold.
-    pub total_qty:  Decimal,
+    pub total_qty:  D256,
     /// The order's type.
     pub order_type: OrderType,
     /// The LIMIT price.
     /// Used for limit, stop-limit and relative orders. In all other cases
     /// specify zero. For relative orders with no limit price, also specify
     /// zero.
-    pub lmt_price:  Option<Decimal>,
+    pub lmt_price:  Option<D256>,
     /// Generic field to contain the stop price for STP LMT orders, trailing
     /// amount, etc.
-    pub aux_price:  Option<Decimal>,
+    pub aux_price:  Option<D256>,
 
     // extended order fields
     /// The time in force.
@@ -96,9 +96,9 @@ pub struct OrderData {
     pub rule_80_a:                       Option<Rule80A>,
     pub all_or_none:                     bool,
     pub min_qty:                         Option<i32>,
-    pub percent_offset:                  Option<Decimal>,
-    pub trail_stop_price:                Option<Decimal>,
-    pub trailing_percent:                Option<Decimal>,
+    pub percent_offset:                  Option<D256>,
+    pub trail_stop_price:                Option<D256>,
+    pub trailing_percent:                Option<D256>,
 
     // financial advisor fields
     pub financial_advisor: Option<FinancialAdvisor>,
@@ -111,21 +111,21 @@ pub struct OrderData {
     pub exempt_code:         Option<i32>,
 
     // SMART routing fields
-    pub discretionary_amt:     Decimal,
+    pub discretionary_amt:     D256,
     pub e_trade_only:          Option<bool>,
     pub firm_quote_only:       Option<bool>,
-    pub nbbo_price_cap:        Option<Decimal>,
+    pub nbbo_price_cap:        Option<D256>,
     pub opt_out_smart_routing: Option<bool>,
 
     // BOX exchange order fields
     pub auction_strategy: Option<AuctionStrategy>,
-    pub starting_price:   Option<Decimal>,
-    pub stock_ref_price:  Option<Decimal>,
-    pub delta:            Option<Decimal>,
+    pub starting_price:   Option<D256>,
+    pub stock_ref_price:  Option<D256>,
+    pub delta:            Option<D256>,
 
     // Pegged to stock and VOL order fields
-    pub stock_range_lower: Option<Decimal>,
-    pub stock_range_upper: Option<Decimal>,
+    pub stock_range_lower: Option<D256>,
+    pub stock_range_upper: Option<D256>,
 
     pub randomize_size:  bool,
     pub randomize_price: bool,
@@ -134,7 +134,7 @@ pub struct OrderData {
     pub volatility_order_parameter: VolatilityOrderParameter,
 
     // Combo order fields
-    pub basis_points:      Option<Decimal>,
+    pub basis_points:      Option<D256>,
     pub basis_points_type: Option<BasisPointsType>,
 
     // Scale order fields
@@ -167,12 +167,12 @@ pub struct OrderData {
     pub model_code: Option<String>,
 
     // Order combo legs
-    pub order_combo_legs:   Option<Vec<Option<Decimal>>>,
+    pub order_combo_legs:   Option<Vec<Option<D256>>>,
     pub order_misc_options: Option<Vec<(String, String)>>,
 
     // VER PEG2BENCH fields
     pub reference_contract_id:            i32,
-    pub pegged_change_amount:             Option<Decimal>,
+    pub pegged_change_amount:             Option<D256>,
     pub is_pegged_change_amount_decrease: bool,
     pub reference_change_amount:          f64,
     pub reference_exchange_id:            Option<String>,
@@ -188,7 +188,7 @@ pub struct OrderData {
 
     pub soft_dollar_tier: Option<SoftDollarTier>,
 
-    pub cash_qty: Option<Decimal>,
+    pub cash_qty: Option<D256>,
 
     pub mifid_2: Option<Mifid2>,
 
@@ -196,7 +196,7 @@ pub struct OrderData {
     pub is_oms_container:                bool,
     pub discretionary_up_to_limit_price: bool,
     pub auto_cancel_date:                Option<String>,
-    pub filled_quantity:                 Option<Decimal>,
+    pub filled_quantity:                 Option<D256>,
     pub ref_futures_con_id:              Option<i32>,
     pub auto_cancel_parent:              bool,
     pub shareholder:                     Option<String>,
@@ -228,16 +228,16 @@ pub struct OrderData {
 
     /// Dpecifies the offset Off The Midpoint that will be applied to the order.
     /// <i>For IBKRATS orders.</i>
-    pub compete_against_best_offset: Option<Decimal>,
+    pub compete_against_best_offset: Option<D256>,
 
     /// This offset is applied when the spread is an even number of cents wide.
     /// This offset must be in whole-penny increments or zero. <i>For IBKRATS
     /// orders.</i>
-    pub mid_offset_at_whole: Option<Decimal>,
+    pub mid_offset_at_whole: Option<D256>,
 
     /// This offset is applied when the spread is an odd number of cents wide.
     /// This offset must be in half-penny increments. <i>For IBKRATS orders.</i>
-    pub mid_offset_at_half: Option<Decimal>,
+    pub mid_offset_at_half: Option<D256>,
 
     /// Customer account
     pub customer_account: Option<String>,
@@ -271,7 +271,7 @@ impl OrderData {
         }
     }
 
-    // pub fn market(contract: Contract, action: Action, qty: Decimal) -> Self {
+    // pub fn market(contract: Contract, action: Action, qty: D256) -> Self {
     //     let mut order = OrderData::new();
     //     order.action = action;
     //     order.contract = contract;
@@ -279,7 +279,7 @@ impl OrderData {
     //     order
     // }
 
-    // pub fn market_on_close(contract: Contract, action: Action, qty: Decimal) ->
+    // pub fn market_on_close(contract: Contract, action: Action, qty: D256) ->
     // Self {     let mut order = OrderData::new();
     //     order.action = action;
     //     order.contract = contract;
@@ -288,7 +288,7 @@ impl OrderData {
     //     order
     // }
 
-    // pub fn relative_market(contract: Contract, action: Action, qty: Decimal) ->
+    // pub fn relative_market(contract: Contract, action: Action, qty: D256) ->
     // Self {     let mut order = OrderData::new();
     //     order.action = action;
     //     order.contract = contract;
@@ -300,8 +300,8 @@ impl OrderData {
     // pub fn limit(
     //     contract: Contract,
     //     action: Action,
-    //     qty: Decimal,
-    //     lmt: Decimal,
+    //     qty: D256,
+    //     lmt: D256,
     //     tif: TimeInForce,
     // ) -> Self {
     //     let mut order = OrderData::new();
@@ -587,7 +587,7 @@ impl ParseIbkrFrame for Order {
         // ####################################################################
         let order_combo_legs_count: Option<usize> = decode(it)?;
         if let Some(n) = order_combo_legs_count {
-            let mut order_legs: Vec<Option<Decimal>> = Vec::with_capacity(n);
+            let mut order_legs: Vec<Option<D256>> = Vec::with_capacity(n);
             for _i in 0..n {
                 order_legs.push(decode(it)?);
             }

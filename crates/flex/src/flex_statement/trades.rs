@@ -1,7 +1,7 @@
 use chrono::{NaiveDate, NaiveDateTime};
 use iso_currency::Currency;
 // use ibkr_rust_api::prelude::*;
-use rust_decimal::Decimal;
+use fastnum::{decimal::Decimal, D256};
 use serde::Deserialize;
 
 use crate::{enums::{notes_deserialize, open_close_deserialize, OrderType, *},
@@ -62,7 +62,7 @@ pub struct Trade {
     pub currency: Currency,
 
     #[serde(rename = "@fxRateToBase")]
-    pub fx_rate_to_base: Option<Decimal>,
+    pub fx_rate_to_base: Option<D256>,
 
     #[serde(rename = "@transactionType")]
     pub transaction_type: String,
@@ -96,7 +96,7 @@ pub struct Trade {
     pub clearing_firm_id: Option<String>,
 
     #[serde(rename = "@origTradePrice")]
-    pub orig_trade_price: Option<Decimal>,
+    pub orig_trade_price: Option<D256>,
 
     // pub orig_trade_date: Option<NaiveDateTime>,
     #[serde(rename = "@origTradeID")]
@@ -142,19 +142,19 @@ pub struct Trade {
 
     // alternative format
     #[serde(rename = "@quantity")]
-    pub quantity: Decimal,
+    pub quantity: D256,
 
     #[serde(rename = "@tradePrice")]
-    pub trade_price: Decimal,
+    pub trade_price: D256,
 
     #[serde(rename = "@tradeMoney")]
-    pub trade_money: Decimal,
+    pub trade_money: D256,
 
     #[serde(rename = "@proceeds")]
-    pub proceeds: Decimal,
+    pub proceeds: D256,
 
     #[serde(rename = "@ibCommission")]
-    pub ib_commission: Decimal,
+    pub ib_commission: D256,
 
     #[serde(deserialize_with = "deserialize_option_from_str")]
     #[serde(rename = "@exchOrderId")]
@@ -181,10 +181,10 @@ pub struct Trade {
     pub level_of_detail: String,
 
     #[serde(rename = "@changeInPrice")]
-    pub change_in_price: Option<Decimal>,
+    pub change_in_price: Option<D256>,
 
     #[serde(rename = "@changeInQuantity")]
-    pub change_in_quantity: Option<Decimal>,
+    pub change_in_quantity: Option<D256>,
 
     #[serde(deserialize_with = "deserialize_from_str")]
     #[serde(rename = "@orderType")]
@@ -194,22 +194,22 @@ pub struct Trade {
     pub is_api_order: String,
 
     #[serde(rename = "@accruedInterest")]
-    pub accrued_interest: Option<Decimal>,
+    pub accrued_interest: Option<D256>,
 
     #[serde(rename = "@traderID")]
     pub trader_id: String,
 
     #[serde(rename = "@taxes")]
-    pub taxes: Decimal,
+    pub taxes: D256,
 
     #[serde(rename = "@ibCommissionCurrency")]
     pub ib_commission_currency: Option<Currency>,
 
     #[serde(rename = "@netCash")]
-    pub net_cash: Decimal,
+    pub net_cash: D256,
 
     #[serde(rename = "@closePrice")]
-    pub close_price: Decimal,
+    pub close_price: D256,
 
     #[serde(deserialize_with = "open_close_deserialize")]
     // #[serde(deserialize_with = "deserialize_option_from_str")]
@@ -221,16 +221,16 @@ pub struct Trade {
     pub notes: Vec<Notes>,
 
     #[serde(rename = "@cost")]
-    pub cost: Decimal,
+    pub cost: D256,
 
     #[serde(rename = "@fifoPnlRealized")]
-    pub fifo_pnl_realized: Decimal,
+    pub fifo_pnl_realized: D256,
 
     #[serde(rename = "@fxPnl")]
-    pub fx_pnl: Option<Decimal>,
+    pub fx_pnl: Option<D256>,
 
     #[serde(rename = "@mtmPnl")]
-    pub mtm_pnl: Option<Decimal>,
+    pub mtm_pnl: Option<D256>,
 
     #[serde(rename = "@origOrderID")]
     pub orig_order_id: Option<i64>,
@@ -283,7 +283,7 @@ mod tests {
                     underlying_security_id:      None,
                     underlying_listing_exchange: None,
                     issuer:                      None,
-                    multiplier:                  Some(Decimal::new(100, 2)),
+                    multiplier:                  Some(D256::new(100, 2)),
                     strike:                      None,
                     expiry:                      None,
                     put_call:                    None,

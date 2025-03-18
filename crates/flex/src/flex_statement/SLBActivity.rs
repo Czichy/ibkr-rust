@@ -8,7 +8,7 @@
 
         pub Currency:Option<Currency>,
 
-        pub FxRateToBase:Option<Decimal>,
+        pub FxRateToBase:Option<D256>,
 
         pub AssetCategory:Option<AssetCategory>,
 
@@ -40,7 +40,7 @@
 
         pub Multiplier:Option<i32>,
 
-        pub Strike:Option<Decimal>,
+        pub Strike:Option<D256>,
 
         [Format(Constants.DateFormat)]
         pub Expiry:Option<NaiveDateTime>,
@@ -56,17 +56,17 @@
         [Format(Constants.DateFormat)]
         pub Date:Option<NaiveDateTime>,
 
-        pub MarkCurrentPrice:Option<Decimal>,
+        pub MarkCurrentPrice:Option<D256>,
 
-        pub MarkPriorPrice:Option<Decimal>,
+        pub MarkPriorPrice:Option<D256>,
 
-        pub MarkQuantity:Option<Decimal>,
+        pub MarkQuantity:Option<D256>,
 
-        pub CollateralAmount:Option<Decimal>,
+        pub CollateralAmount:Option<D256>,
 
         pub ActivityDescription:string,
 
-        pub Quantity:Option<Decimal>,
+        pub Quantity:Option<D256>,
 
         pub SlbTransactionId:string,
     }

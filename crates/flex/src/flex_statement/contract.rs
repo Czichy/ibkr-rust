@@ -1,6 +1,6 @@
 use chrono::NaiveDate;
 
-use rust_decimal::Decimal;
+use fastnum::{decimal::Decimal, D256};
 use serde::Deserialize;
 
 use crate::{enums::{AssetCategory, SecIdType},
@@ -66,11 +66,11 @@ pub struct Contract {
 
     #[serde(deserialize_with = "deserialize_option")]
     #[serde(rename = "@multiplier")]
-    pub multiplier: Option<Decimal>,
+    pub multiplier: Option<D256>,
 
     #[serde(deserialize_with = "deserialize_option")]
     #[serde(rename = "@strike")]
-    pub strike: Option<Decimal>,
+    pub strike: Option<D256>,
 
     #[serde(deserialize_with = "some_naive_date_from_str")]
     #[serde(rename = "@expiry")]
