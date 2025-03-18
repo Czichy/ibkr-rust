@@ -1,7 +1,7 @@
 use chrono::{NaiveDate, NaiveDateTime};
-use iso_currency::Currency;
 // use ibkr_rust_api::prelude::*;
-use fastnum::{decimal::Decimal, D256};
+use fastnum::D256;
+use iso_currency::Currency;
 use serde::Deserialize;
 
 use crate::{enums::{notes_deserialize, open_close_deserialize, OrderType, *},
@@ -241,9 +241,9 @@ mod tests {
     use std::str::FromStr;
 
     use chrono::NaiveDateTime;
+    use fastnum::dec256;
     use pretty_assertions::assert_eq;
     use quick_xml::de::from_str;
-    use rust_decimal_macros::dec;
 
     use super::*;
     use crate::{enums::{AssetCategory, SecIdType},
@@ -283,14 +283,14 @@ mod tests {
                     underlying_security_id:      None,
                     underlying_listing_exchange: None,
                     issuer:                      None,
-                    multiplier:                  Some(D256::new(100, 2)),
+                    multiplier:                  Some(dec256!(100)),
                     strike:                      None,
                     expiry:                      None,
                     put_call:                    None,
                     principal_adjust_factor:     None,
                 },
                 currency:                 Currency::EUR,
-                fx_rate_to_base:          Some(dec!(1)),
+                fx_rate_to_base:          Some(dec256!(1)),
                 transaction_type:         "ExchTrade".to_string(),
                 trade_id:                 Some(29464420),
                 ib_order_id:              Some(23947654),
@@ -299,7 +299,7 @@ mod tests {
                 order_reference:          None,
                 volatility_order_link:    None,
                 clearing_firm_id:         None,
-                orig_trade_price:         Some(dec!(0)),
+                orig_trade_price:         Some(dec256!(0)),
                 orig_trade_id:            None,
                 order_time:               NaiveDateTime::from_str("2021-02-26T09:22:05").ok(),
                 open_date_time:           None,
@@ -310,33 +310,33 @@ mod tests {
                 exchange:                 "AEB".to_string(),
                 transaction_id:           "85594826".to_string(),
                 buy_sell:                 crate::enums::BuySell::Buy,
-                quantity:                 dec!(10),
-                trade_price:              dec!(89.5),
-                trade_money:              dec!(895),
-                proceeds:                 dec!(-895),
-                ib_commission:            dec!(-4),
+                quantity:                 dec256!(10),
+                trade_price:              dec256!(89.5),
+                trade_money:              dec256!(895),
+                proceeds:                 dec256!(-895),
+                ib_commission:            dec256!(-4),
                 exch_order_id:            Some("N/A".to_string()),
                 ext_exec_id:              Some("669953IE00B3RBWM25/B".to_string()),
                 holding_period_date_time: None,
                 when_realized:            None,
                 when_reopened:            None,
                 level_of_detail:          "EXECUTION".to_string(),
-                change_in_price:          Some(dec!(0)),
-                change_in_quantity:       Some(dec!(0)),
+                change_in_price:          Some(dec256!(0)),
+                change_in_quantity:       Some(dec256!(0)),
                 order_type:               OrderType::Limit,
                 is_api_order:             "N".to_string(),
                 accrued_interest:         None,
                 trader_id:                "".to_string(),
-                taxes:                    dec!(0),
+                taxes:                    dec256!(0),
                 ib_commission_currency:   Some(Currency::EUR),
-                net_cash:                 dec!(-899),
-                close_price:              dec!(89.9),
+                net_cash:                 dec256!(-899),
+                close_price:              dec256!(89.9),
                 open_close_indicator:     Some(OpenClose::O),
                 notes:                    vec![],
-                cost:                     dec!(899),
-                fifo_pnl_realized:        dec!(0),
-                fx_pnl:                   Some(dec!(0)),
-                mtm_pnl:                  Some(dec!(4)),
+                cost:                     dec256!(899),
+                fifo_pnl_realized:        dec256!(0),
+                fx_pnl:                   Some(dec256!(0)),
+                mtm_pnl:                  Some(dec256!(4)),
                 orig_order_id:            Some(0),
             },
             response

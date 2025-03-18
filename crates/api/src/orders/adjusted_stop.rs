@@ -1,6 +1,6 @@
 use std::str::Split;
 
-use fastnum::{decimal::Decimal, D256};
+use fastnum::D256;
 
 use crate::{enums::*,
             ib_frame::{ParseError, ParseIbkrFrame, ParseResult},

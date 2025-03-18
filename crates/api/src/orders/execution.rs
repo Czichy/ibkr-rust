@@ -1,6 +1,6 @@
 use std::str::{FromStr, Split};
 
-use fastnum::{decimal::Decimal, D256};
+use fastnum::D256;
 
 use crate::{contract::Contract,
             enums::*,

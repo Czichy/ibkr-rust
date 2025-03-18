@@ -5,7 +5,7 @@ use ibkr_rust_api::{client, contract::*, orders::*, Result};
 
 fn get_client_addr() -> SocketAddr {
     // SocketAddr::new(IpAddr::V4(Ipv4Addr::new(192, 168, 1, 62)), 4444)
-    SocketAddr::new(IpAddr::V4(Ipv4Addr::new(192, 168, 1, 62)), 4444)
+    SocketAddr::new(IpAddr::V4(Ipv4Addr::new(192, 168, 1, 62)), 1111)
 }
 #[tokio::test]
 #[cfg_attr(not(feature = "ibkr_client_test"), ignore)]

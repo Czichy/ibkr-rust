@@ -1,6 +1,6 @@
 use chrono::{NaiveDate, NaiveDateTime};
 use iso_currency::Currency;
-use fastnum::{decimal::Decimal, D256};
+use fastnum::D256;
 use serde::{Deserialize, Serialize};
 
 use self::{corporate_actions::CorporateActions, open_position::OpenPositions};

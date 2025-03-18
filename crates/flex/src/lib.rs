@@ -271,6 +271,7 @@ mod tests {
     use std::{env, path::PathBuf, str::FromStr};
 
     use chrono::{NaiveDate, NaiveDateTime};
+    use fastnum::{dec256, decimal::Decimal, D256};
     use iso_currency::Currency;
     // use ibkr_rust_api::{
     //    ib_enums::{self, SecIdType},
@@ -278,8 +279,6 @@ mod tests {
     //};
     use pretty_assertions::assert_eq;
     use quick_xml::de::from_str;
-    use fastnum::{decimal::Decimal, D256};
-    use rust_decimal_macros::dec;
     use tracing_bunyan_formatter::{BunyanFormattingLayer, JsonStorageLayer};
     use tracing_log::LogTracer;
     use tracing_subscriber::{layer::SubscriberExt, registry::Registry, EnvFilter};
@@ -380,14 +379,14 @@ mod tests {
                         underlying_security_id:      None,
                         underlying_listing_exchange: None,
                         issuer:                      None,
-                        multiplier:                  Some(D256::new(100, 2)),
+                        multiplier:                  Some(dec256!(100)),
                         strike:                      None,
                         expiry:                      None,
                         put_call:                    None,
                         principal_adjust_factor:     None,
                     },
                     currency:                 Currency::USD,
-                    fx_rate_to_base:          Some(dec!(0.88043)),
+                    fx_rate_to_base:          Some(dec256!(0.88043)),
                     transaction_type:         "ExchTrade".to_string(),
                     trade_id:                 Some(337365179),
                     ib_order_id:              Some(300028496),
@@ -396,7 +395,7 @@ mod tests {
                     order_reference:          Some("ChartTrader428018967".to_string()),
                     volatility_order_link:    Some("1413113351.0".to_string()),
                     clearing_firm_id:         None,
-                    orig_trade_price:         Some(dec!(0)),
+                    orig_trade_price:         Some(dec256!(0)),
                     orig_trade_id:            None,
                     order_time:               Some(
                         NaiveDateTime::from_str("2022-02-15T10:20:24").unwrap()
@@ -410,33 +409,33 @@ mod tests {
                     exchange:                 "ISLAND".to_string(),
                     transaction_id:           "932769321".to_string(),
                     buy_sell:                 crate::enums::BuySell::Sell,
-                    quantity:                 dec!(-1),
-                    trade_price:              dec!(115.73),
-                    trade_money:              dec!(-115.73),
-                    proceeds:                 dec!(115.73),
-                    ib_commission:            dec!(-1.000720223),
+                    quantity:                 dec256!(-1),
+                    trade_price:              dec256!(115.73),
+                    trade_money:              dec256!(-115.73),
+                    proceeds:                 dec256!(115.73),
+                    ib_commission:            dec256!(-1.000720223),
                     exch_order_id:            Some("N/A".to_string()),
                     ext_exec_id:              Some("0322420512".to_string()),
                     holding_period_date_time: None,
                     when_realized:            None,
                     when_reopened:            None,
                     level_of_detail:          "EXECUTION".to_string(),
-                    change_in_price:          Some(dec!(0)),
-                    change_in_quantity:       Some(dec!(0)),
+                    change_in_price:          Some(dec256!(0)),
+                    change_in_quantity:       Some(dec256!(0)),
                     order_type:               OrderType::Limit,
                     is_api_order:             "N".to_string(),
                     accrued_interest:         None,
                     trader_id:                "".to_string(),
-                    taxes:                    dec!(0),
+                    taxes:                    dec256!(0),
                     ib_commission_currency:   Some(Currency::USD),
-                    net_cash:                 dec!(114.729279777),
-                    close_price:              dec!(121.47),
+                    net_cash:                 dec256!(114.729279777),
+                    close_price:              dec256!(121.47),
                     open_close_indicator:     Some(OpenClose::O),
                     notes:                    vec![Notes::PartialExecution],
-                    cost:                     dec!(-114.729279777),
-                    fifo_pnl_realized:        dec!(0),
-                    fx_pnl:                   Some(dec!(0)),
-                    mtm_pnl:                  Some(dec!(-5.74)),
+                    cost:                     dec256!(-114.729279777),
+                    fifo_pnl_realized:        dec256!(0),
+                    fx_pnl:                   Some(dec256!(0)),
+                    mtm_pnl:                  Some(dec256!(-5.74)),
                     orig_order_id:            Some(0),
                 },
                 trade_1

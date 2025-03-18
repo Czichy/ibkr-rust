@@ -1,6 +1,6 @@
 use chrono::NaiveDate;
+use fastnum::D256;
 use iso_currency::Currency;
-use fastnum::{decimal::Decimal, D256};
 use serde::Deserialize;
 
 use crate::{enums::MultiDate, flex_statement::contract::Contract, utils::de::*};
@@ -121,10 +121,10 @@ mod tests {
     use std::str::FromStr;
 
     use chrono::NaiveDate;
+    use fastnum::dec256;
     use iso_currency::Currency;
     use pretty_assertions::assert_eq;
     use quick_xml::de::from_str;
-    use rust_decimal_macros::dec;
 
     use super::*;
 
@@ -150,12 +150,12 @@ mod tests {
                     contract:             None,
                     currency:             Currency::EUR,
                     activity_description: "Starting Balance".to_string(),
-                    amount:               Some(dec!(0),),
-                    balance:              Some(dec!(6655.368396105),),
+                    amount:               Some(dec256!(0)),
+                    balance:              Some(dec256!(6655.368396105)),
                     credit:               None,
                     date:                 NaiveDate::from_str("2022-02-15").unwrap(),
                     debit:                None,
-                    fx_rate_to_base:      Some(dec!(1),),
+                    fx_rate_to_base:      Some(dec256!(1),),
                     level_of_detail:      "BaseCurrency".to_string(),
                     model:                None,
                     order_id:             None,
@@ -164,12 +164,12 @@ mod tests {
                     )),
                     settle_date:          None,
                     trade_code:           None,
-                    trade_commission:     Some(dec!(0),),
-                    trade_gross:          Some(dec!(0)),
+                    trade_commission:     Some(dec256!(0),),
+                    trade_gross:          Some(dec256!(0)),
                     trade_id:             None,
-                    trade_price:          Some(dec!(0),),
-                    trade_quantity:       Some(dec!(0),),
-                    trade_tax:            Some(dec!(0),),
+                    trade_price:          Some(dec256!(0),),
+                    trade_quantity:       Some(dec256!(0),),
+                    trade_tax:            Some(dec256!(0),),
                     transaction_id:       None,
                 },
                 StatementOfFundsLine {
@@ -179,12 +179,12 @@ mod tests {
                     contract:             None,
                     currency:             Currency::EUR,
                     activity_description: "Cash Transfer".to_string(),
-                    amount:               Some(dec!(15724.15)),
-                    balance:              Some(dec!(15724.15)),
-                    credit:               Some(dec!(15724.15)),
+                    amount:               Some(dec256!(15724.15)),
+                    balance:              Some(dec256!(15724.15)),
+                    credit:               Some(dec256!(15724.15)),
                     date:                 NaiveDate::from_str("2023-01-30").unwrap(),
                     debit:                None,
-                    fx_rate_to_base:      Some(dec!(1)),
+                    fx_rate_to_base:      Some(dec256!(1)),
                     level_of_detail:      "Currency".to_string(),
                     model:                None,
                     order_id:             None,
@@ -195,12 +195,12 @@ mod tests {
                         NaiveDate::from_str("2023-01-31").unwrap()
                     )),
                     trade_code:           None,
-                    trade_commission:     Some(dec!(0)),
-                    trade_gross:          Some(dec!(0)),
+                    trade_commission:     Some(dec256!(0)),
+                    trade_gross:          Some(dec256!(0)),
                     trade_id:             None,
-                    trade_price:          Some(dec!(0)),
-                    trade_quantity:       Some(dec!(0)),
-                    trade_tax:            Some(dec!(0)),
+                    trade_price:          Some(dec256!(0)),
+                    trade_quantity:       Some(dec256!(0)),
+                    trade_tax:            Some(dec256!(0)),
                     transaction_id:       Some(1635131224),
                 },
                 StatementOfFundsLine {
@@ -223,7 +223,7 @@ mod tests {
                         underlying_security_id:      None,
                         underlying_listing_exchange: None,
                         issuer:                      None,
-                        multiplier:                  Some(dec!(1),),
+                        multiplier:                  Some(dec256!(1),),
                         strike:                      None,
                         expiry:                      None,
                         put_call:                    None,
@@ -231,12 +231,12 @@ mod tests {
                     },),
                     currency:             Currency::EUR,
                     activity_description: "Buy 100 FORD MOTOR CO ".to_string(),
-                    amount:               Some(dec!(-1558.38328),),
-                    balance:              Some(dec!(5103.133989064),),
+                    amount:               Some(dec256!(-1558.38328),),
+                    balance:              Some(dec256!(5103.133989064),),
                     credit:               None,
                     date:                 NaiveDate::from_str("2022-02-14").unwrap(),
-                    debit:                Some(dec!(-1558.38328),),
-                    fx_rate_to_base:      Some(dec!(1),),
+                    debit:                Some(dec256!(-1558.38328),),
+                    fx_rate_to_base:      Some(dec256!(1),),
                     level_of_detail:      "BaseCurrency".to_string(),
                     model:                None,
                     order_id:             Some(299500993),
@@ -247,12 +247,12 @@ mod tests {
                         NaiveDate::from_str("2022-02-16").unwrap()
                     )),
                     trade_code:           Some("P".to_string()),
-                    trade_commission:     Some(dec!(-0.88444),),
-                    trade_gross:          Some(dec!(-1557.49884),),
+                    trade_commission:     Some(dec256!(-0.88444),),
+                    trade_gross:          Some(dec256!(-1557.49884),),
                     trade_id:             Some("336654462".to_string(),),
-                    trade_price:          Some(dec!(17.61),),
-                    trade_quantity:       Some(dec!(100),),
-                    trade_tax:            Some(dec!(0),),
+                    trade_price:          Some(dec256!(17.61),),
+                    trade_quantity:       Some(dec256!(100),),
+                    trade_tax:            Some(dec256!(0),),
                     transaction_id:       Some(929316089,),
                 },
             ],

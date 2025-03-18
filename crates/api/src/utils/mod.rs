@@ -5,7 +5,7 @@ pub mod ib_message {
               str::{self, FromStr}};
 
     use chrono::{Local, NaiveDate, Utc};
-    use fastnum::{decimal::{Context, Decimal, ParseError},
+    use fastnum::{decimal::{Context, ParseError},
                   D256};
     use tracing::log::error;
 
@@ -118,7 +118,7 @@ pub mod ib_message {
         }
     }
 
-    pub fn decode<T>(stream: &mut std::str::Split<'_, &str>) -> Result<Option<T>, IbDecodeError>
+    pub fn decode<T>(stream: &mut str::Split<'_, &str>) -> Result<Option<T>, IbDecodeError>
     where
         T: FromStr + Sized + Decodable,
         <T as FromStr>::Err: std::fmt::Debug,
@@ -212,9 +212,8 @@ pub mod ib_message {
 mod tests {
 
     use chrono::{Local, NaiveDate, TimeZone, Utc};
-    use fastnum::{decimal::Decimal, D256};
+    use fastnum::{dec256, decimal::Decimal, D256};
     use pretty_assertions::assert_eq;
-    use rust_decimal_macros::dec;
 
     use crate::{utils::ib_message::*, TimeStamp};
     #[test]
@@ -303,9 +302,9 @@ mod tests {
     fn decode_decimal() {
         let val = "1234.3";
         let decimal: D256 = D256::decode_str(val).unwrap();
-        assert_eq!(dec!(1234.3), decimal, "D256 conversion");
+        assert_eq!(dec256!(1234.3), decimal, "D256 conversion");
         let val = "7.55E-4";
         let decimal: D256 = D256::decode_str(val).unwrap();
-        assert_eq!(dec!(0.000755), decimal, "D256 conversion");
+        assert_eq!(dec256!(0.000755), decimal, "D256 conversion");
     }
 }

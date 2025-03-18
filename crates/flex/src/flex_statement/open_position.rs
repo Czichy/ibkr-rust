@@ -1,5 +1,5 @@
 ﻿use chrono::NaiveDateTime;
-use fastnum::{decimal::Decimal, D256};
+use fastnum::D256;
 use serde::Deserialize;
 
 use crate::{enums::LongShort, flex_statement::contract::Contract, utils::de::*};

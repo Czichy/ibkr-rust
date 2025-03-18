@@ -3,7 +3,7 @@ use std::{fmt::{Display, Formatter},
 
 use chrono::{DateTime, NaiveDateTime, TimeZone};
 use chrono_tz::{Tz, US, UTC};
-use fastnum::{decimal::Decimal, D256};
+use fastnum::D256;
 
 // #[cfg(feature = "serde")]
 // use serde::{Deserialize, Serialize};

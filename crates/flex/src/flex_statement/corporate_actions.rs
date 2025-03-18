@@ -1,10 +1,10 @@
-use chrono::{NaiveDate};
-use iso_currency::Currency;
+use chrono::NaiveDate;
 // use ibkr_rust_api::prelude::*;
-use fastnum::{decimal::Decimal, D256};
+use fastnum::D256;
+use iso_currency::Currency;
 use serde::Deserialize;
 
-use crate::{enums::{*},
+use crate::{enums::*,
             flex_statement::contract::Contract,
             utils::de::{deserialize_from_str,
                         deserialize_option_from_str,
@@ -217,9 +217,9 @@ mod tests {
     use std::str::FromStr;
 
     use chrono::NaiveDateTime;
+    use fastnum::dec256;
     use pretty_assertions::assert_eq;
     use quick_xml::de::from_str;
-    use rust_decimal_macros::dec;
 
     use super::*;
     use crate::{enums::{AssetCategory, SecIdType},
@@ -262,7 +262,7 @@ mod tests {
                     principal_adjust_factor:     Some("1".to_string()),
                 },
                 currency:           Currency::EUR,
-                fifo_pnl_realized:  dec!(130),
+                fifo_pnl_realized:  dec256!(130),
                 mtm_pnl:            Some(D256::ZERO),
                 action_description: "(DE0001102333) BOND MATURITY FOR EUR 1.00 PER BOND (DBR 1 \
                                      3/4 02/15/24, DBR 1 3/4 02/15/24, DE0001102333)"
@@ -271,9 +271,9 @@ mod tests {
                 report_date:        NaiveDate::from_str("2024-02-15").ok(),
                 transaction_id:     "2495820369".to_string(),
                 level_of_detail:    "DETAIL".to_string(),
-                amount:             dec!(-15000).into(),
-                quantity:           dec!(-15000),
-                proceeds:           dec!(15000),
+                amount:             dec256!(-15000).into(),
+                quantity:           dec256!(-15000),
+                proceeds:           dec256!(15000),
             }],
             response.items
         );

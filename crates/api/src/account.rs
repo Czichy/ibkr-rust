@@ -1,7 +1,7 @@
 use std::{fmt,
           str::{FromStr, Split}};
 
-use fastnum::{decimal::Decimal, D256};
+use fastnum::D256;
 use tokio::sync::watch;
 
 use crate::{account_summary_tags::AccountValueKey,

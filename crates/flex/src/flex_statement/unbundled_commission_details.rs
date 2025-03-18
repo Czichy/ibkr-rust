@@ -1,6 +1,6 @@
 use chrono::NaiveDateTime;
+use fastnum::D256;
 use iso_currency::Currency;
-use fastnum::{decimal::Decimal, D256};
 use serde::Deserialize;
 
 use crate::{enums::*,
@@ -94,10 +94,10 @@ pub struct UnbundledCommissionDetail {
 mod tests {
     use std::str::FromStr;
 
+    use fastnum::dec256;
     use iso_currency::Currency;
     use pretty_assertions::assert_eq;
     use quick_xml::de::from_str;
-    use rust_decimal_macros::dec;
 
     use super::*;
     use crate::{enums::{AssetCategory, SecIdType},
@@ -113,7 +113,7 @@ mod tests {
             UnbundledCommissionDetail {
                 account_id:                    "U7502027".to_string(),
                 acct_alias:                    None,
-                quantity:                      Some(dec!(100)),
+                quantity:                      Some(dec256!(100)),
                 contract:                      Contract {
                     asset_category:              AssetCategory::STK,
                     symbol:                      "F".to_string(),
@@ -129,7 +129,7 @@ mod tests {
                     underlying_security_id:      None,
                     underlying_listing_exchange: None,
                     issuer:                      None,
-                    multiplier:                  Some(dec!(1),),
+                    multiplier:                  Some(dec256!(1),),
                     strike:                      None,
                     expiry:                      None,
                     put_call:                    None,
@@ -142,18 +142,18 @@ mod tests {
                     .unwrap(),
                 trade_id:                      None,
                 model:                         None,
-                fx_rate_to_base:               dec!(0.88444),
-                other:                         dec!(0),
-                reg_other:                     dec!(0),
-                reg_section31_transaction_fee: dec!(0),
-                reg_finratrading_activity_fee: dec!(0),
-                third_party_regulatory_charge: dec!(0),
-                third_party_clearing_charge:   dec!(0),
-                third_party_execution_charge:  dec!(0),
-                broker_clearing_charge:        dec!(0),
-                broker_execution_charge:       dec!(-0.5),
-                total_commission:              dec!(-0.5),
-                price:                         dec!(17.605),
+                fx_rate_to_base:               dec256!(0.88444),
+                other:                         dec256!(0),
+                reg_other:                     dec256!(0),
+                reg_section31_transaction_fee: dec256!(0),
+                reg_finratrading_activity_fee: dec256!(0),
+                third_party_regulatory_charge: dec256!(0),
+                third_party_clearing_charge:   dec256!(0),
+                third_party_execution_charge:  dec256!(0),
+                broker_clearing_charge:        dec256!(0),
+                broker_execution_charge:       dec256!(-0.5),
+                total_commission:              dec256!(-0.5),
+                price:                         dec256!(17.605),
             },
             response
         );

@@ -1,6 +1,6 @@
 use chrono::NaiveDate;
 
-use fastnum::{decimal::Decimal, D256};
+use fastnum::D256;
 use serde::Deserialize;
 
 use crate::{enums::{AssetCategory, SecIdType},
