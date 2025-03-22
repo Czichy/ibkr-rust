@@ -232,29 +232,52 @@
           cargoBuildCommand = "env RUSTDOCFLAGS='-D rustdoc::broken_intra_doc_links' cargo doc --no-deps --document-private-items && cp -a target/doc $out";
           doCheck = false;
         });
+      api = craneLib.buildPackage (individualCrateArgs
+        // rec {
+          pname = manifest.name;
+          version = manifest.version;
+          cargoExtraArgs = "--lib ${pname}";
+          src = fileSetForCrate [
+            "crates/api/src"
+            "crates/api/Cargo.toml"
+          ];
+        });
 
-      ibkr = pkg {
-        name = manifest.name;
-        dir = "../crates";
-        extraDirs = [
-          # "crates/seeking-edge"
-
-          "crates/api"
-          "crates/flex"
-        ];
-      };
+      flex = craneLib.buildPackage (individualCrateArgs
+        // rec {
+          pname = "ibkr-rust-flex";
+          cargoExtraArgs = "--bin ${pname}";
+          src = fileSetForCrate [
+            "crates/flex/src"
+            "crates/flex/Cargo.toml"
+          ];
+        });
+      # ibkr = pkg {
+      #   name = manifest.name;
+      #   dir = "../crates";
+      #   extraDirs = [
+      #     # "crates/seeking-edge"
+      #     "crates/api"
+      #     "crates/flex"
+      #   ];
+      # };
     in {
       packages = {
-        default = ibkr.package;
-        ibkr = ibkr.package;
-        # inherit (self.checks.${system}) coverage;
-        deps = workspaceDeps;
-        workspaceBuild = workspaceBuild;
-        workspaceClippy = workspaceClippy;
-        workspaceTest = workspaceTest;
-        workspaceDoc = workspaceDoc;
-        # container = {seeking-edge = seeking-edge.container;};
+        inherit flex api;
+        inherit (self.checks.${system}) coverage;
+        default = self.packages.${system}.flex;
       };
+      # packages = {
+      #   default = ibkr.package;
+      #   ibkr = ibkr.package;
+      #   # inherit (self.checks.${system}) coverage;
+      #   deps = workspaceDeps;
+      #   workspaceBuild = workspaceBuild;
+      #   workspaceClippy = workspaceClippy;
+      #   workspaceTest = workspaceTest;
+      #   workspaceDoc = workspaceDoc;
+      #   # container = {seeking-edge = seeking-edge.container;};
+      # };
       legacyPackages = {
         cargoExtraPackages = common-build-args.nativeBuildInputs;
         bevyDependencies = bevyDependencies;
