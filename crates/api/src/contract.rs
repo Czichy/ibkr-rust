@@ -126,7 +126,7 @@ impl ParseIbkrFrame for Contract {
                     symbol: decode(it)?.unwrap(),
                     sec_type: decode(it)?.unwrap(),
                     last_trade_date_or_contract_month: decode(it)?,
-                    last_trade_date: decode(it)?,
+                    // last_trade_date: decode(it)?,
                     strike: decode(it)?,
                     right: decode(it)?,
                     multiplier: decode(it)?,
