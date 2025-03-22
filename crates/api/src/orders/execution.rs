@@ -80,7 +80,7 @@ pub struct Execution {
     pub model_code:     Option<String>,
     /// The liquidity type of the execution. Requires TWS 968+ and API v973.05+.
     /// Python API specifically requires API v973.06+.
-    pub last_liquidity: Liquidity,
+    pub last_liquidity: Option<Liquidity>,
 
     /// pending price revision
     pub pending_price_revision: bool,
@@ -126,7 +126,7 @@ impl ParseIbkrFrame for Execution {
             ev_rule: decode(it)?,
             ev_multiplier: decode(it)?,
             model_code: decode(it)?,
-            last_liquidity: decode(it)?.unwrap(),
+            last_liquidity: decode(it)?,
             pending_price_revision: decode(it)?.unwrap(),
             submitter: decode(it)?,
         })
