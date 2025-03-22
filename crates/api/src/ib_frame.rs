@@ -271,6 +271,7 @@ impl IBFrame {
             },
             Incoming::ContractData => {
                 tracing::debug!("decode ContractData");
+                // it.next(); // skip version
                 let req_id: RequestId = decode(&mut it)?.unwrap();
                 let details =
                     contract::ContractDetails::try_parse_frame(msg_id, server_version, &mut it)?;

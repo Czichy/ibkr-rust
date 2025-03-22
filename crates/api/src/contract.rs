@@ -51,6 +51,7 @@ pub struct Contract {
     pub symbol:                            String,
     pub sec_type:                          SecType,
     pub last_trade_date_or_contract_month: Option<String>,
+    pub last_trade_date:                   Option<String>,
     pub strike:                            Option<D256>,
     pub right:                             Option<OptionRight>,
     pub multiplier:                        Option<D256>,
@@ -106,6 +107,7 @@ impl ParseIbkrFrame for Contract {
                     symbol: decode(it)?.unwrap(),
                     sec_type: decode(it)?.unwrap(),
                     last_trade_date_or_contract_month: decode(it)?,
+                    last_trade_date: decode(it)?,
                     strike: decode(it)?,
                     right: decode(it)?,
                     exchange: decode(it)?,
@@ -124,6 +126,7 @@ impl ParseIbkrFrame for Contract {
                     symbol: decode(it)?.unwrap(),
                     sec_type: decode(it)?.unwrap(),
                     last_trade_date_or_contract_month: decode(it)?,
+                    last_trade_date: decode(it)?,
                     strike: decode(it)?,
                     right: decode(it)?,
                     multiplier: decode(it)?,
@@ -313,11 +316,6 @@ impl ParseIbkrFrame for ContractDetails {
                     ..Default::default()
                 };
                 contract.trading_class = decode(it)?;
-                // new field???
-                if server_version >= 183 {
-                    // TODO: ab Version 183
-                    let _: Option<String> = decode(it)?;
-                }
                 contract.con_id = decode(it)?;
                 details.min_tick = decode(it)?;
                 contract.multiplier = decode(it)?;
