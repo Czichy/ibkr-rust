@@ -183,7 +183,7 @@ pub struct OrderStatusUpdate {
     pub filled:          D256,
     pub remaining:       D256,
     pub avg_fill_price:  D256,
-    pub perm_id:         i32,
+    pub perm_id:         i64,
     pub parent_id:       OrderId,
     pub last_fill_price: D256,
     pub client_id:       usize,
@@ -216,8 +216,6 @@ impl ParseIbkrFrame for OrderStatusUpdate {
         })
     }
 }
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
 #[derive(Debug, Clone, Copy, Default)]
 pub enum OrderStatus {
     /// indicates that you have transmitted the order, but have not yet received
