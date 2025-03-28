@@ -41,7 +41,7 @@ pub struct OrderData {
     /// The API client id which placed the order.
     pub client_id: Option<usize>,
     /// The Host order identifier.
-    pub perm_id:   i64,
+    pub perm_id:   Option<i64>,
 
     /// Identifies the side.
     /// Generally available values are BUY and SELL.
@@ -513,7 +513,7 @@ impl ParseIbkrFrame for Order {
             origin: decode(it)?,
             order_ref: decode(it)?,
             client_id: if !completed { decode(it)? } else { None },
-            perm_id: decode(it)?.unwrap(),
+            perm_id: decode(it)?,
             outside_rth: decode(it)?.unwrap(),
             hidden: decode(it)?.unwrap(),
             discretionary_amt: decode(it)?.unwrap(),
