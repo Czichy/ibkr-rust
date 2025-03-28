@@ -13,7 +13,7 @@ use crate::{enums::*,
 /// Provides an active order's current state.
 pub struct OrderState {
     pub order_id:                            Option<OrderId>,
-    pub perm_id:                             Option<i64>,
+    pub perm_id:                             i64,
     /// The order's current status
     pub status:                              OrderStatus, // Option<String>,
     /// The account's current initial margin.
