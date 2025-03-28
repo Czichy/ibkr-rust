@@ -64,14 +64,14 @@ pub struct Execution {
     pub side:           Side,
     pub shares:         D256,
     pub price:          D256,
-    pub perm_id:        i32,
+    pub perm_id:        Option<i64>,
     /// The API client identifier which placed the order which originated this
     /// execution.
-    pub client_id:      ClientId,
+    pub client_id:      Option<ClientId>,
     /// The API client's order Id. May not be unique to an account.
     pub order_id:       OrderId,
     pub contract:       Contract,
-    pub liquidation:    i32,
+    pub liquidation:    Option<i32>,
     pub cum_qty:        D256,
     pub avg_price:      D256,
     pub order_ref:      Option<String>,
@@ -117,9 +117,12 @@ impl ParseIbkrFrame for Execution {
             shares: decode(it)?.unwrap(),
             price: decode(it)?.unwrap(),
 
-            perm_id: decode(it)?.unwrap(),
-            client_id: decode(it)?.unwrap(),
-            liquidation: decode(it)?.unwrap(),
+            perm_id: decode(it)?,
+            client_id: {
+                tracing::error!("gjdfghdflk");
+                decode(it)?
+            },
+            liquidation: decode(it)?,
             cum_qty: decode(it)?.unwrap(),
             avg_price: decode(it)?.unwrap(),
             order_ref: decode(it)?,

@@ -8,7 +8,7 @@ use tracing_subscriber::{layer::SubscriberExt, registry::Registry, EnvFilter};
 #[ctor::ctor]
 fn init() {
     LogTracer::init().expect("Unable to setup log tracer!");
-    let env_filter = EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info"));
+    let env_filter = EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("debug"));
     let app_name = concat!(env!("CARGO_PKG_NAME"), "-", env!("CARGO_PKG_VERSION")).to_string();
     ////let (non_blocking_writer, _guard) =
     ////let tracing_appender::non_blocking(std::io::stdout());
