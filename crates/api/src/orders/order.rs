@@ -41,7 +41,7 @@ pub struct OrderData {
     /// The API client id which placed the order.
     pub client_id: Option<usize>,
     /// The Host order identifier.
-    pub perm_id:   i32,
+    pub perm_id:   i64,
 
     /// Identifies the side.
     /// Generally available values are BUY and SELL.
