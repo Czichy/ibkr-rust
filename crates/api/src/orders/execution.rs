@@ -118,10 +118,7 @@ impl ParseIbkrFrame for Execution {
             price: decode(it)?.unwrap(),
 
             perm_id: decode(it)?,
-            client_id: {
-                tracing::error!("gjdfghdflk");
-                decode(it)?
-            },
+            client_id: decode(it)?,
             liquidation: decode(it)?,
             cum_qty: decode(it)?.unwrap(),
             avg_price: decode(it)?.unwrap(),
