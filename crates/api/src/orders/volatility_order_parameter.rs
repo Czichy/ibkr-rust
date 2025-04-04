@@ -14,11 +14,11 @@ pub struct VolatilityOrderParameter {
     ///     Values include:
     /// 1 – Daily Volatility
     /// 2 – Annual Volatility.
-    pub volatility_type:                   Option<VolatilityType>,
+    pub volatility_type:                   VolatilityType,
     /// Enter an order type to instruct TWS to submit a delta neutral trade on
     /// full or partial execution of the VOL order. VOL orders only. For no
     /// hedge delta order to be sent, specify NONE.
-    pub delta_neutral_order_type:          Option<OrderType>,
+    pub delta_neutral_order_type:          OrderType,
     /// Use this field to enter a value if the value in the
     /// deltaNeutralOrderType field is an order type that requires an Aux price,
     /// such as a REL order. VOL orders only.
@@ -56,7 +56,7 @@ pub struct VolatilityOrderParameter {
     /// Valid values include:
     /// 1 - Average of NBBO
     /// 2 - NBB or the NBO depending on the action and right.
-    pub reference_price_type:              Option<ReferencePriceType>,
+    pub reference_price_type:              ReferencePriceType,
 }
 
 // TODO: Check None
@@ -73,28 +73,28 @@ impl ParseIbkrFrame for VolatilityOrderParameter {
         if !matches!(msg_id, Incoming::OpenOrder | Incoming::CompletedOrder) {
             return Err(ParseError::UnexpectedMessage);
         }
-        let server_version = server_version.ok_or(ParseError::MissingServerVersion)?;
+        let _server_version = server_version.ok_or(ParseError::MissingServerVersion)?;
         let mut result = Self {
             volatility: decode(it)?,
-            volatility_type: decode(it)?,
-            delta_neutral_order_type: decode(it)?,
+            volatility_type: decode(it)?.unwrap(),
+            delta_neutral_order_type: decode(it)?.unwrap(),
             delta_neutral_aux_price: decode(it)?,
             ..Default::default()
         };
-        if result.delta_neutral_order_type.is_some() {
-            result.delta_neutral_con_id = decode(it)?.unwrap();
-            if matches!(msg_id, Incoming::OpenOrder) {
-                result.delta_neutral_settling_firm = decode(it)?;
-                result.delta_neutral_clearing_account = decode(it)?;
-                result.delta_neutral_clearing_intent = decode(it)?;
-                result.delta_neutral_open_close = decode(it)?;
-            }
-            result.delta_neutral_short_sale = decode(it)?.unwrap();
-            result.delta_neutral_short_sale_slot = decode(it)?.unwrap();
-            result.delta_neutral_designated_location = decode(it)?;
+        // if result.delta_neutral_order_type.is_some() {
+        result.delta_neutral_con_id = decode(it)?.unwrap();
+        if matches!(msg_id, Incoming::OpenOrder) {
+            result.delta_neutral_settling_firm = decode(it)?;
+            result.delta_neutral_clearing_account = decode(it)?;
+            result.delta_neutral_clearing_intent = decode(it)?;
+            result.delta_neutral_open_close = decode(it)?;
         }
+        result.delta_neutral_short_sale = decode(it)?.unwrap();
+        result.delta_neutral_short_sale_slot = decode(it)?.unwrap();
+        result.delta_neutral_designated_location = decode(it)?;
+        // }
         result.continuous_update = decode(it)?.unwrap();
-        result.reference_price_type = decode(it)?;
+        result.reference_price_type = decode(it)?.unwrap();
         Ok(result)
     }
 }
@@ -106,15 +106,15 @@ impl crate::utils::ib_message::Encodable for VolatilityOrderParameter {
         code.push_str(&self.volatility_type.encode());
         code.push_str(&self.delta_neutral_order_type.encode());
         code.push_str(&self.delta_neutral_aux_price.encode());
-        if self.delta_neutral_order_type.is_some() {
-            code.push_str(&self.delta_neutral_con_id.encode());
-            code.push_str(&self.delta_neutral_settling_firm.encode());
-            code.push_str(&self.delta_neutral_clearing_account.encode());
-            code.push_str(&self.delta_neutral_clearing_intent.encode());
-            code.push_str(&self.delta_neutral_open_close.encode());
-            code.push_str(&self.delta_neutral_short_sale.encode());
-            code.push_str(&self.delta_neutral_designated_location.encode());
-        }
+        // if self.delta_neutral_order_type.is_some() {
+        code.push_str(&self.delta_neutral_con_id.encode());
+        code.push_str(&self.delta_neutral_settling_firm.encode());
+        code.push_str(&self.delta_neutral_clearing_account.encode());
+        code.push_str(&self.delta_neutral_clearing_intent.encode());
+        code.push_str(&self.delta_neutral_open_close.encode());
+        code.push_str(&self.delta_neutral_short_sale.encode());
+        code.push_str(&self.delta_neutral_designated_location.encode());
+        // }
         code.push_str(&self.continuous_update.encode());
         code.push_str(&self.reference_price_type.encode());
         code

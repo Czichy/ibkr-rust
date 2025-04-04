@@ -131,14 +131,14 @@ pub struct OrderData {
     pub randomize_price: bool,
 
     // Volatility order fields
-    pub volatility_order_parameter: VolatilityOrderParameter,
+    pub volatility_order_parameter: Option<VolatilityOrderParameter>,
 
     // Combo order fields
     pub basis_points:      Option<D256>,
     pub basis_points_type: Option<BasisPointsType>,
 
     // Scale order fields
-    pub scale_order_parameter: ScaleOrderParameter,
+    pub scale_order_parameter: Option<ScaleOrderParameter>,
 
     // Hedge order fields
     pub hedge_type:  Option<HedgeType>,
@@ -569,8 +569,16 @@ impl ParseIbkrFrame for Order {
             ..Default::default()
         };
         // ####################################################################
-        order.volatility_order_parameter =
-            VolatilityOrderParameter::try_parse_frame(msg_id, Some(server_version), it)?;
+        order.volatility_order_parameter = {
+            let vop = VolatilityOrderParameter::try_parse_frame(msg_id, Some(server_version), it)?;
+            if vop.volatility_type == VolatilityType::NoVolType
+                && vop.delta_neutral_order_type == OrderType::NoOrderType
+            {
+                None
+            } else {
+                Some(vop)
+            }
+        };
 
         // ####################################################################
         // read trail params
@@ -602,8 +610,17 @@ impl ParseIbkrFrame for Order {
         }
 
         // ####################################################################
-        order.scale_order_parameter =
-            ScaleOrderParameter::try_parse_frame(msg_id, Some(server_version), it)?;
+        order.scale_order_parameter = {
+            let sop = ScaleOrderParameter::try_parse_frame(msg_id, Some(server_version), it)?;
+            if sop.scale_init_level_size.is_some()
+                || sop.scale_subs_level_size.is_some()
+                || sop.scale_price_increment.is_some()
+            {
+                Some(sop)
+            } else {
+                None
+            }
+        };
 
         // ####################################################################
 

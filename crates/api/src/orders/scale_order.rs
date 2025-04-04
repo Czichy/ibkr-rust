@@ -36,7 +36,7 @@ impl ParseIbkrFrame for ScaleOrderParameter {
         if !matches!(msg_id, Incoming::OpenOrder | Incoming::CompletedOrder) {
             return Err(ParseError::UnexpectedMessage);
         }
-        let server_version = server_version.ok_or(ParseError::MissingServerVersion)?;
+        let _server_version = server_version.ok_or(ParseError::MissingServerVersion)?;
         let mut result = Self {
             scale_init_level_size: decode(it)?,
             scale_subs_level_size: decode(it)?,

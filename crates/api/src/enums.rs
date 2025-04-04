@@ -503,9 +503,9 @@ impl Decodable for OrderOpenClose {}
 #[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Default)]
 pub enum OrderType {
+    #[default]
     NoOrderType, // only legit for deltaNeutralOrderType
     Limit,
-    #[default]
     Market,
     MarketIfTouched,
     MarketOnClose,
@@ -900,10 +900,9 @@ impl FromStr for OCAType {
 
 impl Decodable for OCAType {}
 
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub enum VolatilityType {
+    #[default]
     NoVolType,
     Daily,
     Annual,
@@ -937,8 +936,9 @@ impl Decodable for VolatilityType {}
 
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Default)]
 pub enum ReferencePriceType {
+    #[default]
     NoRefPriceType,
     Average,
     BidOrAsk,

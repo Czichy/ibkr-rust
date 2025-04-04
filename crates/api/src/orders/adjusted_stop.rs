@@ -33,7 +33,7 @@ impl ParseIbkrFrame for AdjustedOrder {
         if !matches!(msg_id, Incoming::OpenOrder | Incoming::CompletedOrder) {
             return Err(ParseError::UnexpectedMessage);
         }
-        let server_version = server_version.ok_or(ParseError::MissingServerVersion)?;
+        let _server_version = server_version.ok_or(ParseError::MissingServerVersion)?;
         let completed = matches!(msg_id, Incoming::CompletedOrder);
         let mut result = Self::default();
         if !completed {
