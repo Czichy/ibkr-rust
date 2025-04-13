@@ -125,8 +125,8 @@ async fn market_data_historical_data() -> Result<()> {
         .request_historical_data(&HistoricalDataRequest {
             req_id: 1010,
             contract,
-            // end_date_time: None,
-            end_date_time: Some(Utc::now()),
+            end_date_time: None,
+            // end_date_time: Some(Utc::now()),
             duration: Duration::Seconds(60),
             bar_size_setting: BarSize::_15Secs,
             what_to_show: HistoricalDataType::Trades,
