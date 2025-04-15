@@ -63,8 +63,8 @@
           openssl
           pkg-config
         ];
-        # LD_LIBRARY_PATH = lib.makeLibraryPath [pkgs.openssl];
-        LD_LIBRARY_PATH = lib.makeLibraryPath buildInputs;
+        LD_LIBRARY_PATH = lib.makeLibraryPath [pkgs.openssl];
+        # LD_LIBRARY_PATH = lib.makeLibraryPath buildInputs;
         # Needed to get openssl-sys to use pkg-config.
         # Doesn't seem to like OpenSSL 3
         OPENSSL_NO_VENDOR = 1;
