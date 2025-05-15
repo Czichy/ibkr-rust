@@ -141,6 +141,11 @@ pub enum IBFrame {
 
     OrderStatus(OrderStatusUpdate),
 
+    #[from(ignore)]
+    ParseError {
+        error_msg: String,
+    },
+
     PortfolioValue(Position),
 
     RealtimeBar(RealtimeBar),

@@ -755,6 +755,10 @@ impl Handler {
                             timestamp,
                         })?;
                     },
+
+                    IBFrame::ParseError { error_msg } => {
+                        error!("Parsing error::{error_msg}");
+                    },
                     // TODO: Implement missing IBFrames
                     IBFrame::AccountCode(_) => (),
                     IBFrame::OpenOrderEnd => (),

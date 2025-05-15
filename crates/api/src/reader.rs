@@ -141,7 +141,10 @@ impl Reader {
                         Ok(frame) => frame,
                         Err(e) => {
                             tracing::warn!("{}", e.to_string());
-                            return Ok(None);
+                            self.buffer.advance(len);
+                            return Ok(Some(IBFrame::ParseError {
+                                error_msg: e.to_string(),
+                            }));
                         },
                     }
                 };

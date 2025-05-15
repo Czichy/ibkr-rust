@@ -92,7 +92,7 @@ async fn market_data_historical_data() -> Result<()> {
     let mut client = client::connect(get_client_addr(), 10).await?;
     tokio::time::sleep(std::time::Duration::from_secs(3)).await;
     let contract = Contract {
-        con_id: Some(76792991),
+        con_id: Some(14204),
         // symbol: "TSLA".to_string(),
         exchange: Some("SMART".to_string()),
         // sec_type: SecType::Stock,
@@ -127,7 +127,7 @@ async fn market_data_historical_data() -> Result<()> {
             contract,
             end_date_time: None,
             // end_date_time: Some(Utc::now()),
-            duration: Duration::Seconds(60),
+            duration: Duration::Seconds(300),
             bar_size_setting: BarSize::_15Secs,
             what_to_show: HistoricalDataType::Trades,
             use_rth: UseRegularTradingHoursOnly::DontUse,
@@ -137,7 +137,7 @@ async fn market_data_historical_data() -> Result<()> {
         })
         .await?;
 
-    tokio::time::sleep(std::time::Duration::from_secs(60)).await;
+    tokio::time::sleep(std::time::Duration::from_secs(180)).await;
     Ok(())
 }
 
@@ -147,10 +147,11 @@ async fn market_data_historical_schedule() -> Result<()> {
     let mut client = client::connect(get_client_addr(), 10).await?;
     tokio::time::sleep(std::time::Duration::from_secs(3)).await;
     let contract = Contract {
-        symbol: "AMD".to_string(),
-        exchange: Some("ISLAND".to_string()),
+        con_id: Some(14204),
+        // symbol: "AMD".to_string(),
+        exchange: Some("SMART".to_string()),
         sec_type: SecType::Stock,
-        currency: "USD".to_string(),
+        // currency: "USD".to_string(),
         ..Default::default()
     };
     let receiver = client.market_data_tracker.historical_schedule.clone();
@@ -169,7 +170,7 @@ async fn market_data_historical_schedule() -> Result<()> {
             req_id: 1010,
             contract,
             end_date_time: Some(Utc::now()),
-            duration: Duration::Year(20),
+            duration: Duration::Day(7),
             bar_size_setting: BarSize::_1Day,
             what_to_show: HistoricalDataType::Schedule,
             use_rth: UseRegularTradingHoursOnly::Use,

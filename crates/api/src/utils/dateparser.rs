@@ -314,7 +314,7 @@ where
     fn ymd_hms_z_ib(&self, input: &str) -> Option<Result<DateTime<Utc>>> {
         lazy_static! {
             static ref RE: Regex = Regex::new(
-                r"^[0-9]{4}[0-9]{2}[0-9]{2}[\s\-]?[0-9]{2}:[0-9]{2}(:[0-9]{2})?(?P<tz>\s*[+-:a-zA-Z0-9]{3,6})$",
+                r"^[0-9]{4}[0-9]{2}[0-9]{2}[\s\-]?[0-9]{2}:[0-9]{2}(:[0-9]{2})?\s?(?P<tz>\s*[+-:a-zA-Z0-9]{3,6})$",
             ).unwrap();
         }
 
@@ -323,9 +323,11 @@ where
         }
         if let Some(caps) = RE.captures(input) {
             if let Some(matched_tz) = caps.name("tz") {
+                tracing::error!("{input}\n{caps:#?} - tz {matched_tz:#?}");
                 let parse_from_str = NaiveDateTime::parse_from_str;
                 return match parse_timezone(matched_tz.as_str().trim()) {
                     Ok(offset) => {
+                        tracing::error!("tz {offset:#?}");
                         parse_from_str(input, "%Y%m%d %H:%M:%S %Z")
                             .or_else(|_| parse_from_str(input, "%Y%m%d %H:%M %Z"))
                             .or_else(|_| parse_from_str(input, "%Y%m%d-%H:%M:%S %Z"))
@@ -335,7 +337,10 @@ where
                             .map(|datetime| datetime.with_timezone(&Utc))
                             .map(Ok)
                     },
-                    Err(err) => Some(Err(err)),
+                    Err(err) => {
+                        tracing::error!("{err}");
+                        Some(Err(err))
+                    },
                 };
             }
         }
@@ -357,6 +362,7 @@ where
             return None;
         }
         if let Some(caps) = RE.captures(input) {
+            tracing::error!("{caps:#?}");
             if let Some(matched_tz) = caps.name("tz") {
                 let parse_from_str = NaiveDateTime::parse_from_str;
                 return match chrono_tz::Tz::from_str(matched_tz.as_str().trim()) {
@@ -968,7 +974,7 @@ fn parse_offset_2822(s: &str) -> Result<i32> {
     let upto = s
         .as_bytes()
         .iter()
-        .position(|&c| c.is_ascii_alphabetic())
+        .position(|&c| !c.is_ascii_alphabetic())
         // .position(|&c| !matches!(c, b'a'..=b'z' | b'A'..=b'Z'))
         .unwrap_or(s.len());
     if upto > 0 {
@@ -2076,6 +2082,14 @@ mod tests {
                 "20220902 16:31:15 Europe/Berlin",
                 Utc.with_ymd_and_hms(2022, 9, 2, 14, 31, 15).unwrap(),
             ),
+            // (
+            //     "20220902 16:31:15 MEZ",
+            //     Utc.with_ymd_and_hms(2022, 9, 2, 14, 31, 15).unwrap(),
+            // ),
+            // (
+            //     "20220902 16:31:15 UTC",
+            //     Utc.with_ymd_and_hms(2022, 9, 2, 14, 31, 15).unwrap(),
+            // ),
             (
                 "20220902-16:31:15 Europe/Berlin",
                 Utc.with_ymd_and_hms(2022, 9, 2, 14, 31, 15).unwrap(),
@@ -2134,6 +2148,8 @@ mod tests {
         let test_cases = [
             ("Europe/Berlin", chrono_tz::Europe::Berlin),
             ("US/Eastern", chrono_tz::US::Eastern),
+            ("MET", chrono_tz::MET),
+            ("UTC", chrono_tz::UTC),
         ];
 
         for &(input, want) in test_cases.iter() {
