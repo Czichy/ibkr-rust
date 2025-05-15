@@ -323,11 +323,11 @@ where
         }
         if let Some(caps) = RE.captures(input) {
             if let Some(matched_tz) = caps.name("tz") {
-                tracing::error!("{input}\n{caps:#?} - tz {matched_tz:#?}");
+                tracing::debug!("{input}\n{caps:#?} - tz {matched_tz:#?}");
                 let parse_from_str = NaiveDateTime::parse_from_str;
                 return match parse_timezone(matched_tz.as_str().trim()) {
                     Ok(offset) => {
-                        tracing::error!("tz {offset:#?}");
+                        tracing::debug!("tz {offset:#?}");
                         parse_from_str(input, "%Y%m%d %H:%M:%S %Z")
                             .or_else(|_| parse_from_str(input, "%Y%m%d %H:%M %Z"))
                             .or_else(|_| parse_from_str(input, "%Y%m%d-%H:%M:%S %Z"))
@@ -362,7 +362,7 @@ where
             return None;
         }
         if let Some(caps) = RE.captures(input) {
-            tracing::error!("{caps:#?}");
+            tracing::debug!("{caps:#?}");
             if let Some(matched_tz) = caps.name("tz") {
                 let parse_from_str = NaiveDateTime::parse_from_str;
                 return match chrono_tz::Tz::from_str(matched_tz.as_str().trim()) {
