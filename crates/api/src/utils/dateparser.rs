@@ -68,6 +68,7 @@ where
             .or_else(|| self.ymd_hms_timezone_ib(input))
             .or_else(|| self.ymd(input))
             .or_else(|| self.ymd_z(input))
+            .or_else(|| self.ymd_default_ib(input))
     }
 
     fn hms_family(&self, input: &str) -> Option<Result<DateTime<Utc>>> {
@@ -262,6 +263,29 @@ where
             .or_else(|_| self.tz.datetime_from_str(input, "%Y%m%d-%H:%M:%S"))
             .ok()
             .map(|parsed| parsed.with_timezone(&Utc))
+            .map(Ok)
+    }
+
+    // yyyymmdd hh:mm:ss
+    // - 20210430 21:14
+    // - 20210430 21:14:10
+    // - 20210430 21:14:10.052282
+    // - 20140426 17:24:37.123
+    // - 20140426 17:24:37.3186369
+    // - 20120803 18:31:59.257000000
+    fn ymd_default_ib(&self, input: &str) -> Option<Result<DateTime<Utc>>> {
+        lazy_static! {
+            static ref RE: Regex = Regex::new(r"^[0-9]{4}[0-9]{2}[0-9]{2}",).unwrap();
+        }
+        if !RE.is_match(input) {
+            return None;
+        }
+
+        NaiveDate::parse_from_str(input, "%Y%m%d")
+            .ok()
+            .map(|parsed| parsed.and_time(NaiveTime::default()).and_utc())
+            // .and_then(|datetime| self.tz.from_local_datetime(&datetime).single())
+            // .map(|at_tz| at_tz.with_timezone(&Utc))
             .map(Ok)
     }
 

@@ -125,14 +125,17 @@ async fn market_data_historical_data() -> Result<()> {
         .request_historical_data(&HistoricalDataRequest {
             req_id: 1010,
             contract,
-            end_date_time: None,
-            // end_date_time: Some(Utc::now()),
-            duration: Duration::Seconds(300),
-            bar_size_setting: BarSize::_15Secs,
+            // end_date_time: None,
+            end_date_time: Some(Utc::now()),
+            duration: Duration::Day(30),
+            // duration: Duration::Seconds(300),
+            bar_size_setting: BarSize::_1Day,
+            // bar_size_setting: BarSize::_15Secs,
             what_to_show: HistoricalDataType::Trades,
             use_rth: UseRegularTradingHoursOnly::DontUse,
             format_date: IntradayBarDateFormat::UnixEpochSeconds,
-            keep_up_to_date: true,
+            keep_up_to_date: false,
+            // keep_up_to_date: true,
             chart_options: vec![],
         })
         .await?;

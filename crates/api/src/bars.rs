@@ -28,8 +28,6 @@ pub struct Bar {
 
 #[derive(Debug, Clone)]
 pub struct BarSeries {
-    // pub start_dt: TimeStamp,
-    // pub end_dt:   TimeStamp,
     pub n_bars: usize,
     pub bars:   Vec<Bar>,
 }
