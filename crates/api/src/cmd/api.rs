@@ -5,7 +5,7 @@ use crate::{enums::{Outgoing, ServerLogLevel},
             utils::ib_message::{Encodable, IBMessage},
             ClientId};
 
-const VERSION: i32 = 2;
+const VERSION: i32 = 1;
 
 #[derive(Debug)]
 pub enum Api {
@@ -55,8 +55,8 @@ impl Api {
                 // start API
                 msg.push_str(&VERSION.encode());
                 msg.push_str(&client_id.encode());
-                msg.push_str("");
-                // msg.push_str(&optional_capabilities.unwrap_or_else(|| "".into()).encode());
+                // msg.push_str("");
+                msg.push_str(&optional_capabilities.unwrap_or_else(|| "".into()).encode());
                 let msg = msg.as_str().to_ib_message().unwrap();
                 Frame::Bulk(Bytes::from(msg))
             },

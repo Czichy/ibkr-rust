@@ -6,7 +6,9 @@ use chrono::Utc;
 use ibkr_rust_api::{bars::*, client, cmd::*, contract::*, orders::*, ticker::*, Result};
 use tracing::error;
 fn get_client_addr() -> SocketAddr {
-    SocketAddr::new(IpAddr::V4(Ipv4Addr::new(10, 15, 10, 25)), 1111)
+    // SocketAddr::new(IpAddr::V4(Ipv4Addr::new(10, 15, 10, 25)), 1111)
+    // SocketAddr::new(IpAddr::V4(Ipv4Addr::new(10, 15, 10, 25)), 4444)
+    SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), 4444)
 }
 #[tokio::test]
 #[cfg_attr(not(feature = "ibkr_client_test"), ignore)]
@@ -154,7 +156,7 @@ async fn market_data_historical_schedule() -> Result<()> {
         // symbol: "AMD".to_string(),
         exchange: Some("SMART".to_string()),
         sec_type: SecType::Stock,
-        // currency: "USD".to_string(),
+        currency: "EUR".to_string(),
         ..Default::default()
     };
     let receiver = client.market_data_tracker.historical_schedule.clone();

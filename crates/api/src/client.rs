@@ -292,7 +292,7 @@ pub async fn connect<T: ToSocketAddrs + Send>(addr: T, client_id: ClientId) -> R
             tracing::error!(cause = ?err, "connection error");
         }
     });
-    client.start_api().await?;
+    // client.start_api().await?;
     Ok(client)
 }
 
@@ -401,13 +401,12 @@ impl Client {
 
         tracing::error!("Server Version: {}", &server_version);
         // // start API
-        // let frame = Api::Start {
-        //     client_id,
-        //     optional_capabilities: None,
-        // };
-        // writer.write_frame(&frame.into_frame()).await?;
+        let frame = Api::Start {
+            client_id,
+            optional_capabilities: None,
+        };
+        writer.write_frame(&frame.into_frame()).await?;
 
-        // error!("hgdfkjhgkdfjhgkjdfgd");
         let conn_state = ConnectionStatus::CONNECTED;
 
         // // Read the response
@@ -511,7 +510,7 @@ impl Client {
                 tracing::error!(cause = ?err, "connection error");
             }
         });
-        client.start_api().await?;
+        // client.start_api().await?;
         Ok(client)
     }
 
