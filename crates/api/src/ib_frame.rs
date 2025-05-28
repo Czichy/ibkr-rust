@@ -420,13 +420,32 @@ impl IBFrame {
             },
 
             Incoming::ErrMsg => {
-                // it.next(); // skip version
+                // MIN_SERVER_VER_ERROR_TIME
+                if let Some(server_version) = server_version {
+                    if server_version < 194 {
+                        // skip version
+                        it.next();
+                    }
+                }
+                let req_id = decode(&mut it)?.unwrap();
+                let code = decode(&mut it)?.unwrap();
+                let message = decode(&mut it)?;
+                let advanced_order_rejection = decode(&mut it)?;
+                let timestamp = if let Some(server_version) = server_version {
+                    if server_version >= 194 {
+                        decode(&mut it)?.unwrap()
+                    } else {
+                        Default::default()
+                    }
+                } else {
+                    Default::default()
+                };
                 Ok(IBFrame::Error {
-                    req_id:                   decode(&mut it)?.unwrap(),
-                    code:                     decode(&mut it)?.unwrap(),
-                    message:                  decode(&mut it)?,
-                    advanced_order_rejection: decode(&mut it)?,
-                    timestamp:                decode(&mut it)?.unwrap(),
+                    req_id,
+                    code,
+                    message,
+                    advanced_order_rejection,
+                    timestamp,
                 })
             },
             // Incoming::MarketDepth => todo!(),
