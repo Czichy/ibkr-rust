@@ -186,57 +186,44 @@ pub async fn connect<T: ToSocketAddrs + Send>(addr: T, client_id: ClientId) -> R
     };
     writer.write_frame(&frame.into_frame()).await?;
 
-    let conn_state = ConnectionStatus::CONNECTED;
+    let mut conn_state = ConnectionStatus::CONNECTED;
 
-    error!("{:#?}", writer);
-    error!("{:#?}", reader);
-    // // Read the response
-    // let mut saw_next_order_id: bool = false;
-    // let mut saw_managed_accounts: bool = false;
+    // Read the response
+    let mut saw_next_order_id: bool = false;
+    let mut saw_managed_accounts: bool = false;
 
-    // let mut attempts = 0;
-    // const MAX_ATTEMPTS: i32 = 100;
-    // loop {
-    //     error!("hgdfkjhgkdfjhgkjdfgd");
-    //     let message = reader.read_frame(None).await?;
+    let mut attempts = 0;
+    const MAX_ATTEMPTS: i32 = 100;
+    loop {
+        let message = reader.read_frame(None).await?;
 
-    //     error!("message: {message:?}");
-    //     if let Some(message) = message {
-    //         match message {
-    //             IBFrame::OrderId(_) => {
-    //                 saw_next_order_id = true;
+        error!("message: {message:?}");
+        if let Some(message) = message {
+            match message {
+                IBFrame::OrderId(_) => {
+                    debug!("Saw Next Order Id: {message:?}");
+                    saw_next_order_id = true;
+                },
+                IBFrame::AccountCode(_) => {
+                    debug!("Saw Managed Accounts: {message:?}");
+                    saw_managed_accounts = true;
+                },
+                IBFrame::Error { .. } => {
+                    debug!("message: {message:?}")
+                },
+                _ => info!("message: {message:?}"),
+            }
+        }
 
-    //                 // message.skip(); // message type
-    //                 // message.skip(); // message version
+        attempts += 1;
+        if (saw_next_order_id && saw_managed_accounts) || attempts > MAX_ATTEMPTS {
+            break;
+        }
+    }
 
-    //                 // let mut connection_metadata =
-    //                 // self.connection_metadata.lock()?;
-    //                 // connection_metadata.next_order_id =
-    //                 // message.next_int()?;
-    //             },
-    //             IBFrame::AccountCode(_) => {
-    //                 saw_managed_accounts = true;
-
-    //                 // message.skip(); // message type
-    //                 // message.skip(); // message version
-
-    //                 // let mut connection_metadata =
-    //                 // self.connection_metadata.lock()?;
-    //                 // connection_metadata.managed_accounts =
-    //                 // message.next_string()?;
-    //             },
-    //             IBFrame::Error { .. } => {
-    //                 error!("message: {message:?}")
-    //             },
-    //             _ => info!("message: {message:?}"),
-    //         }
-    //     }
-
-    //     attempts += 1;
-    //     if (saw_next_order_id && saw_managed_accounts) || attempts > MAX_ATTEMPTS
-    // {         break;
-    //     }
-    // }
+    if saw_next_order_id && saw_managed_accounts {
+        conn_state = ConnectionStatus::READY;
+    }
     // When the provided `shutdown` future completes, we must send a shutdown
     // message to all active connections. We use a broadcast channel for this
     // purpose. The call below ignores the receiver of the broadcast pair, and when
@@ -252,7 +239,7 @@ pub async fn connect<T: ToSocketAddrs + Send>(addr: T, client_id: ClientId) -> R
     let (market_data_tracker_tx, market_data_tracker) = MarketDataTracker::new();
     let (order_tracker_tx, order_tracker) = OrderTracker::new();
     // init handler
-    let mut client = Client {
+    let client = Client {
         writer,
         // connection,
         client_id,
@@ -407,54 +394,44 @@ impl Client {
         };
         writer.write_frame(&frame.into_frame()).await?;
 
-        let conn_state = ConnectionStatus::CONNECTED;
+        let mut conn_state = ConnectionStatus::CONNECTED;
 
-        // // Read the response
-        // let mut saw_next_order_id: bool = false;
-        // let mut saw_managed_accounts: bool = false;
+        // Read the response
+        let mut saw_next_order_id: bool = false;
+        let mut saw_managed_accounts: bool = false;
 
-        // let mut attempts = 0;
-        // const MAX_ATTEMPTS: i32 = 100;
-        // loop {
-        //     let message = reader.read_frame(None).await?;
+        let mut attempts = 0;
+        const MAX_ATTEMPTS: i32 = 100;
+        loop {
+            let message = reader.read_frame(None).await?;
 
-        //     error!("message: {message:?}");
-        //     if let Some(message) = message {
-        //         match message {
-        //             IBFrame::OrderId(_) => {
-        //                 saw_next_order_id = true;
+            error!("message: {message:?}");
+            if let Some(message) = message {
+                match message {
+                    IBFrame::OrderId(_) => {
+                        debug!("Saw Next Order Id: {message:?}");
+                        saw_next_order_id = true;
+                    },
+                    IBFrame::AccountCode(_) => {
+                        debug!("Saw Managed Accounts: {message:?}");
+                        saw_managed_accounts = true;
+                    },
+                    IBFrame::Error { .. } => {
+                        debug!("message: {message:?}")
+                    },
+                    _ => info!("message: {message:?}"),
+                }
+            }
 
-        //                 // message.skip(); // message type
-        //                 // message.skip(); // message version
+            attempts += 1;
+            if (saw_next_order_id && saw_managed_accounts) || attempts > MAX_ATTEMPTS {
+                break;
+            }
+        }
 
-        //                 // let mut connection_metadata =
-        //                 // self.connection_metadata.lock()?;
-        //                 // connection_metadata.next_order_id =
-        //                 // message.next_int()?;
-        //             },
-        //             IBFrame::AccountCode(_) => {
-        //                 saw_managed_accounts = true;
-
-        //                 // message.skip(); // message type
-        //                 // message.skip(); // message version
-
-        //                 // let mut connection_metadata =
-        //                 // self.connection_metadata.lock()?;
-        //                 // connection_metadata.managed_accounts =
-        //                 // message.next_string()?;
-        //             },
-        //             IBFrame::Error { .. } => {
-        //                 error!("message: {message:?}")
-        //             },
-        //             _ => info!("message: {message:?}"),
-        //         }
-        //     }
-
-        //     attempts += 1;
-        //     if (saw_next_order_id && saw_managed_accounts) || attempts > MAX_ATTEMPTS
-        // {         break;
-        //     }
-        // }
+        if saw_next_order_id && saw_managed_accounts {
+            conn_state = ConnectionStatus::READY;
+        }
         // When the provided `shutdown` future completes, we must send a shutdown
         // message to all active connections. We use a broadcast channel for this
         // purpose. The call below ignores the receiver of the broadcast pair, and when
@@ -470,7 +447,7 @@ impl Client {
         let (market_data_tracker_tx, market_data_tracker) = MarketDataTracker::new();
         let (order_tracker_tx, order_tracker) = OrderTracker::new();
         // init handler
-        let mut client = Client {
+        let client = Client {
             writer,
             // connection,
             client_id,
