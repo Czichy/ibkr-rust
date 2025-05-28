@@ -200,8 +200,13 @@ impl ParseIbkrFrame for HistoricalBars {
         match msg_id {
             Incoming::HistoricalData => {
                 let id = decode(it)?.unwrap();
-                // let start_dt = decode(it)?.unwrap();
-                // let end_dt = decode(it)?.unwrap();
+                if let Some(server_version) = server_version {
+                    // MIN_SERVER_VER_HISTORICAL_DATA_END
+                    if server_version < 196 {
+                        let start_dt: TimeStamp = decode(it)?.unwrap();
+                        let end_dt: TimeStamp = decode(it)?.unwrap();
+                    }
+                }
                 let n_bars = decode(it)?.unwrap();
                 let data = {
                     let mut bar_data = Vec::with_capacity(n_bars);
