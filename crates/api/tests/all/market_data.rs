@@ -6,7 +6,7 @@ use chrono::Utc;
 use ibkr_rust_api::{bars::*, client, cmd::*, contract::*, orders::*, ticker::*, Result};
 use tracing::error;
 fn get_client_addr() -> SocketAddr {
-    SocketAddr::new(IpAddr::V4(Ipv4Addr::new(192, 168, 1, 62)), 1111)
+    SocketAddr::new(IpAddr::V4(Ipv4Addr::new(10, 15, 10, 25)), 1111)
 }
 #[tokio::test]
 #[cfg_attr(not(feature = "ibkr_client_test"), ignore)]

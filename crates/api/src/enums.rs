@@ -7,10 +7,10 @@ use num_traits::FromPrimitive;
 use crate::utils::ib_message::{Decodable, Encodable};
 
 pub mod constants {
-    pub const CLIENT_VERSION: i32 = 66;
+    pub const CLIENT_VERSION: i32 = 203;
     pub const MIN_SERVER_VER_PRICE_MGMT_ALGO: i32 = 151;
-    pub const MIN_CLIENT_VER: i32 = 100;
-    pub const MAX_CLIENT_VER: i32 = 163; // MIN_SERVER_VER_PRICE_MGMT_ALGO;
+    pub const MIN_CLIENT_VER: i32 = 199;
+    pub const MAX_CLIENT_VER: i32 = 203; // MIN_SERVER_VER_PRICE_MGMT_ALGO;
     pub const UNSET_INTEGER: i32 = std::i32::MAX;
 }
 

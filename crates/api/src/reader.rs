@@ -84,6 +84,7 @@ impl Reader {
                 // there is, this means that the peer closed the socket while
                 // sending a frame.
                 if self.buffer.is_empty() {
+                    tracing::warn!("The remote closed the connection.");
                     return Ok(None);
                 } else {
                     return Err("connection reset by peer".into());
@@ -107,7 +108,7 @@ impl Reader {
         // which provides a number of helpful utilities for working
         // with bytes.
         let mut buf = Cursor::new(&self.buffer[..]);
-        tracing::trace!("{:?}", buf);
+        tracing::debug!("{:?}", buf);
         // The first step is to check if enough data has been buffered to parse
         // a single frame. This step is usually much faster than doing a full
         // parse of the frame, and allows us to skip allocating data structures
@@ -120,7 +121,7 @@ impl Reader {
                 // before `IBFrame::check` was called, we obtain the length of the
                 // frame by checking the cursor position.
                 let len = buf.position() as usize;
-                tracing::trace!("length of the frame: {:?}", len);
+                tracing::debug!("length of the frame: {:?}", len);
                 // Reset the position to zero before passing the cursor to
                 // `IBFrame::parse`.
                 buf.set_position(0);
