@@ -33,10 +33,9 @@ tracing-bunyan-formatter.workspace = true
 tracing-log.workspace = true
 tracing-subscriber.workspace = true
 
-# ibapi.workspace = true
-
-ibapi = { git = "https://github.com/wvietor/ibkr_rust"}
-tokio-util = { version = "0.7.12", features = ["full"] }
+ibapi = "1.1.0"
+# ibapi = { git = "https://github.com/wvietor/ibkr_rust"}
+# tokio-util = { version = "0.7.12", features = ["full"] }
 
 [dev-dependencies]
 ctor = "0.1.22"

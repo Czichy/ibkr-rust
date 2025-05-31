@@ -84,7 +84,7 @@ impl Reader {
                 // there is, this means that the peer closed the socket while
                 // sending a frame.
                 if self.buffer.is_empty() {
-                    tracing::warn!("The remote closed the connection.");
+                    // tracing::warn!("The remote closed the connection.");
                     return Ok(None);
                 } else {
                     return Err("connection reset by peer".into());
@@ -108,7 +108,7 @@ impl Reader {
         // which provides a number of helpful utilities for working
         // with bytes.
         let mut buf = Cursor::new(&self.buffer[..]);
-        tracing::debug!("{:?}", buf);
+        // tracing::debug!("{:?}", buf);
         // The first step is to check if enough data has been buffered to parse
         // a single frame. This step is usually much faster than doing a full
         // parse of the frame, and allows us to skip allocating data structures

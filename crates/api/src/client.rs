@@ -179,6 +179,7 @@ pub async fn connect<T: ToSocketAddrs + Send>(addr: T, client_id: ClientId) -> R
     };
 
     tracing::error!("Server Version: {}", &server_version);
+    tokio::time::sleep(std::time::Duration::from_secs(1)).await;
     // start API
     let frame = Api::Start {
         client_id,

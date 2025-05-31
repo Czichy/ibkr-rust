@@ -5,7 +5,7 @@ use crate::{enums::{Outgoing, ServerLogLevel},
             utils::ib_message::{Encodable, IBMessage},
             ClientId};
 
-const VERSION: i32 = 1;
+const VERSION: i32 = 2;
 
 #[derive(Debug)]
 pub enum Api {
@@ -38,11 +38,11 @@ impl Api {
                 max_client_version,
             } => {
                 let mut frame = Frame::array();
-                let valid_versions = &format!("v{min_client_version}..{max_client_version}");
+                let mut valid_versions = format!("v{min_client_version}..{max_client_version}");
                 // let mut valid_versions = "v".to_string() + min_client_version.to_string();
                 // valid_versions.push_str("..");
                 // valid_versions.push_str(&max_client_version.to_string());
-                // valid_versions.push_str(" +PACEAPI");
+                valid_versions.push_str(" +PACEAPI");
                 let msg = valid_versions.as_str().to_ib_message().unwrap();
                 frame.push_bulk(Bytes::from(msg));
                 frame
@@ -51,8 +51,21 @@ impl Api {
                 client_id,
                 optional_capabilities,
             } => {
+                //     int msgId = (int)outgoingMessage;
+                // if (serverVersion >= MinServerVer.MIN_SERVER_VER_PROTOBUF)
+                // {
+                //     msgId = EClient.useProtoBuf(serverVersion, outgoingMessage) ? msgId +
+                // Constants.PROTOBUF_MSG_ID : msgId;     byte[] bytes =
+                // BitConverter.GetBytes(msgId);     Array.Reverse(bytes);
+                //     source.Write(bytes);
+                // }
+                // else
+                // {
+                //     AddParameter(source, (int)msgId);
+                // }
                 let mut msg = Outgoing::StartApi.encode();
                 // start API
+                // msg.push_str(&203.encode());
                 msg.push_str(&VERSION.encode());
                 msg.push_str(&client_id.encode());
                 // msg.push_str("");

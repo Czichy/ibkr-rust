@@ -4,10 +4,10 @@ use std::{net::{IpAddr, Ipv4Addr, SocketAddr},
 use ibkr_rust_api::{client, contract::*, orders::*, Result};
 
 fn get_client_addr() -> SocketAddr {
-    // SocketAddr::new(IpAddr::V4(Ipv4Addr::new(192, 168, 1, 62)), 4444)
     // SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), 4444)
-    SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), 1111)
+    // SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), 1111)
     // SocketAddr::new(IpAddr::V4(Ipv4Addr::new(10, 15, 10, 25)), 7496)
+    SocketAddr::new(IpAddr::V4(Ipv4Addr::new(10, 15, 10, 25)), 1111)
 }
 #[tokio::test]
 #[cfg_attr(not(feature = "ibkr_client_test"), ignore)]
@@ -68,8 +68,8 @@ async fn request_next_valid_order_id() -> Result<()> {
 async fn request_contract_details() -> Result<()> {
     // Open a connection to the mini-redis address.
     let mut client = client::connect(get_client_addr(), 1).await?;
-    let contracts = client.subscribe_contract_details().clone();
     tokio::time::sleep(std::time::Duration::from_secs(1)).await;
+    let contracts = client.subscribe_contract_details().clone();
     thread::spawn(move || {
         while let Ok(contract) = contracts.recv() {
             tracing::error!("got contracts:  {:#?}", contract);
@@ -84,7 +84,7 @@ async fn request_contract_details() -> Result<()> {
     };
 
     let _ = &client.request_contract_details(1, _contract2).await?;
-    tokio::time::sleep(std::time::Duration::from_secs(10)).await;
+    tokio::time::sleep(std::time::Duration::from_secs(3)).await;
     Ok(())
 }
 
