@@ -33,16 +33,12 @@ tracing-bunyan-formatter.workspace = true
 tracing-log.workspace = true
 tracing-subscriber.workspace = true
 
-ibapi = "1.1.0"
-# ibapi = { git = "https://github.com/wvietor/ibkr_rust"}
-# tokio-util = { version = "0.7.12", features = ["full"] }
-
 [dev-dependencies]
-ctor = "0.1.22"
+ctor.workspace = true
 # Enable test-utilities in dev mode only. This is mostly for tests.
 tokio = { version = "1.45.0", features = ["test-util", "net"] }
 #tracing-test = "0.2.1"
-pretty_assertions = "1.2.1"
+pretty_assertions.workspace = true
 
 [features]
 default = []

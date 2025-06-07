@@ -94,7 +94,7 @@ async fn market_data_historical_data() -> Result<()> {
     let mut client = client::connect(get_client_addr(), 10).await?;
     tokio::time::sleep(std::time::Duration::from_secs(3)).await;
     let contract = Contract {
-        con_id: Some(14204),
+        con_id: Some(4391),
         // symbol: "TSLA".to_string(),
         exchange: Some("SMART".to_string()),
         // sec_type: SecType::Stock,
@@ -129,10 +129,10 @@ async fn market_data_historical_data() -> Result<()> {
             contract,
             // end_date_time: None,
             end_date_time: Some(Utc::now()),
+            // duration: Duration::Day(30),
             duration: Duration::Day(30),
-            // duration: Duration::Seconds(300),
-            bar_size_setting: BarSize::_1Day,
-            // bar_size_setting: BarSize::_15Secs,
+            // bar_size_setting: BarSize::_1Day,
+            bar_size_setting: BarSize::_1Min,
             what_to_show: HistoricalDataType::Trades,
             use_rth: UseRegularTradingHoursOnly::DontUse,
             format_date: IntradayBarDateFormat::UnixEpochSeconds,

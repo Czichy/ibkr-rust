@@ -21,6 +21,6 @@ tracing-subscriber.workspace = true
 tracing.workspace = true
 
 [dev-dependencies]
-pretty_assertions = "1.1.0"
-ctor = "0.1.21"
+pretty_assertions.workspace = true
+ctor.workspace = true
 fastnum.workspace = true
