@@ -41,15 +41,15 @@ num-derive = "0.4.2"
 num-traits = "0.2.19"
 quick-xml = { version = "0.31", features = [ "serialize" ] }
 regex = "1.6.0"
-reqwest = { version = "0.12", features = ["stream"] }
+reqwest = { version = "0.11", features = ["stream"] }
 serde = { version = "1.0", features = [ "derive" ] }
-strum = "0.27"
-strum_macros = "0.27"
+strum = "0.24.0"
+strum_macros = "0.24.0"
 thiserror = "1.0.30"
 tracing = { version = "0.1", default-features = false, features = ["log", "std","attributes"] }
 tracing-bunyan-formatter = "0.3.9"
 tracing-log = { version = "0.1" }
-tracing-subscriber = { version = "0.3", default-features = false, features = ["registry","fmt","env-filter"] }
+tracing-subscriber = { version = "0.3.16", default-features = false, features = ["registry","fmt","env-filter"] }
     
 # async 
 async-stream = "0.3.5"
@@ -62,7 +62,7 @@ tokio = { version = "1.45", features = ["macros", "parking_lot", "rt", "rt-multi
 # dev
 ###########################################################################
 criterion = "0.5"
-ctor = "0.4"
+ctor = "0.2"
 insta = { version = "1.36", features = ["filters"] }
 pretty_assertions = "1.2"
 proptest = "1.6.0"
@@ -105,3 +105,111 @@ panic = 'unwind'    # This setting is always ignored.
 incremental = true
 codegen-units = 256
 rpath = false
+
+# [workspace.package]
+# authors = ["Czichy <christian@czichy.com>"]
+# name = "ibkr-rust"
+# version = "0.1.0"
+# edition = "2021"
+# include = ["../../LICENSE-APACHE", "../../LICENSE-MIT", "**/*.rs", "Cargo.toml"]
+# homepage = "https://czichy.com"
+# license = "MIT OR Apache-2.0"
+# readme = "README.md"
+# repository = ""
+# rust-version = "1.84"
+ 
+# [workspace]
+# members = [
+#     "crates/api",
+#     "crates/flex",
+#     ]
+
+# [workspace.dependencies]
+# # When using alpha-release, always use exact version, e.g. `version = "=0.x.y-alpha.z"
+# #
+# api = { path = "crates/api" } # version = "=0.21.0-alpha.1", default-features = false }
+# flex = { path = "crates/flex" } # version = "=0.21.0-alpha.1", default-features = false }
+# #
+# # ibapi = "1.1.0"
+# #
+# anyhow = "1.0.40"
+# bitvec = "1.0.1"
+# bytes = "1.1.0"
+# chrono = { version = "0.4", features = [ "serde" ] }
+# chrono-tz = "0.6.3"
+# clap = { version = "4.4", features = [ "derive", "string" ] }
+# derive_more = "0.99"
+# enum-ordinalize = "3.1.11"
+# fastnum = { version = "0.2.2", features = ["serde", "rand", "numtraits"] }
+# flume = { version = "0.11", default-features = false, features = ["async", "select"] }
+# iso_currency = { version = "0.4.0", features = ["with-serde"] }
+# lazy_static = "1.4.0"
+# log = "0.4.14"
+# num-derive = "0.4.2"
+# num-traits = "0.2.19"
+# quick-xml = { version = "0.31", features = [ "serialize" ] }
+# regex = "1.6.0"
+# reqwest = { version = "0.12", features = ["stream"] }
+# serde = { version = "1.0", features = [ "derive" ] }
+# strum = "0.27"
+# strum_macros = "0.27"
+# thiserror = "1.0.30"
+# tracing = { version = "0.1", default-features = false, features = ["log", "std","attributes"] }
+# tracing-bunyan-formatter = "0.3.9"
+# tracing-log = { version = "0.1" }
+# tracing-subscriber = { version = "0.3", default-features = false, features = ["registry","fmt","env-filter"] }
+    
+# # async 
+# async-stream = "0.3.5"
+# crossbeam = "0.8"
+# crossbeam-channel  = "0.5.6"
+# futures = "0.3"
+# tokio = { version = "1.45", features = ["macros", "parking_lot", "rt", "rt-multi-thread", "sync","time","fs","io-util", "net"] }
+
+# ############################################################################
+# # dev
+# ###########################################################################
+# criterion = "0.5"
+# ctor = "0.4"
+# insta = { version = "1.36", features = ["filters"] }
+# pretty_assertions = "1.2"
+# proptest = "1.6.0"
+# rstest = "0.24.0"
+
+
+    
+# [profile.dev]
+# opt-level = 0
+# debug = true
+# # split-debuginfo = '...'  # Platform-specific.
+# debug-assertions = true
+# overflow-checks = true
+# lto = false
+# panic = 'unwind'
+# incremental = true
+# codegen-units = 256
+# rpath = false
+
+# [profile.release]
+# opt-level = 3
+# debug = false
+# # split-debuginfo = '...'  # Platform-specific.
+# debug-assertions = false
+# overflow-checks = false
+# lto = false
+# panic = 'unwind'
+# incremental = false
+# codegen-units = 16
+# rpath = false
+
+# [profile.test]
+# opt-level = 0
+# debug = 2
+# # split-debuginfo = '...'  # Platform-specific.
+# debug-assertions = true
+# overflow-checks = true
+# lto = false
+# panic = 'unwind'    # This setting is always ignored.
+# incremental = true
+# codegen-units = 256
+# rpath = false
