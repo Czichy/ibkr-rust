@@ -130,7 +130,7 @@ async fn market_data_historical_data() -> Result<()> {
             // end_date_time: None,
             end_date_time: Some(Utc::now()),
             // duration: Duration::Day(30),
-            duration: Duration::Day(30),
+            duration: Duration::Day(3),
             // bar_size_setting: BarSize::_1Day,
             bar_size_setting: BarSize::_1Min,
             what_to_show: HistoricalDataType::Trades,
