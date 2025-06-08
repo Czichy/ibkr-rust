@@ -4,10 +4,10 @@ use std::{net::{IpAddr, Ipv4Addr, SocketAddr},
 use ibkr_rust_api::{client, contract::*, orders::*, Result};
 
 fn get_client_addr() -> SocketAddr {
-    // SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), 4444)
+    SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), 4444)
     // SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), 1111)
     // SocketAddr::new(IpAddr::V4(Ipv4Addr::new(10, 15, 10, 25)), 7496)
-    SocketAddr::new(IpAddr::V4(Ipv4Addr::new(10, 15, 10, 25)), 1111)
+    // SocketAddr::new(IpAddr::V4(Ipv4Addr::new(10, 15, 10, 25)), 1111)
 }
 #[tokio::test]
 #[cfg_attr(not(feature = "ibkr_client_test"), ignore)]
