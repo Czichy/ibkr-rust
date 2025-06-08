@@ -72,7 +72,7 @@ impl ParseIbkrFrame for HistoricalSchedule {
         for _i in 0..n_sessions {
             let start_session: String = decode(it)?.unwrap();
             let end_session: String = decode(it)?.unwrap();
-            tracing::log::error!("start: {start_session:#?}");
+            tracing::log::debug!("start: {start_session:#?}");
             let start_date_time_session = parse
                 .parse(&format!("{start_session} {tz}"))
                 .map_err(|_| ParseError::UnexpectedVariant(tz.clone()))?;
