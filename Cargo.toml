@@ -28,7 +28,7 @@ anyhow = "1.0.40"
 bitvec = "1.0.1"
 bytes = "1.1.0"
 chrono = { version = "0.4", features = [ "serde" ] }
-chrono-tz = "0.6.3"
+chrono-tz = "0.10"
 clap = { version = "4.4", features = [ "derive", "string" ] }
 derive_more = "0.99"
 enum-ordinalize = "3.1.11"
