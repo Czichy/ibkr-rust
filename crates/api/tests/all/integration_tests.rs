@@ -16,15 +16,6 @@ async fn request_account_updates() -> Result<()> {
     client
         .request_account_updates(true, "DU3293378".to_string())
         .await?;
-    // tokio::spawn(async move {
-    //    let mut account_receiver = client.account_tracker;
-    //    while let summary = account_receiver.recv() {
-    //        //tracing::debug!(
-    //        //    "{:?}\t-\tunrealized pnl:  {:?}",
-    //        //    account_receiver.unrealized_pnl()
-    //        //);
-    //    }
-    //});
     thread::spawn(move || {
         let account_receiver = client.account_tracker;
         loop {

@@ -30,7 +30,7 @@ bytes = "1.1.0"
 chrono = { version = "0.4", features = [ "serde" ] }
 chrono-tz = "0.10"
 clap = { version = "4.4", features = [ "derive", "string" ] }
-derive_more = "2"
+derive_more = { version = "2", features = ["full"] }
 enum-ordinalize = "3.1.11"
 fastnum = { version = "0.2.2", features = ["serde", "rand", "numtraits"] }
 flume = { version = "0.11", default-features = false, features = ["async", "select"] }
