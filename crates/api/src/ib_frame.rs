@@ -300,6 +300,7 @@ impl IBFrame {
             },
             Incoming::OpenOrder | Incoming::CompletedOrder => {
                 let order_information = Order::try_parse_frame(msg_id, server_version, &mut it)?;
+                tracing::debug!("decoded order_information:\n{order_information:#?}");
                 match msg_id {
                     Incoming::OpenOrder => Ok(IBFrame::OpenOrder(order_information)),
                     Incoming::CompletedOrder => Ok(IBFrame::CompletedOrder(order_information)),

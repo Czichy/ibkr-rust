@@ -568,6 +568,7 @@ impl ParseIbkrFrame for Order {
             trigger_method: decode(it)?,
             ..Default::default()
         };
+        tracing::debug!("order: {order:#?}");
         // ####################################################################
         order.volatility_order_parameter = {
             let vop = VolatilityOrderParameter::try_parse_frame(msg_id, Some(server_version), it)?;
@@ -669,6 +670,7 @@ impl ParseIbkrFrame for Order {
             _ => OrderState::default(),
         };
 
+        tracing::debug!("order: {order:#?}");
         // ####################################################################
         order.randomize_size = decode(it)?.unwrap();
         order.randomize_price = decode(it)?.unwrap();
@@ -705,6 +707,7 @@ impl ParseIbkrFrame for Order {
             order.adjusted_order = Some(adj_order);
         }
 
+        tracing::debug!("order: {order:#?}");
         // ####################################################################
 
         if !completed {
@@ -752,6 +755,7 @@ impl ParseIbkrFrame for Order {
         order.mid_offset_at_whole = decode(it)?;
         order.mid_offset_at_half = decode(it)?;
 
+        tracing::debug!("order: {order:#?}");
         order.customer_account = decode(it)?;
         order.professional_customer = decode(it)?.unwrap();
         if !completed {
@@ -761,11 +765,15 @@ impl ParseIbkrFrame for Order {
             order.manual_order_indicator = decode(it)?;
         }
 
-        order.submitter = decode(it)?;
-        if !completed {
+        tracing::debug!("order: {order:#?}");
+        if server_version >= 198 {
+            order.submitter = decode(it)?;
+        }
+        if server_version >= 199 && !completed {
             order.imbalance_only = decode(it)?.unwrap();
         }
 
+        tracing::debug!("order: {order:#?}");
         Ok(Order {
             order,
             order_state,

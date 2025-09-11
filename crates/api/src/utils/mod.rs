@@ -16,10 +16,7 @@ pub mod ib_message {
 
     impl IBMessage for &str {
         fn to_ib_message(&self) -> Result<Vec<u8>, std::num::TryFromIntError> {
-            let msg_len: u32 = match self.len().try_into() {
-                Ok(val) => val,
-                Err(err) => return Err(err),
-            };
+            let msg_len: u32 = self.len().try_into()?;
             let len_bytes = msg_len.to_be_bytes();
             let mut res = Vec::with_capacity(self.len() + 4);
             res.extend_from_slice(&len_bytes);

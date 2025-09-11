@@ -2,7 +2,7 @@
 use std::{net::{IpAddr, Ipv4Addr, SocketAddr},
           thread};
 
-use chrono::Utc;
+use chrono::{TimeZone, Utc};
 use ibkr_rust_api::{bars::*, client, cmd::*, contract::*, orders::*, ticker::*, Result};
 use tracing::error;
 fn get_client_addr() -> SocketAddr {
@@ -174,7 +174,7 @@ async fn market_data_historical_schedule() -> Result<()> {
         .request_historical_data(&HistoricalDataRequest {
             req_id: 1010,
             contract,
-            end_date_time: Some(Utc::now()),
+            end_date_time: Some(Utc.with_ymd_and_hms(2025, 4, 28, 0, 0, 0).unwrap()),
             duration: Duration::Day(7),
             bar_size_setting: BarSize::_1Day,
             what_to_show: HistoricalDataType::Schedule,

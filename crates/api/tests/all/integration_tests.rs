@@ -140,12 +140,12 @@ async fn orders_auto_open() -> Result<()> {
     let executions = client.order_tracker.executions.clone();
     thread::spawn(move || {
         while let Ok(order) = orders.recv() {
-            tracing::debug!("got order:  {:?}", order);
+            tracing::debug!("got order:  {:#?}", order);
         }
     });
     thread::spawn(move || {
         while let Ok(order) = executions.recv() {
-            tracing::debug!("got executions:  {:?}", order);
+            tracing::debug!("got executions:  {:#?}", order);
         }
     });
     let _ = client.request_auto_open_orders(true).await?;
@@ -173,11 +173,11 @@ async fn orders_all_open() -> Result<()> {
     });
     thread::spawn(move || {
         while let Ok(status) = rec_status.recv() {
-            tracing::error!("got status:  {:?}", status);
+            tracing::error!("got status:  {:#?}", status);
         }
     });
     let _ = client.request_all_open_orders().await?;
-    tokio::time::sleep(std::time::Duration::from_secs(60)).await;
+    tokio::time::sleep(std::time::Duration::from_secs(120)).await;
     // signal::ctrl_c().await.expect("failed to listen for event");
     Ok(())
 }
@@ -246,7 +246,7 @@ async fn executions_unfiltered() -> Result<()> {
     let receiver = client.order_tracker.executions.clone();
     thread::spawn(move || {
         while let Ok(fill) = receiver.recv() {
-            tracing::error!("got order:  {:?}", fill);
+            tracing::error!("got order:  {:#?}", fill);
             // tracing::debug!("got order with state:  {:?}", order_state);
         }
     });
