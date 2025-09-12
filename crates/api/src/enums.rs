@@ -2,6 +2,7 @@ use std::{fmt::Formatter, str::FromStr};
 
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
+use serde::{Deserialize, Serialize};
 
 // use serde::Deserialize;
 use crate::utils::ib_message::{Decodable, Encodable};
@@ -322,9 +323,7 @@ pub struct TagValue {
 impl TagValue {
     pub const fn new(tag: String, value: String) -> Self { TagValue { tag, value } }
 }
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum ComboAction {
     Buy,
     Sell,
@@ -357,8 +356,8 @@ impl FromStr for ComboAction {
 
 impl Decodable for ComboAction {}
 
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+// #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+// #[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum OptionOpenClose {
     Same,
@@ -395,8 +394,8 @@ impl FromStr for OptionOpenClose {
 
 impl Decodable for OptionOpenClose {}
 
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+// #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+// #[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum ShortSaleSlot {
     NoSlot,
@@ -430,8 +429,8 @@ impl FromStr for ShortSaleSlot {
 
 impl Decodable for ShortSaleSlot {}
 
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+// #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+// #[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
 #[derive(Debug, Clone, Copy, Default)]
 pub enum Action {
     #[default]
@@ -469,8 +468,8 @@ impl FromStr for Action {
 
 impl Decodable for Action {}
 
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+// #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+// #[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
 #[derive(Debug, Clone, Copy)]
 pub enum OrderOpenClose {
     Open,
@@ -501,8 +500,8 @@ impl FromStr for OrderOpenClose {
 
 impl Decodable for OrderOpenClose {}
 
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+// #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+// #[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Default)]
 pub enum OrderType {
     #[default]
@@ -605,8 +604,8 @@ impl FromStr for OrderType {
 }
 impl Decodable for OrderType {}
 
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+// #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+// #[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
 #[derive(Debug, Clone, Copy)]
 pub enum TriggerMethod {
     Default,
@@ -652,8 +651,8 @@ impl FromStr for TriggerMethod {
 
 impl Decodable for TriggerMethod {}
 
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+// #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+// #[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
 #[derive(Debug, Clone, Copy)]
 /// The time in force.
 /// Valid values are:
@@ -726,8 +725,8 @@ impl FromStr for TimeInForce {
 
 impl Decodable for TimeInForce {}
 
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+// #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+// #[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
 #[derive(Debug, Clone, Copy)]
 pub enum Rule80A {
     Individual,
@@ -782,8 +781,8 @@ impl FromStr for Rule80A {
 
 impl Decodable for Rule80A {}
 
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+// #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+// #[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
 #[derive(Debug, Clone, Copy)]
 pub enum Origin {
     Customer,
@@ -817,8 +816,8 @@ impl FromStr for Origin {
 
 impl Decodable for Origin {}
 
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+// #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+// #[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
 #[derive(Debug, Clone, Copy)]
 pub enum AuctionStrategy {
     NoAuctionStrategy,
@@ -856,8 +855,8 @@ impl FromStr for AuctionStrategy {
 
 impl Decodable for AuctionStrategy {}
 
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+// #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+// #[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
 #[derive(Debug, Clone, Copy)]
 /// Tells how to handle remaining orders in an OCA group when one order or part
 /// of an order executes. Valid values are:
@@ -936,8 +935,8 @@ impl FromStr for VolatilityType {
 
 impl Decodable for VolatilityType {}
 
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+// #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+// #[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
 #[derive(Debug, Clone, Copy, Default)]
 pub enum ReferencePriceType {
     #[default]
@@ -972,8 +971,8 @@ impl FromStr for ReferencePriceType {
 
 impl Decodable for ReferencePriceType {}
 
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+// #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+// #[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
 #[derive(Debug, Clone, Copy)]
 pub enum BasisPointsType {
     Undefined,
@@ -1001,8 +1000,8 @@ impl FromStr for BasisPointsType {
 
 impl Decodable for BasisPointsType {}
 
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+// #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+// #[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
 #[derive(PartialEq, Debug, Clone, Copy, Eq)]
 pub enum HedgeType {
     Undefined,
@@ -1042,8 +1041,8 @@ impl FromStr for HedgeType {
 
 impl Decodable for HedgeType {}
 
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+// #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+// #[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
 #[derive(Debug, Clone, Copy)]
 pub enum ClearingIntent {
     InteractiveBrokers,
@@ -1076,8 +1075,8 @@ impl FromStr for ClearingIntent {
 }
 
 impl Decodable for ClearingIntent {}
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+// #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+// #[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
 #[derive(Debug, Clone, Copy)]
 pub enum Side {
     Buy,

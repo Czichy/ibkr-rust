@@ -339,8 +339,8 @@ impl FromStr for OrderStatus {
 
 impl Decodable for OrderStatus {}
 
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
+// #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+// #[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
 #[derive(Debug, Clone, Copy)]
 pub enum OrderConditionType {
     Price         = 1,

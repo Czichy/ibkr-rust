@@ -4,13 +4,11 @@ use std::{fmt::{Display, Formatter},
 use chrono::{DateTime, NaiveDateTime, TimeZone};
 use chrono_tz::{Tz, US, UTC};
 use fastnum::D256;
+use serde::{Deserialize, Serialize};
 
-// #[cfg(feature = "serde")]
-// use serde::{Deserialize, Serialize};
 use crate::{enums::*,
             ib_frame::{ParseError, ParseIbkrFrame, ParseResult},
-            utils::ib_message::Encodable,
-            utils::ib_message::{decode, Decodable},
+            utils::ib_message::{decode, Decodable, Encodable},
             ServerVersion};
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ComboLeg {
@@ -538,9 +536,7 @@ impl Display for SecType {
 
 impl Decodable for SecType {}
 
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum OptionRight {
     Undefined,
     Put,
@@ -575,8 +571,6 @@ impl FromStr for OptionRight {
     }
 }
 
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[cfg_attr(feature = "serde", serde(rename_all = "lowercase"))]
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
 pub enum SecIdType {
     Isin,

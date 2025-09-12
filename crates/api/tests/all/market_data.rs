@@ -105,7 +105,7 @@ async fn market_data_historical_data() -> Result<()> {
     thread::spawn(move || {
         let mut count: i32 = 0;
         while let Ok(_fill) = receiver.recv() {
-            tracing::error!("received: {:?}", _fill);
+            tracing::error!("received: {:#?}", _fill);
             count += 1;
             if count > 3 {}
         }
@@ -116,7 +116,7 @@ async fn market_data_historical_data() -> Result<()> {
     thread::spawn(move || {
         let mut count: i32 = 0;
         while let Ok(_fill) = receiver.recv() {
-            tracing::error!("received: {:?}", _fill);
+            tracing::error!("received: {:#?}", _fill);
             count += 1;
             if count > 3 {}
         }
@@ -127,8 +127,8 @@ async fn market_data_historical_data() -> Result<()> {
         .request_historical_data(&HistoricalDataRequest {
             req_id: 1010,
             contract,
-            // end_date_time: None,
-            end_date_time: Some(Utc::now()),
+            end_date_time: None,
+            // end_date_time: Some(Utc::now()),
             // duration: Duration::Day(30),
             duration: Duration::Day(3),
             // bar_size_setting: BarSize::_1Day,
