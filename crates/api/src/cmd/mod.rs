@@ -3,6 +3,8 @@ pub use api::Api;
 
 mod request_account_summary;
 pub use request_account_summary::RequestAccountSummary;
+mod request_account_updates_multi;
+pub use request_account_updates_multi::RequestAccountUpdatesMulti;
 mod request_account_updates;
 pub use request_account_updates::RequestAccountUpdates;
 

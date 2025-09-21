@@ -3,8 +3,9 @@ use tracing::debug;
 
 use super::Client;
 use crate::{account::{AccountData, AccountLastUpdate},
-            cmd::{RequestAccountSummary, RequestAccountUpdates},
+            cmd::{RequestAccountSummary, RequestAccountUpdates, RequestAccountUpdatesMulti},
             AccountCode,
+            ModelCode,
             Result};
 impl Client {
     // pub fn subscribe_account_updates(self) -> AccountReceiver {
@@ -73,41 +74,22 @@ impl Client {
         self.writer.write_frame(&frame.into_frame()).await?;
         Ok(())
     }
-    //#[tracing::instrument(skip(self))]
-    // pub async fn get_account_summary(
-    //    &mut self,
-    //    group_name:String,
-    //    tags: Vec<String>,
-    //) -> Result<Vec<ContractDetails>> {
-    //    // Convert the command into a frame
-    //    let req_id = self.get_next_req_id();
-    //    let frame = RequestContractDetails::new(req_id, contract);
-    //    debug!("request id:\t{}", req_id);
-    //    debug!(request = ?frame);
-    //    // register sender for contract details callback
-    //    let (rep_tx, mut rep_rx) = mpsc::channel(8);
-    //    let _subscribe = self
-    //        .subscribe_handler_tx
-    //        .send(Request::RequestWithId {
-    //            req_id,
-    //            sender: rep_tx,
-    //        })
-    //        .await?;
-    //    // Write the frame to the socket
-    //    self.writer.write_frame(&frame.into_frame()).await?;
-    //    let mut results = Vec::new();
-    //    while let Some(result) = rep_rx.recv().await {
-    //        match result {
-    //            Response::ContractDetails { req_id: _, details } => {
-    //                tracing::trace!("Received contract details: {:?}", details);
-    //                match details {
-    //                    Some(details) => results.push(details),
-    //                    None => break,
-    //                }
-    //            },
-    //            //_ => (),
-    //        }
-    //    }
-    //    Ok(results)
-    //}
+
+    #[tracing::instrument(skip(self))]
+    pub async fn request_account_updates_multi(
+        &mut self,
+        account_code: AccountCode,
+        model_code: ModelCode,
+        ledger_and_nlv: bool,
+    ) -> Result<()> {
+        let req_id = self.get_next_req_id();
+        let frame =
+            RequestAccountUpdatesMulti::new(req_id, account_code, model_code, ledger_and_nlv);
+
+        debug!(request = ?frame);
+
+        // Write the frame to the socket
+        self.writer.write_frame(&frame.into_frame()).await?;
+        Ok(())
+    }
 }

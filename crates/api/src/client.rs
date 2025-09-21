@@ -695,6 +695,7 @@ impl Handler {
                     },
 
                     IBFrame::AccountUpdateEnd(_) => {},
+                    IBFrame::AccountUpdateMultiEnd(_) => {},
 
                     IBFrame::CurrentTime(dtime) => {
                         self.message_events_tx

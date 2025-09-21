@@ -46,6 +46,7 @@ pub type ServerVersion = i32;
 pub type OrderId = i32;
 pub type RequestId = i32;
 pub type AccountCode = String;
+pub type ModelCode = String;
 pub type TimeStamp = DateTime<Utc>;
 
 // pub use self::{app_options::AppOptions,

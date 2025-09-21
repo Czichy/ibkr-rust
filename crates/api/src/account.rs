@@ -10,6 +10,7 @@ use crate::{account_summary_tags::AccountValueKey,
             ib_frame::{ParseError, ParseIbkrFrame, ParseResult},
             utils::ib_message::{decode, Decodable},
             AccountCode,
+            ModelCode,
             RequestId,
             ServerVersion,
             TimeStamp};
@@ -17,6 +18,7 @@ use crate::{account_summary_tags::AccountValueKey,
 pub struct AccountData {
     pub req_id:   Option<RequestId>,
     pub account:  AccountCode,
+    pub model:    ModelCode,
     pub key:      AccountValueKey,
     pub value:    String,
     pub currency: String,
@@ -25,7 +27,7 @@ pub struct AccountData {
 impl ParseIbkrFrame for AccountData {
     fn try_parse_frame(
         msg_id: Incoming,
-        server_version: Option<ServerVersion>,
+        _server_version: Option<ServerVersion>,
         it: &mut Split<&str>,
     ) -> ParseResult<Self>
     where
@@ -43,6 +45,25 @@ impl ParseIbkrFrame for AccountData {
                 Ok(Self {
                     req_id,
                     account,
+                    model: Default::default(),
+                    key,
+                    value: decode(it)?.unwrap(),
+                    currency: decode(it)?.unwrap_or_default(),
+                })
+            },
+            Incoming::AccountUpdateMulti => {
+                it.next(); // skip version
+                tracing::debug!("getting account values");
+                let req_id = decode(it)?;
+                let account = decode(it)?.unwrap();
+                let model = decode(it)?.unwrap();
+                let key = &decode::<String>(it)?.unwrap();
+                let key = AccountValueKey::from_str(key)
+                    .unwrap_or_else(|_| AccountValueKey::Unknown(key.to_string()));
+                Ok(Self {
+                    req_id,
+                    account,
+                    model,
                     key,
                     value: decode(it)?.unwrap(),
                     currency: decode(it)?.unwrap_or_default(),
@@ -60,6 +81,7 @@ impl ParseIbkrFrame for AccountData {
                     value: decode(it)?.unwrap(),
                     currency: decode(it)?.unwrap_or_default(),
                     account: decode(it)?.unwrap(),
+                    model: Default::default(),
                 })
             },
             _ => Err(ParseError::Incomplete),

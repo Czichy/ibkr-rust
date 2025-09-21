@@ -87,6 +87,9 @@ pub enum IBFrame {
     AccountUpdateEnd(AccountCode),
 
     #[from(ignore)]
+    AccountUpdateMultiEnd(RequestId),
+
+    #[from(ignore)]
     AccountUpdateTime(AccountLastUpdate),
 
     #[from(ignore)]
@@ -231,6 +234,20 @@ impl IBFrame {
                 it.next(); // skip version
                 let code = decode::<String>(&mut it)?.unwrap();
                 Ok(IBFrame::AccountUpdateEnd(code))
+            },
+
+            Incoming::AccountUpdateMulti => {
+                Ok(IBFrame::AccountSummary(AccountData::try_parse_frame(
+                    msg_id,
+                    server_version,
+                    &mut it,
+                )?))
+            },
+
+            Incoming::AccountUpdateMultiEnd => {
+                it.next(); // skip version
+                let req_id: i32 = decode(&mut it)?.unwrap();
+                Ok(IBFrame::AccountUpdateMultiEnd(req_id))
             },
 
             Incoming::AcctUpdateTime => {

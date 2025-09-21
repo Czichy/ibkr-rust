@@ -3,6 +3,8 @@ use bytes::Bytes;
 use crate::{enums::Outgoing,
             frame::Frame,
             utils::ib_message::{Encodable, IBMessage},
+            AccountCode,
+            ModelCode,
             RequestId};
 
 const VERSION: i32 = 1;
@@ -82,22 +84,30 @@ const VERSION: i32 = 1;
 ///           currencies.
 ///         */
 #[derive(Debug)]
-pub struct RequestAccountSummary {
-    req_id:     RequestId,
-    group_name: String,
-    tags:       Vec<String>,
+pub struct RequestAccountUpdatesMulti {
+    req_id:         RequestId,
+    account_code:   AccountCode,
+    model_code:     ModelCode,
+    ledger_and_nlv: bool,
 }
 
-impl RequestAccountSummary {
+impl RequestAccountUpdatesMulti {
     /// Create a new `Set` command which sets `key` to `value`.
     ///
     /// If `expire` is `Some`, the value should expire after the specified
     /// duration.
-    pub fn new(req_id: RequestId, group_name: String, tags: Vec<String>) -> RequestAccountSummary {
-        RequestAccountSummary {
+    pub fn new(
+        req_id: RequestId,
+
+        account_code: AccountCode,
+        model_code: ModelCode,
+        ledger_and_nlv: bool,
+    ) -> Self {
+        Self {
             req_id,
-            group_name,
-            tags,
+            account_code,
+            model_code,
+            ledger_and_nlv,
         }
     }
 
@@ -106,11 +116,12 @@ impl RequestAccountSummary {
     /// This is called by the client when encoding a `RequestMarketData` command
     /// to send to the server.
     pub(crate) fn into_frame(self) -> Frame {
-        let mut msg = Outgoing::ReqAccountSummary.encode();
+        let mut msg = Outgoing::ReqAccountUpdatesMulti.encode();
         msg.push_str(&VERSION.encode());
         msg.push_str(&self.req_id.encode());
-        msg.push_str(&self.group_name.encode());
-        msg.push_str(&self.tags.join(",").encode());
+        msg.push_str(&self.account_code.encode());
+        msg.push_str(&self.model_code.encode());
+        msg.push_str(&self.ledger_and_nlv.encode());
         let msg = msg.as_str().to_ib_message().unwrap();
         Frame::Bulk(Bytes::from(msg))
     }
