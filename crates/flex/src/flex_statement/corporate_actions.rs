@@ -216,14 +216,14 @@ pub struct CorporateAction {
 mod tests {
     use std::str::FromStr;
 
-    use chrono::NaiveDateTime;
+    
     use fastnum::dec256;
     use pretty_assertions::assert_eq;
     use quick_xml::de::from_str;
 
     use super::*;
     use crate::{enums::{AssetCategory, SecIdType},
-                flex_statement::{contract::Contract, trades::Trade}};
+                flex_statement::contract::Contract};
 
     #[test]
     fn flex_deserialize_corporate_action() {

@@ -3,7 +3,7 @@ use std::{net::{IpAddr, Ipv4Addr, SocketAddr},
           thread};
 
 use chrono::{TimeZone, Utc};
-use ibkr_rust_api::{bars::*, client, cmd::*, contract::*, orders::*, ticker::*, Result};
+use ibkr_rust_api::{bars::*, client, cmd::*, contract::*, ticker::*, Result};
 use tracing::error;
 fn get_client_addr() -> SocketAddr {
     // SocketAddr::new(IpAddr::V4(Ipv4Addr::new(10, 15, 10, 25)), 1111)

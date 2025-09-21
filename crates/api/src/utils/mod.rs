@@ -209,7 +209,7 @@ pub mod ib_message {
 mod tests {
 
     use chrono::{Local, NaiveDate, TimeZone, Utc};
-    use fastnum::{dec256, decimal::Decimal, D256};
+    use fastnum::{dec256, D256};
     use pretty_assertions::assert_eq;
 
     use crate::{utils::ib_message::*, TimeStamp};

@@ -271,7 +271,7 @@ mod tests {
     use std::{env, path::PathBuf, str::FromStr};
 
     use chrono::{NaiveDate, NaiveDateTime};
-    use fastnum::{dec256, decimal::Decimal, D256};
+    use fastnum::dec256;
     use iso_currency::Currency;
     // use ibkr_rust_api::{
     //    ib_enums::{self, SecIdType},

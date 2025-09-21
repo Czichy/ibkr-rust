@@ -1,4 +1,4 @@
-use std::{path::PathBuf, process::Command};
+use std::path::PathBuf;
 
 use clap::Parser;
 use ibkr_rust_flex::FlexReader;

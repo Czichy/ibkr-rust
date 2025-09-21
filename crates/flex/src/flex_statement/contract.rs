@@ -90,7 +90,7 @@ mod tests {
     use pretty_assertions::assert_eq;
     use quick_xml::de::from_str;
 
-    use super::*;
+    
     use crate::{enums::{AssetCategory, SecIdType},
                 flex_statement::contract::Contract};
 

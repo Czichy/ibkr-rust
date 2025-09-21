@@ -1,4 +1,4 @@
-use crate::{ib_frame::ParseIbkrFrame, orders::Order, ServerVersion};
+use crate::{ib_frame::ParseIbkrFrame, orders::Order};
 
 #[test]
 fn parse_completed_orders() {
