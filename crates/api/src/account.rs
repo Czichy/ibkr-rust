@@ -18,7 +18,7 @@ use crate::{account_summary_tags::AccountValueKey,
 pub struct AccountData {
     pub req_id:   Option<RequestId>,
     pub account:  AccountCode,
-    pub model:    ModelCode,
+    pub model:    Option<ModelCode>,
     pub key:      AccountValueKey,
     pub value:    String,
     pub currency: String,
@@ -56,7 +56,7 @@ impl ParseIbkrFrame for AccountData {
                 tracing::debug!("getting account values");
                 let req_id = decode(it)?;
                 let account = decode(it)?.unwrap();
-                let model = decode(it)?.unwrap();
+                let model = decode(it)?;
                 let key = &decode::<String>(it)?.unwrap();
                 let key = AccountValueKey::from_str(key)
                     .unwrap_or_else(|_| AccountValueKey::Unknown(key.to_string()));
