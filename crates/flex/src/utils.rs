@@ -94,7 +94,7 @@ pub mod de {
         // NaiveDateTime::parse_from_str(&s,
         // "%Y-%m-%d;%H:%M:%S").map_err(de::Error::custom)
         Err(de::Error::custom(format!(
-            "unknown date time format: {}",
+            "1 - unknown date time format: {}",
             s
         )))
     }
@@ -131,7 +131,7 @@ pub mod de {
         // NaiveDateTime::parse_from_str(&s,
         // "%Y-%m-%d;%H:%M:%S").map_err(de::Error::custom)
         Err(de::Error::custom(format!(
-            "unknown date time format: {}",
+            "2 - unknown naive date format: {}",
             s
         )))
     }
@@ -139,7 +139,7 @@ pub mod de {
     where
         D: Deserializer<'de>,
     {
-        let date_fmt = &vec![
+        let date_fmt = [
             "%Y-%m-%d", "%Y%m%d", "%m/%d/%Y", "%m/%d/%y", "%d/%m/%Y", "%d/%m/%y", "%d-%m-%y",
         ];
 
@@ -152,7 +152,7 @@ pub mod de {
             }
         }
         Err(de::Error::custom(format!(
-            "unknown date time format: {}",
+            "3- unknown naive date format: {}",
             s
         )))
     }

@@ -17,6 +17,8 @@ pub enum BuySell {
     Buy,
     #[serde(rename = "SELL")]
     Sell,
+    #[serde(rename = "BUY (Ca.)")]
+    BuyCa,
     #[serde(rename = "SELL (Ca.)")]
     SellCa,
 }

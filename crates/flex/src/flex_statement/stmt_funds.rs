@@ -51,8 +51,8 @@ pub struct StatementOfFundsLine {
     pub credit: Option<D256>,
 
     #[serde(rename = "@date")]
-    #[serde(deserialize_with = "naive_date_from_str")]
-    pub date: NaiveDate,
+    #[serde(deserialize_with = "multi_date_from_str")]
+    pub date: Option<MultiDate>,
 
     #[serde(rename = "@debit")]
     #[serde(deserialize_with = "deserialize_option_from_str")]
@@ -153,7 +153,9 @@ mod tests {
                     amount:               Some(dec256!(0)),
                     balance:              Some(dec256!(6655.368396105)),
                     credit:               None,
-                    date:                 NaiveDate::from_str("2022-02-15").unwrap(),
+                    date:                 Some(MultiDate::Date(
+                        NaiveDate::from_str("2022-02-15").unwrap()
+                    )),
                     debit:                None,
                     fx_rate_to_base:      Some(dec256!(1),),
                     level_of_detail:      "BaseCurrency".to_string(),
@@ -182,7 +184,9 @@ mod tests {
                     amount:               Some(dec256!(15724.15)),
                     balance:              Some(dec256!(15724.15)),
                     credit:               Some(dec256!(15724.15)),
-                    date:                 NaiveDate::from_str("2023-01-30").unwrap(),
+                    date:                 Some(MultiDate::Date(
+                        NaiveDate::from_str("2023-01-30").unwrap()
+                    )),
                     debit:                None,
                     fx_rate_to_base:      Some(dec256!(1)),
                     level_of_detail:      "Currency".to_string(),
@@ -234,7 +238,9 @@ mod tests {
                     amount:               Some(dec256!(-1558.38328),),
                     balance:              Some(dec256!(5103.133989064),),
                     credit:               None,
-                    date:                 NaiveDate::from_str("2022-02-14").unwrap(),
+                    date:                 Some(MultiDate::Date(
+                        NaiveDate::from_str("2022-02-14").unwrap()
+                    )),
                     debit:                Some(dec256!(-1558.38328),),
                     fx_rate_to_base:      Some(dec256!(1),),
                     level_of_detail:      "BaseCurrency".to_string(),
