@@ -8,7 +8,7 @@ use tracing::error;
 fn get_client_addr() -> SocketAddr {
     // SocketAddr::new(IpAddr::V4(Ipv4Addr::new(10, 15, 10, 25)), 1111)
     // SocketAddr::new(IpAddr::V4(Ipv4Addr::new(10, 15, 10, 25)), 4444)
-    SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), 4444)
+    SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), 8888)
 }
 #[tokio::test]
 #[cfg_attr(not(feature = "ibkr_client_test"), ignore)]
@@ -127,14 +127,14 @@ async fn market_data_historical_data() -> Result<()> {
         .request_historical_data(&HistoricalDataRequest {
             req_id: 1010,
             contract,
-            end_date_time: None,
-            // end_date_time: Some(Utc::now()),
+            // end_date_time: None,
+            end_date_time: Some(Utc::now()),
             // duration: Duration::Day(30),
-            duration: Duration::Day(3),
+            duration: Duration::Day(365),
             // bar_size_setting: BarSize::_1Day,
             bar_size_setting: BarSize::_1Min,
             what_to_show: HistoricalDataType::Trades,
-            use_rth: UseRegularTradingHoursOnly::DontUse,
+            use_rth: UseRegularTradingHoursOnly::Use,
             format_date: IntradayBarDateFormat::UnixEpochSeconds,
             keep_up_to_date: false,
             // keep_up_to_date: true,
