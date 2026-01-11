@@ -160,11 +160,12 @@
         inherit (self.checks.${system}) coverage;
         default = self.packages.${system}.flex;
         # Export the full source (unfiltered) for use by other flakes that need the workspace
-        ibkr-rust-source = pkgs.runCommand "ibkr-rust-source" {} ''
-          cp -r ${../.} $out
-          chmod -R +w $out
-          rm -rf $out/.git
-        '';
+        # Use builtins.path to preserve the exact source without modifications
+        ibkr-rust-source = builtins.path {
+          path = ../.;
+          name = "ibkr-rust-source";
+          filter = path: type: !(builtins.baseNameOf path == ".git");
+        };
       };
       legacyPackages = {
         cargoExtraPackages = args.nativeBuildInputs;
