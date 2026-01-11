@@ -159,6 +159,8 @@
         inherit flex api;
         inherit (self.checks.${system}) coverage;
         default = self.packages.${system}.flex;
+        # Export the source for use by other flakes
+        ibkr-rust-source = src;
       };
       legacyPackages = {
         cargoExtraPackages = args.nativeBuildInputs;
