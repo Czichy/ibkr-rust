@@ -50,6 +50,7 @@ pub enum ParseError {
 }
 pub type ParseResult<T, E = ParseError> = Result<T, E>;
 
+#[allow(dead_code)]
 pub trait FromIbkrFrame {
     /// Converts the command into an equivalent `Frame`.
     ///
@@ -177,7 +178,7 @@ impl IBFrame {
         let end = src.get_ref().len() - 1;
         tracing::debug!("start: {:?} end: {:?} msg_size: {:?}", start, end, msg_size);
         if end < (start + msg_size + 3) {
-            tracing::warn!(
+            tracing::debug!(
                 "incomplete message! message: {:?}\n expectiong len: {}, msg_size: {}",
                 headbuf,
                 end,
@@ -582,10 +583,10 @@ mod tests {
              u{0}1.7976931348623157E308\u{0}1.7976931348623157E308\u{0}0\u{0}\u{0}\u{0}\u{0}0\\
              u{0}1\u{0}0\u{0}0\u{0}0\u{0}\u{0}\u{0}0\u{0}"
                 .as_bytes();
-        tracing::warn!("{:?}", String::from_utf8_lossy(&[0, 0, 2, 120]));
+        tracing::debug!("{:?}", String::from_utf8_lossy(&[0, 0, 2, 120]));
         let mut buff = Cursor::new(string_to_parse);
         let open_position = IBFrame::parse(&mut buff, Some(176));
-        tracing::warn!("parse open position: {:#?}", open_position);
+        tracing::debug!("parse open position: {:#?}", open_position);
     }
     #[test]
     #[ignore]
@@ -609,9 +610,9 @@ mod tests {
              u{0}1.7976931348623157E308\u{0}1.7976931348623157E308\u{0}0\u{0}\u{0}\u{0}\u{0}0\\
              u{0}1\u{0}0\u{0}0\u{0}0\u{0}\u{0}\u{0}0\u{0}"
                 .as_bytes();
-        tracing::warn!("{:?}", String::from_utf8_lossy(&[0, 0, 2, 127]));
+        tracing::debug!("{:?}", String::from_utf8_lossy(&[0, 0, 2, 127]));
         let mut buff = Cursor::new(string_to_parse);
         let open_position = IBFrame::parse(&mut buff, Some(183));
-        tracing::warn!("parse open position: {:#?}", open_position);
+        tracing::debug!("parse open position: {:#?}", open_position);
     }
 }
