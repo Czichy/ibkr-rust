@@ -206,3 +206,25 @@ _rust_build_and_test_single directory *args:
 codegen:
     clear
     cargo run --package se_types_builder
+
+# ============================ IBKR integration tests ============================
+
+# Offline unit tests (no TWS required) - includes encoding regression tests
+test-unit:
+    cargo test --lib -p ibkr-rust-api
+
+# Integration tests against Paper-TWS (requires TWS/Gateway on port 4002)
+test-integration:
+    cargo test -p ibkr-rust-api --features ibkr_client_test -- --test-threads=1
+
+# Only order lifecycle integration tests
+test-orders:
+    cargo test -p ibkr-rust-api --features ibkr_client_test order_lifecycle -- --test-threads=1
+
+# Only connection integration tests
+test-connection:
+    cargo test -p ibkr-rust-api --features ibkr_client_test connection -- --test-threads=1
+
+# Only encoding regression tests (offline, fast)
+test-encoding:
+    cargo test --lib -p ibkr-rust-api encoding_tests

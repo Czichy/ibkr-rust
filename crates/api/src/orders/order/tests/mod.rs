@@ -1,12 +1,11 @@
-use fastnum::{D256, decimal::Context};
-use crate::{
-    cmd::PlaceOrder,
-    contract::{Contract, SecType},
-    enums::*,
-    frame::Frame,
-    ib_frame::ParseIbkrFrame,
-    orders::Order,
-};
+use fastnum::{decimal::Context, D256};
+
+use crate::{cmd::PlaceOrder,
+            contract::{Contract, SecType},
+            enums::*,
+            frame::Frame,
+            ib_frame::ParseIbkrFrame,
+            orders::Order};
 
 #[test]
 fn parse_completed_orders() {
@@ -222,17 +221,19 @@ fn parse_completed_orders() {
 //     assert!(results.is_ok(), "failed to place order: {}",
 // results.err().unwrap()); }
 
-/// Integration test: Verify PlaceOrder encoding produces correct TWS API v100+ field layout.
+/// Integration test: Verify PlaceOrder encoding produces correct TWS API v100+
+/// field layout.
 ///
 /// TWS API PlaceOrder frame format:
-///   PLACE_ORDER(3) | order_id | con_id | symbol | sec_type | expiry | strike | right |
-///   multiplier | exchange | primary_exchange | currency | local_symbol | trading_class |
-///   sec_id_type | sec_id | action | total_qty | order_type | lmt_price | aux_price | ...
+///   PLACE_ORDER(3) | order_id | con_id | symbol | sec_type | expiry | strike |
+/// right |   multiplier | exchange | primary_exchange | currency | local_symbol
+/// | trading_class |   sec_id_type | sec_id | action | total_qty | order_type |
+/// lmt_price | aux_price | ...
 #[test]
 fn encode_place_order_market_stock() {
     let order = Order {
-        order_id: Some(42),
-        contract: Contract {
+        order_id:    Some(42),
+        contract:    Contract {
             con_id: Some(265598),
             symbol: "AAPL".to_string(),
             sec_type: SecType::Stock,
@@ -241,7 +242,7 @@ fn encode_place_order_market_stock() {
             currency: "USD".to_string(),
             ..Default::default()
         },
-        order: super::OrderData {
+        order:       super::OrderData {
             action: Action::Buy,
             total_qty: D256::from_str("100", Context::default()).unwrap(),
             order_type: OrderType::Market,
@@ -270,7 +271,10 @@ fn encode_place_order_market_stock() {
     }
 
     // [0] = message type: PLACE_ORDER = 3
-    assert_eq!(fields[0], "3", "field[0] should be PLACE_ORDER message type (3)");
+    assert_eq!(
+        fields[0], "3",
+        "field[0] should be PLACE_ORDER message type (3)"
+    );
     // [1] = order_id (was missing before fix, causing Error 320)
     assert_eq!(fields[1], "42", "field[1] should be order_id");
     // [2] = con_id
@@ -311,15 +315,20 @@ fn encode_place_order_market_stock() {
     assert_eq!(fields[27], "1", "field[27] should be transmit=true");
 
     // Verify reasonable field count
-    assert!(fields.len() > 70, "Expected >70 fields, got {}", fields.len());
+    assert!(
+        fields.len() > 70,
+        "Expected >70 fields, got {}",
+        fields.len()
+    );
 }
 
-/// Test encoding matches the known-good reference from the commented-out encode_limit_order test.
+/// Test encoding matches the known-good reference from the commented-out
+/// encode_limit_order test.
 #[test]
 fn encode_place_order_limit_future() {
     let order = Order {
-        order_id: Some(12),
-        contract: Contract {
+        order_id:    Some(12),
+        contract:    Contract {
             con_id: Some(0),
             symbol: String::new(),
             sec_type: SecType::Future,
@@ -334,7 +343,7 @@ fn encode_place_order_limit_future() {
             trading_class: None,
             ..Default::default()
         },
-        order: super::OrderData {
+        order:       super::OrderData {
             action: Action::Buy,
             total_qty: D256::from_str("10", Context::default()).unwrap(),
             order_type: OrderType::Limit,
@@ -376,11 +385,18 @@ fn encode_place_order_limit_future() {
     for i in 0..max_len {
         let actual = actual_fields.get(i).unwrap_or(&"<MISSING>");
         let expected = ref_fields.get(i).unwrap_or(&"<MISSING>");
-        let marker = if actual != expected { " <<<< MISMATCH" } else { "" };
+        let marker = if actual != expected {
+            " <<<< MISMATCH"
+        } else {
+            ""
+        };
         if actual != expected && first_mismatch.is_none() {
             first_mismatch = Some(i);
         }
-        eprintln!("  [{:3}] ref={:>20} | actual={:>20}{}", i, expected, actual, marker);
+        eprintln!(
+            "  [{:3}] ref={:>20} | actual={:>20}{}",
+            i, expected, actual, marker
+        );
     }
 
     if let Some(idx) = first_mismatch {
@@ -388,8 +404,10 @@ fn encode_place_order_limit_future() {
     }
 
     assert!(
-        pipe_separated.starts_with("3|12|0||FUT|202303|0|||EUREX||EUR|FGBL MAR 23||||BUY|10|LMT|500|"),
+        pipe_separated
+            .starts_with("3|12|0||FUT|202303|0|||EUREX||EUR|FGBL MAR 23||||BUY|10|LMT|500|"),
         "Header fields should match reference. Got: {}",
         &pipe_separated[..pipe_separated.len().min(120)]
     );
 }
+mod encoding_tests;
