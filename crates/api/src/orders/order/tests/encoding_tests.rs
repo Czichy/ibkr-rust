@@ -233,10 +233,11 @@ fn encode_field_count_stable() {
     let fields = encode_to_fields(&order);
     let count = fields.len();
 
-    // Current encoding produces ~85-95 fields. Detect large unexpected changes.
+    // After Error 320 fix: encoding now correctly sends all fields matching Java API.
+    // Non-vol, non-scale, non-peg orders produce ~115-125 fields.
     assert!(
-        (80..=100).contains(&count),
-        "Expected 80-100 fields, got {}. This may indicate an encoding change.",
+        (110..=135).contains(&count),
+        "Expected 110-135 fields, got {}. This may indicate an encoding change.",
         count
     );
 }

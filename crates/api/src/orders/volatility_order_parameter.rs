@@ -106,15 +106,17 @@ impl crate::utils::ib_message::Encodable for VolatilityOrderParameter {
         code.push_str(&self.volatility_type.encode());
         code.push_str(&self.delta_neutral_order_type.encode());
         code.push_str(&self.delta_neutral_aux_price.encode());
-        // if self.delta_neutral_order_type.is_some() {
-        code.push_str(&self.delta_neutral_con_id.encode());
-        code.push_str(&self.delta_neutral_settling_firm.encode());
-        code.push_str(&self.delta_neutral_clearing_account.encode());
-        code.push_str(&self.delta_neutral_clearing_intent.encode());
-        code.push_str(&self.delta_neutral_open_close.encode());
-        code.push_str(&self.delta_neutral_short_sale.encode());
-        code.push_str(&self.delta_neutral_designated_location.encode());
-        // }
+        // Java only sends delta_neutral detail fields when deltaNeutralOrderType is non-empty
+        if self.delta_neutral_order_type != OrderType::NoOrderType {
+            code.push_str(&self.delta_neutral_con_id.encode());
+            code.push_str(&self.delta_neutral_settling_firm.encode());
+            code.push_str(&self.delta_neutral_clearing_account.encode());
+            code.push_str(&self.delta_neutral_clearing_intent.encode());
+            code.push_str(&self.delta_neutral_open_close.encode());
+            code.push_str(&self.delta_neutral_short_sale.encode());
+            code.push_str(&self.delta_neutral_short_sale_slot.encode());
+            code.push_str(&self.delta_neutral_designated_location.encode());
+        }
         code.push_str(&self.continuous_update.encode());
         code.push_str(&self.reference_price_type.encode());
         code

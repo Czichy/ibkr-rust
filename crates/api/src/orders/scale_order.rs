@@ -75,6 +75,7 @@ impl crate::utils::ib_message::Encodable for ScaleOrderParameter {
                 code.push_str(&self.scale_random_percent.encode());
             }
         }
+        code.push_str(&self.scale_table.encode());
         code
     }
 }

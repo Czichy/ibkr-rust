@@ -16,7 +16,7 @@ use crate::{cmd::UsePriceMgmtAlgo,
             utils::ib_message::{decode, Encodable},
             OrderId,
             ServerVersion,
-            TimeStamp};
+};
 
 #[derive(Default, Debug, Clone)]
 pub struct SoftDollarTier {
@@ -207,7 +207,7 @@ pub struct OrderData {
     pub use_price_mgmt_algo:             Option<UsePriceMgmtAlgo>,
     /// Specifies the duration of the order. Format: yyyymmdd hh:mm:ss TZ.
     /// For GTD orders.
-    pub duration:                        Option<TimeStamp>,
+    pub duration:                        Option<i32>,
     /// Value must be positive, and it is number of seconds that SMART order
     /// would be parked for at IBKRATS before being routed to exchange.
     pub post_to_ats:                     Option<i32>,
@@ -372,7 +372,11 @@ impl Encodable for Order {
         code.push_str(&self.order.discretionary_amt.encode());
         code.push_str(&self.order.good_after_time.encode());
         code.push_str(&self.order.good_till_date.encode());
-        code.push_str(&self.order.financial_advisor.encode());
+        // Java always sends FA fields (even defaults)
+        match &self.order.financial_advisor {
+            Some(fa) => code.push_str(&fa.encode()),
+            None => code.push_str(&FinancialAdvisor::default().encode()),
+        }
         code.push_str(&self.order.model_code.encode());
         code.push_str(&self.order.short_sale_slot.encode());
         code.push_str(&self.order.designated_location.encode());
@@ -394,11 +398,19 @@ impl Encodable for Order {
         code.push_str(&self.order.stock_range_upper.encode());
         code.push_str(&self.order.override_percentage_constraints.encode());
 
-        code.push_str(&self.order.volatility_order_parameter.encode());
+        // Java always sends volatility fields (even defaults for non-vol orders)
+        match &self.order.volatility_order_parameter {
+            Some(vop) => code.push_str(&vop.encode()),
+            None => code.push_str(&VolatilityOrderParameter::default().encode()),
+        }
 
         code.push_str(&self.order.trail_stop_price.encode());
         code.push_str(&self.order.trailing_percent.encode());
-        code.push_str(&self.order.scale_order_parameter.encode());
+        // Java always sends scale fields (even defaults for non-scale orders)
+        match &self.order.scale_order_parameter {
+            Some(sop) => code.push_str(&sop.encode()),
+            None => code.push_str(&ScaleOrderParameter::default().encode()),
+        }
         code.push_str(&self.order.active_start_time.encode());
         code.push_str(&self.order.active_stop_time.encode());
         code.push_str(&self.order.hedge_type.encode());
@@ -459,7 +471,14 @@ impl Encodable for Order {
             None => code.push_str("0\0"),
         }
 
-        code.push_str(&self.order.adjusted_order.encode());
+        // Java always sends adjusted order fields (even defaults)
+        match &self.order.adjusted_order {
+            Some(adj) => code.push_str(&adj.encode()),
+            None => code.push_str(&AdjustedOrder::default().encode()),
+        }
+
+        code.push_str(&self.order.ext_operator.encode());
+
         match &self.order.soft_dollar_tier {
             Some(tier) => {
                 code.push_str(&tier.name.encode());
@@ -469,12 +488,51 @@ impl Encodable for Order {
         }
         code.push_str(&self.order.cash_qty.encode());
 
-        code.push_str(&self.order.mifid_2.encode());
+        // Java always sends all 4 MIFID2 fields
+        match &self.order.mifid_2 {
+            Some(m) => code.push_str(&m.encode()),
+            None => code.push_str(&Mifid2::default().encode()),
+        }
 
         code.push_str(&self.order.dont_use_auto_price_for_hedge.encode());
         code.push_str(&self.order.is_oms_container.encode());
         code.push_str(&self.order.discretionary_up_to_limit_price.encode());
         code.push_str(&self.order.use_price_mgmt_algo.encode());
+        code.push_str(&self.order.duration.encode());
+        code.push_str(&self.order.post_to_ats.encode());
+        code.push_str(&self.order.auto_cancel_parent.encode());
+        code.push_str(&self.order.advanced_error_override.encode());
+        code.push_str(&self.order.manual_order_time.encode());
+
+        // PEGBEST/PEGMID offsets - conditional on exchange and order type
+        // Java: IsPegBestOrder = PEG_BEST, IsPegMidOrder = PEG_MID
+        if self.contract.exchange.as_deref() == Some("IBKRATS") {
+            code.push_str(&self.order.min_trade_qty.encode());
+        }
+        let is_peg_mid = self.order.order_type == OrderType::PeggedToMidpoint;
+        // PEG BEST order type: check encoded string since variant may not exist
+        let order_type_str = self.order.order_type.encode();
+        let is_peg_best = order_type_str.starts_with("PEG BEST");
+        let mut send_mid_offsets = false;
+        if is_peg_best {
+            code.push_str(&self.order.min_compete_size.encode());
+            code.push_str(&self.order.compete_against_best_offset.encode());
+            if self.order.compete_against_best_offset.is_none() {
+                send_mid_offsets = true;
+            }
+        } else if is_peg_mid {
+            send_mid_offsets = true;
+        }
+        if send_mid_offsets {
+            code.push_str(&self.order.mid_offset_at_whole.encode());
+            code.push_str(&self.order.mid_offset_at_half.encode());
+        }
+
+        code.push_str(&self.order.customer_account.encode());
+        code.push_str(&self.order.professional_customer.encode());
+        code.push_str(&self.order.include_overnight.encode());
+        code.push_str(&self.order.manual_order_indicator.encode());
+        code.push_str(&self.order.imbalance_only.encode());
         code
     }
 }

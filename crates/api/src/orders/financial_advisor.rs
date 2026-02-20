@@ -18,7 +18,7 @@ impl ParseIbkrFrame for FinancialAdvisor {
     #[allow(clippy::cognitive_complexity)]
     fn try_parse_frame(
         msg_id: Incoming,
-        server_version: Option<ServerVersion>,
+        _server_version: Option<ServerVersion>,
         it: &mut Split<&str>,
     ) -> ParseResult<Self>
     where
@@ -51,7 +51,8 @@ impl crate::utils::ib_message::Encodable for FinancialAdvisor {
         code.push_str(&self.fa_group.encode());
         code.push_str(&self.fa_method.encode());
         code.push_str(&self.fa_percentage.encode());
-        code.push_str(&self.fa_profile.encode());
+        // fa_profile deprecated since MIN_SERVER_VER_FA_PROFILE_DESUPPORT (177)
+        // Modern TWS (>= 177) does NOT expect this field
         code
     }
 }
