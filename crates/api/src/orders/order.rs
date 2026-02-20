@@ -84,7 +84,7 @@ pub struct OrderData {
     pub order_ref:                       Option<String>,
     pub transmit:                        bool,
     pub parent_id:                       Option<i32>,
-    pub block_order:                     Option<bool>,
+    pub block_order:                     bool,
     pub sweep_to_fill:                   bool,
     pub display_size:                    Option<i32>,
     pub trigger_method:                  Option<TriggerMethod>,
@@ -112,10 +112,10 @@ pub struct OrderData {
 
     // SMART routing fields
     pub discretionary_amt:     D256,
-    pub e_trade_only:          Option<bool>,
-    pub firm_quote_only:       Option<bool>,
+    pub e_trade_only:          bool,
+    pub firm_quote_only:       bool,
     pub nbbo_price_cap:        Option<D256>,
-    pub opt_out_smart_routing: Option<bool>,
+    pub opt_out_smart_routing: bool,
 
     // BOX exchange order fields
     pub auction_strategy: Option<AuctionStrategy>,
@@ -157,7 +157,7 @@ pub struct OrderData {
     pub algo_id:                    Option<String>,
 
     // What-if
-    pub what_if: Option<bool>,
+    pub what_if: bool,
 
     // Not held
     pub not_held:  bool,
@@ -260,6 +260,7 @@ pub struct OrderData {
 
 impl OrderData {
     #[allow(clippy::missing_const_for_fn)]
+    #[allow(dead_code)]
     fn new() -> Self {
         OrderData {
             transmit: true,
@@ -555,14 +556,14 @@ impl ParseIbkrFrame for Order {
             stock_range_lower: decode(it)?,
             stock_range_upper: decode(it)?,
             display_size: decode(it)?,
-            block_order: if !completed { decode(it)? } else { None },
+            block_order: if !completed { decode(it)?.unwrap_or_default() } else { false },
             sweep_to_fill: decode(it)?.unwrap(),
             all_or_none: decode(it)?.unwrap(),
             // all_or_none: decode(it)?.unwrap_or_default(),
             min_qty: decode(it)?,
             oca_type: decode(it)?,
-            e_trade_only: if !completed { decode(it)? } else { None },
-            firm_quote_only: if !completed { decode(it)? } else { None },
+            e_trade_only: if !completed { decode(it)?.unwrap_or_default() } else { false },
+            firm_quote_only: if !completed { decode(it)?.unwrap_or_default() } else { false },
             nbbo_price_cap: if !completed { decode(it)? } else { None },
             parent_id: if !completed { decode(it)? } else { None },
             trigger_method: decode(it)?,
@@ -631,7 +632,7 @@ impl ParseIbkrFrame for Order {
                 order.hedge_param = decode(it)?;
             }
         }
-        order.opt_out_smart_routing = if !completed { decode(it)? } else { None };
+        order.opt_out_smart_routing = if !completed { decode(it)?.unwrap_or_default() } else { false };
         order.clearing_account = decode(it)?;
         order.clearing_intent = decode(it)?;
         order.not_held = decode(it)?.unwrap();
@@ -657,7 +658,7 @@ impl ParseIbkrFrame for Order {
             }
         }
         order.solicited = decode(it)?.unwrap();
-        order.what_if = if !completed { decode(it)? } else { None };
+        order.what_if = if !completed { decode(it)?.unwrap_or_default() } else { false };
         // ####################################################################
         let mut order_state = match msg_id {
             Incoming::OpenOrder => OrderState::try_parse_frame(msg_id, Some(server_version), it)?,
