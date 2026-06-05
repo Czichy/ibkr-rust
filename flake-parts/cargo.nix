@@ -112,6 +112,14 @@
             "crates/flex/src"
             "crates/flex/Cargo.toml"
           ];
+          # Das Binary linkt libssl/libcrypto dynamisch, der Rust-Linker bettet
+          # aber keinen RPATH ein (openssl wird beim Build nur ueber
+          # LD_LIBRARY_PATH gefunden). Dadurch fehlt openssl im Laufzeit-Closure
+          # und der Aufrufer muss LD_LIBRARY_PATH setzen -- was bei abweichender
+          # glibc-Version bricht. Wir patchen openssl daher fest ins RPATH.
+          postFixup = ''
+            patchelf --add-rpath ${lib.makeLibraryPath [pkgs.openssl]} $out/bin/ibkr-rust-flex
+          '';
         });
     in {
       checks = {
